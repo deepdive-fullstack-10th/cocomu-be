@@ -1,7 +1,7 @@
 package co.kr.cocomu.user.domain;
 
 import co.kr.cocomu.common.exception.domain.BadRequestException;
-import co.kr.cocomu.user.dto.UserDto;
+import co.kr.cocomu.user.dto.response.UserDto;
 import co.kr.cocomu.user.exception.UserExceptionCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

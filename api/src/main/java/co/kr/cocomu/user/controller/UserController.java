@@ -1,16 +1,10 @@
 package co.kr.cocomu.user.controller;
 
 import co.kr.cocomu.common.api.Api;
-import co.kr.cocomu.common.exception.domain.BadRequestException;
-import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.user.controller.docs.UserControllerDocs;
-import co.kr.cocomu.user.domain.User;
-import co.kr.cocomu.user.dto.UserDto;
+import co.kr.cocomu.user.dto.response.UserDto;
 import co.kr.cocomu.user.controller.code.UserStatusCode;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
-import co.kr.cocomu.user.dto.response.AllUserResponse;
-import co.kr.cocomu.user.exception.UserExceptionCode;
-import co.kr.cocomu.user.repository.UserJpaRepository;
 import co.kr.cocomu.user.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -38,8 +32,6 @@ public class UserController implements UserControllerDocs {
     @GetMapping("/all")
     public Api<List<UserDto>> getUsers() {
         final List<UserDto> users = userService.findAll();
-        final AllUserResponse result = new AllUserResponse(users);
-
         return Api.of(UserStatusCode.ALL_USER_FOUND_SUCCESS, users);
     }
 

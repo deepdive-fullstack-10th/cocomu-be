@@ -10,7 +10,7 @@ public record ErrorResponse(
     String message
 ) {
 
-    private static final String MESSAGE_FORMAT = "[필드명: %s] 예외 메세지: %s";
+    private static final String MESSAGE_FORMAT = "필드명: %s, 예외 메세지: %s";
 
     @Override
     public String toString() {

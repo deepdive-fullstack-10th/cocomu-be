@@ -16,6 +16,12 @@ spring:
         default_batch_fetch_size: 100
     open-in-view: false
 
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter : method
+    doc-expansion : none
+
 logging:
   level:
     org.hibernate.SQL: debug

@@ -2,7 +2,7 @@ package co.kr.cocomu.user.controller.docs;
 
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
-import co.kr.cocomu.user.dto.UserDto;
+import co.kr.cocomu.user.dto.response.UserDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
