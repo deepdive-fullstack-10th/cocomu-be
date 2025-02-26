@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: ${DEV_DATASOURCE_URL}
+    username: ${DEV_DATASOURCE_USERNAME}
+    password: ${DEV_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+    defer-datasource-initialization: true
+
+jwt:
+  secret-key: random-secret-key-32-byte-1234567890-1234567890
+  access-exp: 3600000
+  refresh-exp: 86400000
+
+admin:
+  swagger:
+    url: http://localhost:8080
+    username: cocomu
+    password: cocomu1!

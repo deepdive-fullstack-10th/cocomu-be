@@ -1,5 +1,6 @@
 package co.kr.cocomu.user.domain;
 
+import co.kr.cocomu.common.entity.TimeBaseEntity;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.user.dto.response.UserDto;
 import co.kr.cocomu.user.exception.UserExceptionCode;
@@ -12,12 +13,13 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "cocomu_user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class User {
+public class User extends TimeBaseEntity {
 
     private static final String DEFAULT_PROFILE_IMAGE = "https://cdn.cocomu.co.kr/images/profile.png";
     private static final int MAX_NICKNAME_LENGTH = 10;

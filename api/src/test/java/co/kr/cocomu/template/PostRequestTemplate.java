@@ -1,95 +1,45 @@
 package co.kr.cocomu.template;
 
-import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import java.util.Map;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 public class PostRequestTemplate {
 
-    public static <T> T executeSuccess(
-        final String path,
-        final Object requestBody,
-        final TypeRef<T> typeRef
-    ) {
+    public static ValidatableMockMvcResponse execute(String path) {
+        return RestAssuredMockMvc
+            .given().log().all()
+            .when().post(path)
+            .then().log().all();
+    }
+
+    public static ValidatableMockMvcResponse executeWithBody(String path, Object requestBody) {
         return RestAssuredMockMvc
             .given().log().all()
             .contentType(MediaType.APPLICATION_JSON)
             .body(requestBody)
             .when().post(path)
-            .then().log().all()
-            .status(HttpStatus.OK)
-            .extract()
-            .as(typeRef);
+            .then().log().all();
     }
 
-    public static <T> T executeWithParams(
-        final String path,
-        final Map<String, Object> queryParams,
-        final Object requestBody,
-        final TypeRef<T> typeRef
-    ) {
+    public static ValidatableMockMvcResponse executeWithParams(String path, Map<String, Object> queryParams) {
         return RestAssuredMockMvc
             .given().log().all()
             .contentType(MediaType.APPLICATION_JSON)
             .params(queryParams)
-            .body(requestBody)
             .when().post(path)
-            .then().log().all()
-            .status(HttpStatus.OK)
-            .extract()
-            .as(typeRef);
+            .then().log().all();
     }
 
-    public static void executeBadRequest(final String path, final Object requestBody) {
-        RestAssuredMockMvc
-            .given().log().all()
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(requestBody)
-            .when().post(path)
-            .then().log().all()
-            .status(HttpStatus.BAD_REQUEST);
-    }
-
-    public static void executeBadRequestWithParams(
-        final String path,
-        final Map<String, Object> queryParams,
-        final Object requestBody
-    ) {
+    public static void executeWithBodyAndParams(String path, Object requestBody, Map<String, Object> queryParams) {
         RestAssuredMockMvc
             .given().log().all()
             .contentType(MediaType.APPLICATION_JSON)
             .body(requestBody)
             .params(queryParams)
-            .when().get(path)
-            .then().log().all()
-            .status(HttpStatus.BAD_REQUEST);
-    }
-
-    public static void executeNotFound(final String path, final Object requestBody) {
-        RestAssuredMockMvc
-            .given().log().all()
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(requestBody)
             .when().post(path)
-            .then().log().all()
-            .status(HttpStatus.NOT_FOUND);
-    }
-
-    public static void executeNotFoundWithParams(
-        final String path,
-        final Map<String, Object> queryParams,
-        final Object requestBody
-    ) {
-        RestAssuredMockMvc
-            .given().log().all()
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(requestBody)
-            .params(queryParams)
-            .when().get(path)
-            .then().log().all()
-            .status(HttpStatus.NOT_FOUND);
+            .then().log().all();
     }
 
 }
