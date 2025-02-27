@@ -42,3 +42,15 @@ admin:
     url: http://localhost:8080
     username: cocomu
     password: cocomu1!
+
+oauth:
+  github:
+    client-id: ${GITHUB_ID}
+    client-secret: ${GITHUB_SECRET}
+  kakao:
+    client-id: ${KAKAO_ID}
+    client-secret: ${KAKAO_SECRET}
+  google:
+    client-id: ${GOOGLE_ID}
+    client-secret: ${GOOGLE_SECRET}
+    redirect-uri: ${GOOGLE_REDIRECT_URI}

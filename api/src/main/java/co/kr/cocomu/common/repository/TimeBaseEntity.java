@@ -1,4 +1,4 @@
-package co.kr.cocomu.common.entity;
+package co.kr.cocomu.common.repository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

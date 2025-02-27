@@ -3,6 +3,7 @@ package co.kr.cocomu.auth.service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -24,14 +25,15 @@ public class CookieService {
     public void setRefreshTokenCookie(final HttpServletResponse response, String refreshToken) {
         final Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
-        cookie.setSecure(isProdEnvironment());
+        cookie.setSecure(isHttpsEnvironment());
         cookie.setPath("/");
         cookie.setMaxAge(refreshTokenExpiredAt);
         response.addCookie(cookie);
     }
 
-    public boolean isProdEnvironment() {
-        return Arrays.asList(environment.getActiveProfiles()).contains("prod");
+    private boolean isHttpsEnvironment() {
+        final List<String> profiles = Arrays.asList(environment.getActiveProfiles());
+        return profiles.contains("prod") || profiles.contains("dev");
     }
 
 }

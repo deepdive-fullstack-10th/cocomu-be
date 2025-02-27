@@ -32,11 +32,11 @@ class CookieServiceTest {
     }
 
     @Test
-    void 개발_환경에서_쿠키를_설정한다() {
+    void 로컬_환경에서_쿠키를_설정한다() {
         // given
         ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
         String refreshToken = "refresh-token-value";
-        when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
+        when(environment.getActiveProfiles()).thenReturn(new String[]{"default"});
 
         // when
         cookieService.setRefreshTokenCookie(response, refreshToken);
@@ -54,6 +54,23 @@ class CookieServiceTest {
     }
 
     @Test
+    void 개발_환경에서_쿠키를_설정한다() {
+        // given
+        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
+        String refreshToken = "refresh-token-value";
+        when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
+
+        // when
+        cookieService.setRefreshTokenCookie(response, refreshToken);
+
+        // then
+        verify(response).addCookie(cookieCaptor.capture());
+
+        Cookie capturedCookie = cookieCaptor.getValue();
+        assertThat(capturedCookie.getSecure()).isTrue();
+    }
+
+    @Test
     void 프로덕션_환경에서_쿠키를_설정한다() {
         // given
         ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
@@ -68,42 +85,6 @@ class CookieServiceTest {
 
         Cookie capturedCookie = cookieCaptor.getValue();
         assertThat(capturedCookie.getSecure()).isTrue();
-    }
-
-    @Test
-    void 프로필_설정이_없을_때_프로덕션_환경이_아니라고_판단한다() {
-        // given
-        when(environment.getActiveProfiles()).thenReturn(new String[]{});
-
-        // when
-        boolean isProd = cookieService.isProdEnvironment();
-
-        // then
-        assertThat(isProd).isFalse();
-    }
-
-    @Test
-    void prod_프로필일_때_프로덕션_환경이라고_판단한다() {
-        // given
-        when(environment.getActiveProfiles()).thenReturn(new String[]{"prod"});
-
-        // when
-        boolean isProd = cookieService.isProdEnvironment();
-
-        // then
-        assertThat(isProd).isTrue();
-    }
-
-    @Test
-    void dev_프로필일_때_프로덕션_환경이_아니라고_판단한다() {
-        // given
-        when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
-
-        // when
-        boolean isProd = cookieService.isProdEnvironment();
-
-        // then
-        assertThat(isProd).isFalse();
     }
 
 }

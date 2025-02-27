@@ -1,5 +1,6 @@
 package co.kr.cocomu.common.exception;
 
+import co.kr.cocomu.common.exception.domain.BadGatewayException;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.common.exception.domain.UnAuthorizedException;
@@ -8,9 +9,11 @@ import co.kr.cocomu.common.exception.dto.ExceptionResponse;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +27,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleException(final Exception e) {
         e.printStackTrace();
-
         log.error("{} : {}", e.getClass(), e.getMessage());
 
         return ResponseEntity.internalServerError()
@@ -41,10 +43,7 @@ public class GlobalExceptionHandler {
             .map(fieldError -> new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
             .toList();
 
-        log.error("{} : {}", e.getClass(), errorResponses);
-
-        return ResponseEntity.badRequest()
-            .body(new ExceptionResponse(9001, errorResponses.toString()));
+        return buildErrorResponse(9001, e, errorResponses.toString());
     }
 
     @ExceptionHandler
@@ -55,9 +54,7 @@ public class GlobalExceptionHandler {
             e.getName(),
             Objects.requireNonNull(e.getRequiredType()).getSimpleName() + " 타입으로 변환할 수 없는 요청입니다."
         );
-
-        return ResponseEntity.badRequest()
-            .body(new ExceptionResponse(9002, errorResponse.toString()));
+        return buildErrorResponse(9002, e, errorResponse.toString());
     }
 
     @ExceptionHandler
@@ -65,11 +62,24 @@ public class GlobalExceptionHandler {
         final MissingServletRequestParameterException e
     ) {
         final ErrorResponse errorResponse = new ErrorResponse(e.getParameterName(), "파라미터가 필요합니다.");
+        return buildErrorResponse(9003, e, errorResponse.toString());
+    }
 
-        log.error("{} - {}", e.getClass(), errorResponse);
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(
+        final HttpMessageNotReadableException e
+    ) {
+        return buildErrorResponse(9004, e, "잘못된 요청 형식입니다.");
+    }
 
-        return ResponseEntity.badRequest()
-            .body(new ExceptionResponse(9003, errorResponse.toString()));
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ExceptionResponse> handleConstraintViolationException(final ConstraintViolationException e) {
+        final List<ErrorResponse> errors = e.getConstraintViolations()
+            .stream()
+            .map(violation -> new ErrorResponse(violation.getPropertyPath().toString(), violation.getMessage()))
+            .toList();
+
+        return buildErrorResponse(9005, e, errors.toString());
     }
 
     @ExceptionHandler
@@ -91,6 +101,22 @@ public class GlobalExceptionHandler {
         log.error("{} : {}", e.getClass(), e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(new ExceptionResponse(e.getExceptionType().getCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleBadGatewayException(final BadGatewayException e) {
+        log.error("{} : {}", e.getClass(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+            .body(new ExceptionResponse(e.getExceptionType().getCode(), e.getMessage()));
+    }
+
+    private ResponseEntity<ExceptionResponse> buildErrorResponse(
+        final int code,
+        final Exception e,
+        final String message
+    ) {
+        log.error("{} - {}", e.getClass(), message);
+        return ResponseEntity.badRequest().body(new ExceptionResponse(code, message));
     }
 
 }

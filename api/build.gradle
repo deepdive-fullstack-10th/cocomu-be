@@ -46,6 +46,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'io.rest-assured:spring-mock-mvc'
+    testImplementation 'com.squareup.okhttp3:mockwebserver'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -63,7 +64,7 @@ jacoco {
 def classDirectoriesFilter = {
     project.fileTree(
             dir: it,
-            excludes: ['**/common/**', "**/CocomuApiApplication.class"]
+            excludes: ['**/common/**', "**/CocomuApiApplication.class", "**/config/**"]
     )
 }
 
