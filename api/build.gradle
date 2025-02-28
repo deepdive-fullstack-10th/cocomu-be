@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
+    id 'jacoco'
 }
 
 group = 'co.kr.cocomu'
@@ -18,15 +19,34 @@ configurations {
 }
 
 dependencies {
-    // spring web
+    // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    // DB
+    runtimeOnly 'com.h2database:h2' // test & local
+    implementation 'mysql:mysql-connector-java:8.0.33' // dev & prod
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'io.rest-assured:spring-mock-mvc'
+    testImplementation 'com.squareup.okhttp3:mockwebserver'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -36,3 +56,62 @@ test {
 
 bootJar.archiveFileName = 'app.jar'
 jar.enabled = false;
+
+jacoco {
+    toolVersion = "0.8.9"
+}
+
+def classDirectoriesFilter = {
+    project.fileTree(
+            dir: it,
+            excludes: ['**/common/**', "**/CocomuApiApplication.class", "**/config/**"]
+    )
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect(classDirectoriesFilter)))
+    }
+
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir('reports/jacoco/html')
+    }
+    finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect(classDirectoriesFilter)))
+    }
+
+    violationRules {
+        rule {
+            element = 'CLASS'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+        }
+    }
+
+}
