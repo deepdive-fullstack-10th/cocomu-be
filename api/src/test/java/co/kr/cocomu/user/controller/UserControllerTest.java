@@ -2,9 +2,12 @@ package co.kr.cocomu.user.controller;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 
 import co.kr.cocomu.common.api.Api;
+import co.kr.cocomu.common.jwt.JwtProvider;
 import co.kr.cocomu.common.security.SecurityConfig;
 import co.kr.cocomu.template.GetRequestTemplate;
 import co.kr.cocomu.template.PostRequestTemplate;
@@ -33,6 +36,7 @@ class UserControllerTest {
     private static final String PATH_PREFIX = "/api/v1/users";
 
     @MockBean private UserService userService;
+    @MockBean private JwtProvider jwtProvider;
 
     private UserDto userDto;
 
@@ -40,12 +44,14 @@ class UserControllerTest {
     void setUser(WebApplicationContext webApplicationContext) {
         RestAssuredMockMvc.webAppContextSetup(webApplicationContext);
         userDto = new UserDto(1L, "코코무", "https://cdn.cocomu.co.kr/images/profile.png");
+        doNothing().when(jwtProvider).validationTokenWithThrow(anyString());
+        given(jwtProvider.getUserId(anyString())).willReturn(1L);
     }
 
     @Test
     void 사용자_조회가_성공한다() {
         // given
-        String path = PATH_PREFIX + "/me/1";
+        String path = PATH_PREFIX + "/me";
         given(userService.findUser(1L)).willReturn(userDto);
 
         // when

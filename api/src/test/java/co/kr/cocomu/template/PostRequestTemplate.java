@@ -10,6 +10,7 @@ public class PostRequestTemplate {
     public static ValidatableMockMvcResponse execute(String path) {
         return RestAssuredMockMvc
             .given().log().all()
+            .header("Authorization", "Bearer token")
             .when().post(path)
             .then().log().all();
     }
@@ -17,6 +18,7 @@ public class PostRequestTemplate {
     public static ValidatableMockMvcResponse executeWithBody(String path, Object requestBody) {
         return RestAssuredMockMvc
             .given().log().all()
+            .header("Authorization", "Bearer token")
             .contentType(MediaType.APPLICATION_JSON)
             .body(requestBody)
             .when().post(path)
@@ -26,15 +28,21 @@ public class PostRequestTemplate {
     public static ValidatableMockMvcResponse executeWithParams(String path, Map<String, Object> queryParams) {
         return RestAssuredMockMvc
             .given().log().all()
+            .header("Authorization", "Bearer token")
             .contentType(MediaType.APPLICATION_JSON)
             .params(queryParams)
             .when().post(path)
             .then().log().all();
     }
 
-    public static void executeWithBodyAndParams(String path, Object requestBody, Map<String, Object> queryParams) {
-        RestAssuredMockMvc
+    public static ValidatableMockMvcResponse executeWithBodyAndParams(
+        String path,
+        Object requestBody,
+        Map<String, Object> queryParams
+    ) {
+        return RestAssuredMockMvc
             .given().log().all()
+            .header("Authorization", "Bearer token")
             .contentType(MediaType.APPLICATION_JSON)
             .body(requestBody)
             .params(queryParams)

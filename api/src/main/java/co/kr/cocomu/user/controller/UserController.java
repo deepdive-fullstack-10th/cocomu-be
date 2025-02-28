@@ -9,6 +9,7 @@ import co.kr.cocomu.user.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +24,8 @@ public class UserController implements UserControllerDocs {
 
     private final UserService userService;
 
-    @GetMapping("/me/{userId}")
-    public Api<UserDto> getUser(@PathVariable final Long userId) {
+    @GetMapping("/me")
+    public Api<UserDto> getUser(@AuthenticationPrincipal final Long userId) {
         final UserDto user = userService.findUser(userId);
         return Api.of(UserStatusCode.USER_FOUND_SUCCESS, user);
     }

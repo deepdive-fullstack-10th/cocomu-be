@@ -10,6 +10,7 @@ public class GetRequestTemplate {
     public static ValidatableMockMvcResponse execute(String path) {
         return RestAssuredMockMvc
             .given().log().all()
+            .header("Authorization", "Bearer token")
             .contentType(MediaType.APPLICATION_JSON)
             .when().get(path)
             .then().log().all();
@@ -18,6 +19,7 @@ public class GetRequestTemplate {
     public static ValidatableMockMvcResponse executeWithParams(String path, Map<String, Object> params) {
         return RestAssuredMockMvc
             .given().log().all()
+            .header("Authorization", "Bearer token")
             .contentType(MediaType.APPLICATION_JSON)
             .params(params)
             .when().get(path)

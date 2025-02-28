@@ -19,6 +19,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -72,7 +73,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(9004, e, "잘못된 요청 형식입니다.");
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleConstraintViolationException(final ConstraintViolationException e) {
         final List<ErrorResponse> errors = e.getConstraintViolations()
             .stream()
@@ -80,6 +81,12 @@ public class GlobalExceptionHandler {
             .toList();
 
         return buildErrorResponse(9005, e, errors.toString());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleNoResourceFoundException(final NoResourceFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ExceptionResponse(9006, "존재하지 않는 API입니다."));
     }
 
     @ExceptionHandler
