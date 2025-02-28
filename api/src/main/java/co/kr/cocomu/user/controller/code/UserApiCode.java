@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum UserStatusCode implements ApiCode {
+public enum UserApiCode implements ApiCode {
 
     USER_JOIN_SUCCESS(1000, "사용자 정보가 추가되었습니다."),
     USER_FOUND_SUCCESS(1000, "사용자 정보를 조회했습니다."),

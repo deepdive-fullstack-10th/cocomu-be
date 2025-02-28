@@ -1,7 +1,7 @@
 package co.kr.cocomu.common.security;
 
-import co.kr.cocomu.common.admin.AdminConstants;
-import co.kr.cocomu.common.admin.AdminUriGroup;
+import co.kr.cocomu.admin.config.AdminConstants;
+import co.kr.cocomu.admin.config.AdminUriGroup;
 import co.kr.cocomu.common.jwt.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;

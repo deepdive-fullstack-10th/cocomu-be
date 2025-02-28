@@ -1,4 +1,4 @@
-package co.kr.cocomu.auth.dto.code;
+package co.kr.cocomu.auth.controller.code;
 
 import co.kr.cocomu.common.api.ApiCode;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum AuthCode implements ApiCode {
+public enum AuthApiCode implements ApiCode {
 
     LOGIN_SUCCESS(1100, "로그인에 성공했습니다"),
     ;

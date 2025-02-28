@@ -3,7 +3,7 @@ package co.kr.cocomu.auth.client.kakao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kr.cocomu.auth.client.TokenResponse;
-import co.kr.cocomu.template.OAuthClientTemplate;
+import co.kr.cocomu.common.template.OAuthClientTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package co.kr.cocomu.fake;
+package co.kr.cocomu.common.fake;
 
 import co.kr.cocomu.auth.client.OAuthClientGenerator;
 import okhttp3.mockwebserver.MockWebServer;

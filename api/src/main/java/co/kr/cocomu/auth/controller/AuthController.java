@@ -2,16 +2,14 @@ package co.kr.cocomu.auth.controller;
 
 import co.kr.cocomu.auth.controller.docs.AuthControllerDocs;
 import co.kr.cocomu.auth.domain.OAuth2Provider;
-import co.kr.cocomu.auth.dto.code.AuthCode;
+import co.kr.cocomu.auth.controller.code.AuthApiCode;
 import co.kr.cocomu.auth.dto.request.OAuthRequest;
 import co.kr.cocomu.auth.dto.response.AuthResponse;
-import co.kr.cocomu.auth.exception.AuthExceptionCode;
 import co.kr.cocomu.auth.service.CookieService;
 import co.kr.cocomu.auth.service.GithubService;
 import co.kr.cocomu.auth.service.GoogleService;
 import co.kr.cocomu.auth.service.KakaoService;
 import co.kr.cocomu.common.api.Api;
-import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.jwt.JwtProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -48,7 +46,7 @@ public class AuthController implements AuthControllerDocs {
 
         cookieService.setRefreshTokenCookie(response, refreshToken);
 
-        return Api.of(AuthCode.LOGIN_SUCCESS, new AuthResponse(accessToken));
+        return Api.of(AuthApiCode.LOGIN_SUCCESS, new AuthResponse(accessToken));
     }
 
     private Long oAuthLoginByProvider(final OAuthRequest request) {
@@ -69,7 +67,7 @@ public class AuthController implements AuthControllerDocs {
 
         cookieService.setRefreshTokenCookie(response, refreshToken);
 
-        return Api.of(AuthCode.LOGIN_SUCCESS, new AuthResponse(accessToken));
+        return Api.of(AuthApiCode.LOGIN_SUCCESS, new AuthResponse(accessToken));
     }
 
 }

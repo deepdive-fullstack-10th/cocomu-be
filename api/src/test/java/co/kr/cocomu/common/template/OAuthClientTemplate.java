@@ -1,6 +1,6 @@
-package co.kr.cocomu.template;
+package co.kr.cocomu.common.template;
 
-import co.kr.cocomu.fake.FakeOAuthClientGenerator;
+import co.kr.cocomu.common.fake.FakeOAuthClientGenerator;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;

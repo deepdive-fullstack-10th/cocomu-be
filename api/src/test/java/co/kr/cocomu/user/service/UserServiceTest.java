@@ -6,11 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
-import co.kr.cocomu.user.dto.response.UserDto;
+import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.exception.UserExceptionCode;
 import co.kr.cocomu.user.repository.UserJpaRepository;
 import java.util.List;
@@ -33,7 +32,7 @@ class UserServiceTest {
     private UserService userService;
 
     private User user;
-    private UserDto userDto;
+    private UserResponse userResponse;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +40,7 @@ class UserServiceTest {
         ReflectionTestUtils.setField(user, "id", 1L);
         ReflectionTestUtils.setField(user, "profileImageUrl", "https://cdn.cocomu.co.kr/images/profile.png");
 
-        userDto = new UserDto(1L, "코코무", "https://cdn.cocomu.co.kr/images/profile.png");
+        userResponse = new UserResponse(1L, "코코무", "https://cdn.cocomu.co.kr/images/profile.png");
     }
 
     @Test
@@ -51,10 +50,10 @@ class UserServiceTest {
         given(userJpaRepository.save(any(User.class))).willReturn(user);
 
         // when
-        UserDto result = userService.saveUser(dto);
+        UserResponse result = userService.saveUser(dto);
 
         // then
-        assertThat(result).isEqualTo(userDto);
+        assertThat(result).isEqualTo(userResponse);
         verify(userJpaRepository).save(any(User.class));
     }
 
@@ -65,10 +64,10 @@ class UserServiceTest {
         given(userJpaRepository.findAll()).willReturn(mockUsers);
 
         // when
-        List<UserDto> result = userService.findAll();
+        List<UserResponse> result = userService.findAll();
 
         // then
-        assertThat(result).isEqualTo(List.of(userDto));
+        assertThat(result).isEqualTo(List.of(userResponse));
         verify(userJpaRepository).findAll();
     }
 
@@ -79,10 +78,10 @@ class UserServiceTest {
         given(userJpaRepository.findById(userId)).willReturn(Optional.of(user));
 
         // when
-        UserDto result = userService.findUser(userId);
+        UserResponse result = userService.findUser(userId);
 
         // then
-        assertThat(result).isEqualTo(userDto);
+        assertThat(result).isEqualTo(userResponse);
         verify(userJpaRepository).findById(1L);
     }
 

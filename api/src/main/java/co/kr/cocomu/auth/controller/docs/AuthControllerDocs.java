@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@Tag(name = "002. COCOMU USER AUTH", description = "코코무 사용자 인증 관련 API")
+@Tag(name = "002. COCOMU-USER-AUTH", description = "코코무 사용자 인증 관련 API")
 public interface AuthControllerDocs {
 
     @Operation(summary = "백도어 로그인", description = "개발용으로 임시 로그인을 하는 기능")

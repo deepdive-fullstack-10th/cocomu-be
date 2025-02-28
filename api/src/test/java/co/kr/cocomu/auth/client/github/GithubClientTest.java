@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import co.kr.cocomu.auth.client.TokenResponse;
 import co.kr.cocomu.auth.exception.AuthExceptionCode;
 import co.kr.cocomu.common.exception.domain.BadGatewayException;
-import co.kr.cocomu.template.OAuthClientTemplate;
+import co.kr.cocomu.common.template.OAuthClientTemplate;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

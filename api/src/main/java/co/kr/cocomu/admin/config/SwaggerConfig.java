@@ -1,4 +1,4 @@
-package co.kr.cocomu.common.admin;
+package co.kr.cocomu.admin.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.jackson.ModelResolver;

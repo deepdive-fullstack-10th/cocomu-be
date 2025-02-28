@@ -10,25 +10,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.auth.domain.OAuth2Provider;
-import co.kr.cocomu.auth.dto.code.AuthCode;
+import co.kr.cocomu.auth.controller.code.AuthApiCode;
 import co.kr.cocomu.auth.dto.request.OAuthRequest;
 import co.kr.cocomu.auth.dto.response.AuthResponse;
-import co.kr.cocomu.auth.exception.AuthExceptionCode;
 import co.kr.cocomu.auth.service.CookieService;
 import co.kr.cocomu.auth.service.GithubService;
 import co.kr.cocomu.auth.service.GoogleService;
 import co.kr.cocomu.auth.service.KakaoService;
+import co.kr.cocomu.common.BaseControllerTest;
 import co.kr.cocomu.common.api.Api;
-import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.jwt.JwtProvider;
 import co.kr.cocomu.common.security.SecurityConfig;
-import co.kr.cocomu.template.GetRequestTemplate;
-import co.kr.cocomu.template.PostRequestTemplate;
+import co.kr.cocomu.common.template.GetRequestTemplate;
+import co.kr.cocomu.common.template.PostRequestTemplate;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,7 +38,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.context.WebApplicationContext;
 
 @WebMvcTest(AuthController.class)
-@WithMockUser
 @Import(value = {SecurityConfig.class})
 class AuthControllerTest {
 
@@ -74,8 +70,8 @@ class AuthControllerTest {
 
         // then
         Api<AuthResponse> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(AuthCode.LOGIN_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(AuthCode.LOGIN_SUCCESS.getMessage());
+        assertThat(result.code()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getMessage());
         assertThat(result.result().accessToken()).isEqualTo(backdoorAccessToken);
         verify(cookieService).setRefreshTokenCookie(any(), eq(backdoorRefreshToken));
     }
@@ -100,8 +96,8 @@ class AuthControllerTest {
 
         // then
         Api<AuthResponse> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(AuthCode.LOGIN_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(AuthCode.LOGIN_SUCCESS.getMessage());
+        assertThat(result.code()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getMessage());
         assertThat(result.result().accessToken()).isEqualTo(mockAccessToken);
         verify(cookieService).setRefreshTokenCookie(any(), eq(mockRefreshToken));
     }

@@ -1,6 +1,6 @@
 package co.kr.cocomu.common.security;
 
-import static co.kr.cocomu.common.admin.AdminConstants.SWAGGER_URIS;
+import static co.kr.cocomu.admin.config.AdminConstants.ADMIN_URIS;
 import static co.kr.cocomu.common.security.SecurityPathConfig.PUBLIC_START_URIS;
 
 import co.kr.cocomu.common.jwt.JwtProvider;
@@ -13,7 +13,6 @@ import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -62,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean containsSwaggerUris(final HttpServletRequest request) {
-        return SWAGGER_URIS.stream()
+        return ADMIN_URIS.stream()
             .anyMatch(url -> request.getRequestURI().contains(url));
     }
 

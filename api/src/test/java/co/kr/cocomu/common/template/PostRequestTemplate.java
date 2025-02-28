@@ -1,4 +1,4 @@
-package co.kr.cocomu.template;
+package co.kr.cocomu.common.template;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
@@ -15,7 +15,7 @@ public class PostRequestTemplate {
             .then().log().all();
     }
 
-    public static ValidatableMockMvcResponse executeWithBody(String path, Object requestBody) {
+    public static <T> ValidatableMockMvcResponse executeWithBody(String path, T requestBody) {
         return RestAssuredMockMvc
             .given().log().all()
             .header("Authorization", "Bearer token")

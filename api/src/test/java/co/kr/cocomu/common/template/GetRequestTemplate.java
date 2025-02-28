@@ -1,4 +1,4 @@
-package co.kr.cocomu.template;
+package co.kr.cocomu.common.template;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
