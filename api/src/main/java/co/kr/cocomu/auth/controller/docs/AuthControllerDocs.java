@@ -18,19 +18,24 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "백도어 로그인", description = "개발용으로 임시 로그인을 하는 기능")
     @ApiResponse(
-        responseCode = "1100",
+        responseCode = "200",
         description = "로그인에 성공했습니다."
     )
     Api<AuthResponse> login(HttpServletResponse response);
 
     @Operation(summary = "OAuth 로그인", description = "OAuth 로그인을 하는 기능")
     @ApiResponse(
-        responseCode = "1100",
+        responseCode = "200",
         description = "로그인에 성공했습니다."
     )
     @ApiResponse(
-        responseCode = "1101",
+        responseCode = "400",
         description = "제공되지 않는 OAuth Service 입니다.",
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    @ApiResponse(
+        responseCode = "502",
+        description = "OAuth 로그인에 실패했습니다.\nOAuth 로그인 중 알 수 없는 에러가 발생했습니다.",
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<AuthResponse> loginWithOAuth2(OAuthRequest request, HttpServletResponse response);

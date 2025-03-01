@@ -1,12 +1,14 @@
 package co.kr.cocomu.study.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.BaseControllerTest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
+import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.service.StudyService;
 import io.restassured.common.mapper.TypeRef;
@@ -38,6 +40,22 @@ class StudyControllerTest extends BaseControllerTest {
         Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(StudyApiCode.CREATE_STUDY_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.CREATE_STUDY_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(1L);
+    }
+
+    @Test
+    void 공개방_참여_요청이_성공한다() {
+        // given
+        when(studyService.joinPublicStudy(1L, 1L, StudyRole.NORMAL)).thenReturn(1L);
+
+        // when
+        String path = PATH_PREFIX + "/public/1/join";
+        ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
+
+        // then
+        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.JOIN_STUDY_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.JOIN_STUDY_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(1L);
     }
 

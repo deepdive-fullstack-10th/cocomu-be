@@ -1,21 +1,19 @@
 package co.kr.cocomu.study.domain;
 
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.repository.TimeBaseEntity;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
-import co.kr.cocomu.user.domain.User;
+import co.kr.cocomu.study.exception.StudyExceptionCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +33,6 @@ public class Study extends TimeBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_id")
     private Long id;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "leader_id")
-    private User leader;
 
     @Column(length = 20, nullable = false)
     private String name;
@@ -62,28 +56,32 @@ public class Study extends TimeBaseEntity {
     private List<StudyLanguage> languages = new ArrayList<>();
 
     private Study(
-        final User leader,
         final String name,
         final String password,
         final String description,
         final StudyStatus status,
         final int totalUserCount
     ) {
-        this.leader = leader;
         this.name = name;
         this.password = password;
         this.description = description;
         this.status = status;
-        this.currentUserCount = 1;
+        this.currentUserCount = 0;
         this.totalUserCount = totalUserCount;
     }
 
-    public static Study createPublicStudy(final User leader, final CreatePublicStudyDto dto) {
-        return new Study(leader, dto.name(), null, dto.description(), StudyStatus.PUBLIC, dto.totalUserCount());
+    public static Study createPublicStudy(final CreatePublicStudyDto dto) {
+        return new Study(dto.name(), null, dto.description(), StudyStatus.PUBLIC, dto.totalUserCount());
     }
 
     public void increaseCurrentUserCount() {
         this.currentUserCount++;
+    }
+
+    public void decreaseCurrentUserCount() {
+        if (this.currentUserCount > 0) {
+            this.currentUserCount--;
+        }
     }
 
     public void addBooks(final List<Workbook> workbooks) {
@@ -106,6 +104,13 @@ public class Study extends TimeBaseEntity {
     public void addLanguage(final Language language) {
         final StudyLanguage studyLanguage = StudyLanguage.of(this, language);
         this.languages.add(studyLanguage);
+    }
+
+    public void removeStudy() {
+        if (currentUserCount >= 1) {
+            throw new BadRequestException(StudyExceptionCode.REMAINING_USER);
+        }
+        status = StudyStatus.REMOVE;
     }
 
 }
