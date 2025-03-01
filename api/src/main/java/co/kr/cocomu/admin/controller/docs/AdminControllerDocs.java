@@ -1,8 +1,8 @@
 package co.kr.cocomu.admin.controller.docs;
 
-import co.kr.cocomu.admin.dto.request.CreateJudgeRequest;
+import co.kr.cocomu.admin.dto.request.CreateWorkbookRequest;
 import co.kr.cocomu.admin.dto.request.CreateLanguageRequest;
-import co.kr.cocomu.admin.dto.response.JudgeResponse;
+import co.kr.cocomu.admin.dto.response.WorkbookResponse;
 import co.kr.cocomu.admin.dto.response.LanguageResponse;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
@@ -18,7 +18,7 @@ public interface AdminControllerDocs {
         responseCode = "10000",
         description = "스터디 문제집 정보가 추가되었습니다."
     )
-    Api<JudgeResponse> addJudge(CreateJudgeRequest dto);
+    Api<WorkbookResponse> addWorkbook(CreateWorkbookRequest dto);
 
     @Operation(summary = "언어 정보 추가", description = "스터디에 언어 정보를 추가하는 기능")
     @ApiResponse(
@@ -32,7 +32,7 @@ public interface AdminControllerDocs {
         responseCode = "10002",
         description = "스터디 문제집 정보가 삭제되었습니다."
     )
-    NoContent deleteJudge(Long judgeId);
+    NoContent deleteWorkbook(Long workbookId);
 
     @Operation(summary = "언어 정보 삭제", description = "스터디에 언어 정보를 삭제하는 기능")
     @ApiResponse(

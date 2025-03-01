@@ -40,7 +40,7 @@ public class Study extends TimeBaseEntity {
     @JoinColumn(name = "leader_id")
     private User leader;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 20, nullable = false)
     private String name;
     @Column(length = 6)
     private String password;
@@ -56,7 +56,7 @@ public class Study extends TimeBaseEntity {
     private int totalUserCount;
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StudyJudge> judges = new ArrayList<>();
+    private List<StudyWorkbook> workbooks = new ArrayList<>();
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyLanguage> languages = new ArrayList<>();
@@ -86,15 +86,15 @@ public class Study extends TimeBaseEntity {
         this.currentUserCount++;
     }
 
-    public void addJudges(final List<Judge> judges) {
-        for (Judge judge : judges) {
-            addJudge(judge);
+    public void addBooks(final List<Workbook> workbooks) {
+        for (Workbook workBook : workbooks) {
+            addBook(workBook);
         }
     }
 
-    public void addJudge(final Judge judge) {
-        final StudyJudge studyJudge = StudyJudge.of(this, judge);
-        this.judges.add(studyJudge);
+    public void addBook(final Workbook workBook) {
+        final StudyWorkbook studyWorkbook = StudyWorkbook.of(this, workBook);
+        this.workbooks.add(studyWorkbook);
     }
 
     public void addLanguages(final List<Language> languages) {

@@ -1,6 +1,7 @@
 package co.kr.cocomu.user.service;
 
 import co.kr.cocomu.common.exception.domain.NotFoundException;
+import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
@@ -25,6 +26,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public User getUserWithThrow(final Long userId) {
+        return userJpaRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(UserExceptionCode.USER_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
     public List<UserResponse> findAll() {
         return userJpaRepository.findAll()
         .stream()
@@ -34,9 +41,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponse findUser(final Long userId) {
-        return userJpaRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException(UserExceptionCode.USER_NOT_FOUND))
-            .toDto();
+        return getUserWithThrow(userId).toDto();
     }
 
 }

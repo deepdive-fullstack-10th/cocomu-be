@@ -7,9 +7,9 @@ import static org.mockito.Mockito.verify;
 
 import co.kr.cocomu.admin.service.AdminService;
 import co.kr.cocomu.admin.controller.code.AdminApiCode;
-import co.kr.cocomu.admin.dto.request.CreateJudgeRequest;
+import co.kr.cocomu.admin.dto.request.CreateWorkbookRequest;
 import co.kr.cocomu.admin.dto.request.CreateLanguageRequest;
-import co.kr.cocomu.admin.dto.response.JudgeResponse;
+import co.kr.cocomu.admin.dto.response.WorkbookResponse;
 import co.kr.cocomu.admin.dto.response.LanguageResponse;
 import co.kr.cocomu.common.BaseControllerTest;
 import co.kr.cocomu.common.api.Api;
@@ -33,18 +33,18 @@ class AdminControllerTest extends BaseControllerTest {
 
     @Test
     void 스터디_문제집_추가_요청이_성공한다() {
-        CreateJudgeRequest dto = new CreateJudgeRequest("백준", "이미지URL");
-        JudgeResponse mockResponse = new JudgeResponse(1L, "백준", "이미지URL");
-        given(adminService.addJudge(dto)).willReturn(mockResponse);
+        CreateWorkbookRequest dto = new CreateWorkbookRequest("백준", "이미지URL");
+        WorkbookResponse mockResponse = new WorkbookResponse(1L, "백준", "이미지URL");
+        given(adminService.addWorkbook(dto)).willReturn(mockResponse);
 
         // when
-        String path = PATH_PREFIX + "/studies/judges";
+        String path = PATH_PREFIX + "/studies/workbooks";
         ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
 
         // then
-        Api<JudgeResponse> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(AdminApiCode.ADD_JUDGE_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(AdminApiCode.ADD_JUDGE_SUCCESS.getMessage());
+        Api<WorkbookResponse> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(AdminApiCode.ADD_WORKBOOK_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(AdminApiCode.ADD_WORKBOOK_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockResponse);
     }
 
@@ -68,14 +68,14 @@ class AdminControllerTest extends BaseControllerTest {
     @Test
     void 스터디_문제집_삭제_요청이_성공한다() {
         // when
-        String path = PATH_PREFIX + "/studies/judges/1";
+        String path = PATH_PREFIX + "/studies/workbooks/1";
         ValidatableMockMvcResponse response = DeleteRequestTemplate.execute(path);
 
         // then
         NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(AdminApiCode.DELETE_JUDGE_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(AdminApiCode.DELETE_JUDGE_SUCCESS.getMessage());
-        verify(adminService).deleteJudge(1L);
+        assertThat(result.code()).isEqualTo(AdminApiCode.DELETE_WORKBOOK_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(AdminApiCode.DELETE_WORKBOOK_SUCCESS.getMessage());
+        verify(adminService).deleteWorkbook(1L);
     }
 
     @Test

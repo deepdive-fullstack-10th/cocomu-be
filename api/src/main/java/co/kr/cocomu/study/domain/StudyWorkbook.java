@@ -18,15 +18,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "cocomu_study_judge")
+@Table(name = "cocomu_study_workbook")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class StudyJudge {
+public class StudyWorkbook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "study_judge_id")
+    @Column(name = "study_workbook_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -34,16 +34,16 @@ public class StudyJudge {
     private Study study;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "judge_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Judge judge;
+    @JoinColumn(name = "workbook_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Workbook workbook;
 
-    private StudyJudge(final Study study, final Judge judge) {
+    private StudyWorkbook(final Study study, final Workbook workbook) {
         this.study = study;
-        this.judge = judge;
+        this.workbook = workbook;
     }
 
-    public static StudyJudge of(final Study study, final Judge judge) {
-        return new StudyJudge(study, judge);
+    public static StudyWorkbook of(final Study study, final Workbook workbook) {
+        return new StudyWorkbook(study, workbook);
     }
 
 }

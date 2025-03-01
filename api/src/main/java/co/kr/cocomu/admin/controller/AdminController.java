@@ -3,9 +3,9 @@ package co.kr.cocomu.admin.controller;
 import co.kr.cocomu.admin.service.AdminService;
 import co.kr.cocomu.admin.controller.code.AdminApiCode;
 import co.kr.cocomu.admin.controller.docs.AdminControllerDocs;
-import co.kr.cocomu.admin.dto.request.CreateJudgeRequest;
+import co.kr.cocomu.admin.dto.request.CreateWorkbookRequest;
 import co.kr.cocomu.admin.dto.request.CreateLanguageRequest;
-import co.kr.cocomu.admin.dto.response.JudgeResponse;
+import co.kr.cocomu.admin.dto.response.WorkbookResponse;
 import co.kr.cocomu.admin.dto.response.LanguageResponse;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
@@ -25,10 +25,10 @@ public class AdminController implements AdminControllerDocs {
 
     private final AdminService adminService;
 
-    @PostMapping("/studies/judges")
-    public Api<JudgeResponse> addJudge(@Valid @RequestBody final CreateJudgeRequest dto) {
-        final JudgeResponse result = adminService.addJudge(dto);
-        return Api.of(AdminApiCode.ADD_JUDGE_SUCCESS, result);
+    @PostMapping("/studies/workbooks")
+    public Api<WorkbookResponse> addWorkbook(@Valid @RequestBody final CreateWorkbookRequest dto) {
+        final WorkbookResponse result = adminService.addWorkbook(dto);
+        return Api.of(AdminApiCode.ADD_WORKBOOK_SUCCESS, result);
     }
 
     @PostMapping("/studies/languages")
@@ -37,10 +37,10 @@ public class AdminController implements AdminControllerDocs {
         return Api.of(AdminApiCode.ADD_LANGUAGE_SUCCESS, result);
     }
 
-    @DeleteMapping("/studies/judges/{judgeId}")
-    public NoContent deleteJudge(@PathVariable final Long judgeId) {
-        adminService.deleteJudge(judgeId);
-        return NoContent.from(AdminApiCode.DELETE_JUDGE_SUCCESS);
+    @DeleteMapping("/studies/workbooks/{workbookId}")
+    public NoContent deleteWorkbook(@PathVariable final Long workbookId) {
+        adminService.deleteWorkbook(workbookId);
+        return NoContent.from(AdminApiCode.DELETE_WORKBOOK_SUCCESS);
     }
 
     @DeleteMapping("/studies/languages/{languageId}")

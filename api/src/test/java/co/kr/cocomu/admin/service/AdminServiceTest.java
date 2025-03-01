@@ -7,15 +7,15 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import co.kr.cocomu.admin.dto.request.CreateJudgeRequest;
+import co.kr.cocomu.admin.dto.request.CreateWorkbookRequest;
 import co.kr.cocomu.admin.dto.request.CreateLanguageRequest;
-import co.kr.cocomu.admin.dto.response.JudgeResponse;
+import co.kr.cocomu.admin.dto.response.WorkbookResponse;
 import co.kr.cocomu.admin.dto.response.LanguageResponse;
 import co.kr.cocomu.admin.exception.AdminExceptionCode;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
-import co.kr.cocomu.study.domain.Judge;
+import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.domain.Language;
-import co.kr.cocomu.study.repository.JudgeJpaRepository;
+import co.kr.cocomu.study.repository.WorkbookJpaRepository;
 import co.kr.cocomu.study.repository.LanguageJpaRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -29,24 +29,24 @@ import org.springframework.test.util.ReflectionTestUtils;
 class AdminServiceTest {
 
     @Mock private LanguageJpaRepository languageJpaRepository;
-    @Mock private JudgeJpaRepository judgeJpaRepository;
+    @Mock private WorkbookJpaRepository workbookJpaRepository;
 
     @InjectMocks private AdminService adminService;
 
     @Test
     void 문제집이_추가가_된다() {
         // given
-        CreateJudgeRequest dto = new CreateJudgeRequest("백준", "이미지URL");
-        Judge savedJudge = Judge.of("백준", "이미지URL");
-        ReflectionTestUtils.setField(savedJudge, "id", 1L);
+        CreateWorkbookRequest dto = new CreateWorkbookRequest("백준", "이미지URL");
+        Workbook savedWorkbook = Workbook.of("백준", "이미지URL");
+        ReflectionTestUtils.setField(savedWorkbook, "id", 1L);
 
-        given(judgeJpaRepository.save(any(Judge.class))).willReturn(savedJudge);
+        given(workbookJpaRepository.save(any(Workbook.class))).willReturn(savedWorkbook);
 
         // when
-        JudgeResponse result = adminService.addJudge(dto);
+        WorkbookResponse result = adminService.addWorkbook(dto);
 
         // then
-        assertThat(result.judgeId()).isEqualTo(1L);
+        assertThat(result.workbookId()).isEqualTo(1L);
     }
 
     @Test
@@ -68,25 +68,25 @@ class AdminServiceTest {
     @Test
     void 문제집이_삭제된다() {
         // given
-        Judge judge = Judge.of("백준", "이미지 URL");
-        given(judgeJpaRepository.findById(anyLong())).willReturn(Optional.of(judge));
+        Workbook workBook = Workbook.of("백준", "이미지 URL");
+        given(workbookJpaRepository.findById(anyLong())).willReturn(Optional.of(workBook));
 
         // when
-        adminService.deleteJudge(1L);
+        adminService.deleteWorkbook(1L);
 
         // then
-        verify(judgeJpaRepository).delete(judge);
+        verify(workbookJpaRepository).delete(workBook);
     }
 
     @Test
     void 존재하지_않는_문제집_삭제시_예외가_발생한다() {
         // given
-        given(judgeJpaRepository.findById(anyLong())).willReturn(Optional.empty());
+        given(workbookJpaRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> adminService.deleteJudge(1L))
+        assertThatThrownBy(() -> adminService.deleteWorkbook(1L))
             .isInstanceOf(NotFoundException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", AdminExceptionCode.NOT_FOUND_JUDGE);
+            .hasFieldOrPropertyWithValue("exceptionType", AdminExceptionCode.NOT_FOUND_WORKBOOK);
     }
 
     @Test

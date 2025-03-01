@@ -45,13 +45,13 @@ class StudyTest {
         // given
         CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 10);
         Study publicStudy = Study.createPublicStudy(user, dto);
-        Judge judge = Judge.of("백준", "image");
+        Workbook workBook = Workbook.of("백준", "image");
 
         // when
-        publicStudy.addJudge(judge);
+        publicStudy.addBook(workBook);
 
         // then
-        assertThat(publicStudy.getJudges()).hasSize(1);
+        assertThat(publicStudy.getWorkbooks()).hasSize(1);
     }
 
     @Test
@@ -59,13 +59,13 @@ class StudyTest {
         // given
         CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 10);
         Study publicStudy = Study.createPublicStudy(user, dto);
-        List<Judge> judges = List.of(Judge.of("백준", "image"), Judge.of("프로그래머스", "image"));
+        List<Workbook> workbooks = List.of(Workbook.of("백준", "image"), Workbook.of("프로그래머스", "image"));
 
         // when
-        publicStudy.addJudges(judges);
+        publicStudy.addBooks(workbooks);
 
         // then
-        assertThat(publicStudy.getJudges()).hasSize(2);
+        assertThat(publicStudy.getWorkbooks()).hasSize(2);
     }
 
     @Test
