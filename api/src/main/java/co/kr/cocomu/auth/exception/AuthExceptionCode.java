@@ -19,8 +19,8 @@ public enum AuthExceptionCode implements ExceptionCode {
     OAUTH_ERROR(1110, "OAuth 로그인 중 알 수 없는 에러가 발생했습니다."),
     ;
 
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 
 }
 

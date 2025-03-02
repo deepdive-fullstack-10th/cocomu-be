@@ -1,5 +1,6 @@
 package co.kr.cocomu.common.security;
 
+import co.kr.cocomu.common.exception.domain.UnAuthorizedException;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -28,7 +29,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (final IllegalStateException e) {
+        } catch (final UnAuthorizedException e) {
             log.error("JWT 인증 예외 발생 - {}", e.getMessage());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);

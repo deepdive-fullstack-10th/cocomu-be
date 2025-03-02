@@ -1,8 +1,9 @@
 package co.kr.cocomu.user.service;
 
 import co.kr.cocomu.common.exception.domain.NotFoundException;
+import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.user.domain.User;
-import co.kr.cocomu.user.dto.response.UserDto;
+import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.exception.UserExceptionCode;
 import co.kr.cocomu.user.repository.UserJpaRepository;
@@ -18,14 +19,20 @@ public class UserService {
 
     private final UserJpaRepository userJpaRepository;
 
-    public UserDto saveUser(final UserJoinRequest dto) {
+    public UserResponse saveUser(final UserJoinRequest dto) {
         final User user = User.createUser(dto.nickname());
         final User savedUser = userJpaRepository.save(user);
-        return new UserDto(savedUser.getId(), savedUser.getNickname(), savedUser.getProfileImageUrl());
+        return new UserResponse(savedUser.getId(), savedUser.getNickname(), savedUser.getProfileImageUrl());
     }
 
     @Transactional(readOnly = true)
-    public List<UserDto> findAll() {
+    public User getUserWithThrow(final Long userId) {
+        return userJpaRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(UserExceptionCode.USER_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserResponse> findAll() {
         return userJpaRepository.findAll()
         .stream()
         .map(User::toDto)
@@ -33,10 +40,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDto findUser(final Long userId) {
-        return userJpaRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException(UserExceptionCode.USER_NOT_FOUND))
-            .toDto();
+    public UserResponse findUser(final Long userId) {
+        return getUserWithThrow(userId).toDto();
     }
 
 }

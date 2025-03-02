@@ -2,7 +2,7 @@ package co.kr.cocomu.user.domain;
 
 import co.kr.cocomu.common.repository.TimeBaseEntity;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
-import co.kr.cocomu.user.dto.response.UserDto;
+import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.exception.UserExceptionCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,8 +53,8 @@ public class User extends TimeBaseEntity {
         }
     }
 
-    public UserDto toDto() {
-        return new UserDto(id, nickname, profileImageUrl);
+    public UserResponse toDto() {
+        return new UserResponse(id, nickname, profileImageUrl);
     }
 
 }
