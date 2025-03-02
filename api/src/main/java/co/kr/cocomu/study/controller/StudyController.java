@@ -10,6 +10,7 @@ import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyPageDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
+import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.repository.LanguageJpaRepository;
 import co.kr.cocomu.study.repository.WorkbookJpaRepository;
@@ -75,6 +76,15 @@ public class StudyController implements StudyControllerDocs {
         final List<Workbook> workbooks = workbookJpaRepository.findAll();
         final List<WorkbookDto> result = workbooks.stream().map(Workbook::toDto).toList();
         return Api.of(StudyApiCode.GET_ALL_WORKBOOK_SUCCESS, result);
+    }
+
+    @GetMapping("/{studyId}/studyInfo")
+    public Api<StudyPageDto> getStudyInfo(
+        @AuthenticationPrincipal final Long userId,
+        @PathVariable final Long studyId
+    ) {
+        final StudyPageDto result = studyQueryRepository.findStudyPagesByStudyId(studyId, userId);
+        return Api.of(StudyApiCode.GET_STUDY_INFO_SUCCESS, result);
     }
 
 }

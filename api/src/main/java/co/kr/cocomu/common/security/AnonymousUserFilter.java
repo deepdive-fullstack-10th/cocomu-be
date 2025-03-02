@@ -1,7 +1,5 @@
 package co.kr.cocomu.common.security;
 
-import static co.kr.cocomu.common.security.SecurityPathConfig.ANONYMOUS_URIS;
-
 import co.kr.cocomu.auth.exception.AuthExceptionCode;
 import co.kr.cocomu.common.exception.domain.UnAuthorizedException;
 import co.kr.cocomu.common.jwt.JwtProvider;
@@ -65,8 +63,8 @@ public class AnonymousUserFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String path = request.getRequestURI();
-        return !ANONYMOUS_URIS.contains(path);
+        final String path = request.getRequestURI();
+        return !SecurityPathConfig.isAnonymousUri(path);
     }
 
 }

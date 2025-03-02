@@ -15,6 +15,7 @@ import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyPageDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
+import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.repository.LanguageJpaRepository;
 import co.kr.cocomu.study.repository.WorkbookJpaRepository;
@@ -145,6 +146,23 @@ class StudyControllerTest extends BaseControllerTest {
 
         // then
         문제집조회결과(workbooks, response);
+    }
+
+    @Test
+    void 스터디_정보페이지_조회가_된다() {
+        // given
+        StudyPageDto mockResult = new StudyPageDto();
+        when(studyQueryRepository.findStudyPagesByStudyId(1L, null)).thenReturn(mockResult);
+
+        // when
+        String path = PATH_PREFIX + "/1/studyInfo";
+        ValidatableMockMvcResponse response = GetRequestTemplate.executeNoAuth(path);
+
+        // then
+        Api<StudyPageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.GET_STUDY_INFO_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.GET_STUDY_INFO_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockResult);
     }
 
     /*

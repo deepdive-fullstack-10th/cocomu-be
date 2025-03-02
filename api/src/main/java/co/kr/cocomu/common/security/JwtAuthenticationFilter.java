@@ -1,10 +1,5 @@
 package co.kr.cocomu.common.security;
 
-import static co.kr.cocomu.admin.config.AdminConstants.ADMIN_URIS;
-import static co.kr.cocomu.common.security.SecurityPathConfig.ANONYMOUS_URIS;
-import static co.kr.cocomu.common.security.SecurityPathConfig.PUBLIC_START_URIS;
-import static co.kr.cocomu.common.security.SecurityPathConfig.PUBLIC_URIS;
-
 import co.kr.cocomu.auth.exception.AuthExceptionCode;
 import co.kr.cocomu.common.exception.domain.UnAuthorizedException;
 import co.kr.cocomu.common.jwt.JwtProvider;
@@ -61,30 +56,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) {
-        return containsSwaggerUris(request) ||
-            startsWithAllowedStartUris(request) ||
-            equalsAnonymousUris(request) ||
-            equalsPublicUris(request);
-    }
-
-    private boolean containsSwaggerUris(final HttpServletRequest request) {
-        return ADMIN_URIS.stream()
-            .anyMatch(url -> request.getRequestURI().contains(url));
-    }
-
-    private boolean startsWithAllowedStartUris(final HttpServletRequest request) {
-        return PUBLIC_START_URIS.stream()
-                .anyMatch(url -> request.getRequestURI().startsWith(url));
-    }
-
-    private boolean equalsAnonymousUris(final HttpServletRequest request) {
-        return ANONYMOUS_URIS.stream()
-            .anyMatch(url -> request.getRequestURI().equals(url));
-    }
-
-    private boolean equalsPublicUris(final HttpServletRequest request) {
-        return PUBLIC_URIS.stream()
-            .anyMatch(url -> request.getRequestURI().equals(url));
+        final String path = request.getRequestURI();
+        return SecurityPathConfig.isPublicUri(path)
+            || SecurityPathConfig.isAnonymousUri(path);
     }
 
 }
