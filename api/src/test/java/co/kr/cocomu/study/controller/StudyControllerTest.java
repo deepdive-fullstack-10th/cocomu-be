@@ -13,6 +13,7 @@ import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.service.StudyCommandService;
 import co.kr.cocomu.study.service.StudyQueryService;
@@ -91,71 +92,43 @@ class StudyControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void 인증_토큰이_있을_때_전체_스터디_언어_조회가_된다() {
-        // given
-        List<LanguageDto> languages = 언어조회설정();
-
-        // when
-        String path = PATH_PREFIX + "/languages";
-        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
-
-        // then
-        언어조회결과(languages, response);
-    }
-
-    @Test
-    void 인증_토큰이_없을_때_전체_스터디_언어_조회가_된다() {
-        // given
-        List<LanguageDto> languages = 언어조회설정();
-
-        // when
-        String path = PATH_PREFIX + "/languages";
-        ValidatableMockMvcResponse response = GetRequestTemplate.executeNoAuth(path);
-
-        // then
-        언어조회결과(languages, response);
-    }
-
-    @Test
-    void 인증_토큰_추가시_전체_스터디_문제집_조회가_된다() {
-        // given
-        List<WorkbookDto> workbooks = 문제집조회설정();
-
-        // when
-        String path = PATH_PREFIX + "/workbooks";
-        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
-
-        // then
-        문제집조회결과(workbooks, response);
-    }
-
-    @Test
-    void 인증_없이_전체_스터디_문제집_조회가_된다() {
-        // given
-        List<WorkbookDto> workbooks = 문제집조회설정();
-
-        // when
-        String path = PATH_PREFIX + "/workbooks";
-        ValidatableMockMvcResponse response = GetRequestTemplate.executeNoAuth(path);
-
-        // then
-        문제집조회결과(workbooks, response);
-    }
-
-    @Test
     void 스터디_정보페이지_조회가_된다() {
         // given
         StudyCardDto mockResult = new StudyCardDto();
         when(studyQueryService.getStudyCard(1L, null)).thenReturn(mockResult);
 
         // when
-        String path = PATH_PREFIX + "/1/studyInfo";
+        String path = PATH_PREFIX + "/1/study-information";
         ValidatableMockMvcResponse response = GetRequestTemplate.executeNoAuth(path);
 
         // then
         Api<StudyCardDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(StudyApiCode.GET_STUDY_INFO_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.GET_STUDY_INFO_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockResult);
+    }
+
+    @Test
+    void 스터디_리스트_페이지_조회가_된다() {
+        // given
+        GetAllStudyFilterDto noFilter = new GetAllStudyFilterDto(null, null, null, null, null, null);
+        List<WorkbookDto> mockWorkbooks = List.of(new WorkbookDto(1L, "백준", "이미지URL"));
+        List<LanguageDto> mockLanguages = List.of(new LanguageDto(1L, "Java", "이미지URL"));
+        AllStudyCardDto mockStudyCards = new AllStudyCardDto(10L, List.of());
+        StudyPageDto mockResult = new StudyPageDto(mockWorkbooks, mockLanguages, mockStudyCards);
+
+        when(studyQueryService.getAllWorkbooks()).thenReturn(mockWorkbooks);
+        when(studyQueryService.getAllLanguages()).thenReturn(mockLanguages);
+        when(studyQueryService.getAllStudyCard(noFilter, null)).thenReturn(mockStudyCards);
+
+        // when
+        String path = PATH_PREFIX + "/page";
+        ValidatableMockMvcResponse response = GetRequestTemplate.executeNoAuth(path);
+
+        // then
+        Api<StudyPageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.GET_STUDY_PAGE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.GET_STUDY_PAGE_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockResult);
     }
 
@@ -174,36 +147,6 @@ class StudyControllerTest extends BaseControllerTest {
         assertThat(result.code()).isEqualTo(StudyApiCode.GET_ALL_STUDIES_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.GET_ALL_STUDIES_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockResult);
-    }
-
-    private @NotNull List<LanguageDto> 언어조회설정() {
-        LanguageDto language1 = new LanguageDto(1L, "JAVA", "이미지URL");
-        LanguageDto language2 = new LanguageDto(1L, "PYTHON", "이미지URL");
-        List<LanguageDto> languages = List.of(language1, language2);
-        when(studyQueryService.getAllLanguages()).thenReturn(languages);
-        return languages;
-    }
-
-    private static void 언어조회결과(final List<LanguageDto> languages, final ValidatableMockMvcResponse response) {
-        Api<List<LanguageDto>> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(StudyApiCode.GET_ALL_LANGUAGE_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(StudyApiCode.GET_ALL_LANGUAGE_SUCCESS.getMessage());
-        assertThat(result.result()).isEqualTo(languages);
-    }
-
-    private @NotNull List<WorkbookDto> 문제집조회설정() {
-        WorkbookDto workbook1 = new WorkbookDto(1L, "백준", "이미지URL");
-        WorkbookDto workbook2 = new WorkbookDto(2L, "프로그래머스", "이미지URL");
-        List<WorkbookDto> workbooks = List.of(workbook1, workbook2);
-        when(studyQueryService.getAllWorkbooks()).thenReturn(workbooks);
-        return workbooks;
-    }
-
-    private static void 문제집조회결과(List<WorkbookDto> workbooks, ValidatableMockMvcResponse response) {
-        Api<List<WorkbookDto>> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(StudyApiCode.GET_ALL_WORKBOOK_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(StudyApiCode.GET_ALL_WORKBOOK_SUCCESS.getMessage());
-        assertThat(result.result()).isEqualTo(workbooks);
     }
 
 }

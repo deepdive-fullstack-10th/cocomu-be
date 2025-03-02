@@ -3,6 +3,7 @@ package co.kr.cocomu.study.dto.request;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
+import java.security.PublicKey;
 import java.util.List;
 
 @Schema(description = "전체 스터디 조회 요청")
@@ -20,4 +21,9 @@ public record GetAllStudyFilterDto(
     @Schema(description = "스터디 조회 페이지", example = "1", requiredMode = RequiredMode.NOT_REQUIRED)
     Long page
 ) {
+
+    public static GetAllStudyFilterDto filterNothing() {
+        return new GetAllStudyFilterDto(null, null, null, null, null, null);
+    }
+
 }

@@ -8,6 +8,7 @@ import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.repository.query.StudyQueryRepository;
 import co.kr.cocomu.study.repository.query.condition.StudyFilterCondition;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -26,17 +27,15 @@ public class StudyQueryRepositoryImpl implements StudyQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public Long countStudyCardsWithFilter(final GetAllStudyFilterDto filter, final Long userId) {
-        final BooleanExpression condition = StudyFilterCondition.buildStudyFilterCondition(filter, userId);
         return queryFactory.select(study.count())
             .from(study)
-            .where(condition)
+            .where(StudyFilterCondition.buildStudyFilterCondition(filter, userId))
             .fetchOne();
     }
 
     public List<StudyCardDto> findTop20StudyCardsWithFilter(final GetAllStudyFilterDto filter, final Long userId) {
-        final BooleanExpression condition = StudyFilterCondition.buildStudyFilterCondition(filter, userId);
         return buildStudyPageForm(userId)
-            .where(condition)
+            .where(StudyFilterCondition.buildStudyFilterCondition(filter, userId))
             .orderBy(study.createdAt.desc())
             .offset(pageOffset(filter.page()))
             .limit(STUDY_PAGE_SIZE)

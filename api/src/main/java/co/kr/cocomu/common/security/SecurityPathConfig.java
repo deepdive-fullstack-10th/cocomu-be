@@ -14,16 +14,16 @@ public class SecurityPathConfig {
     );
 
     public static final List<String> PUBLIC_URIS = List.of(
-        "/api/v1/studies/languages",
-        "/api/v1/studies/workbooks"
+        "favicon.ico"
     );
 
     public static final List<String> ANONYMOUS_URIS = List.of(
-        "/api/v1/studies"
+        "/api/v1/studies",
+        "/api/v1/studies/page"
     );
 
     public static final List<String> ANONYMOUS_END_URIS = List.of(
-        "/studyInfo"
+        "/study-information"
     );
 
     public static boolean isAnonymousUri(final String path) {

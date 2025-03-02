@@ -8,6 +8,7 @@ import static co.kr.cocomu.study.domain.QStudyWorkbook.studyWorkbook;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
 import co.kr.cocomu.study.domain.vo.StudyUserStatus;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
@@ -15,12 +16,14 @@ import java.util.List;
 
 public class StudyFilterCondition {
 
-    public static BooleanExpression buildStudyFilterCondition(final GetAllStudyFilterDto filter, final Long userId) {
-        return getLanguageCondition(filter.languages())
-            .and(getWorkbookCondition(filter.workbooks()))
-            .and(getStatusCondition(filter.status()))
-            .and(getJoinableCondition(filter.joinable(), userId))
-            .and(getSearchCondition(filter.keyword()));
+    public static Predicate[] buildStudyFilterCondition(final GetAllStudyFilterDto filter, final Long userId) {
+        return new Predicate[] {
+            getLanguageCondition(filter.languages()),
+            getWorkbookCondition(filter.workbooks()),
+            getStatusCondition(filter.status()),
+            getJoinableCondition(filter.joinable(), userId),
+            getSearchCondition(filter.keyword())
+        };
     }
 
     // 스터디에 참여할 수 있는지 확인하는 조건

@@ -8,12 +8,14 @@ import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.service.StudyCommandService;
 import co.kr.cocomu.study.service.StudyQueryService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/studies")
 @RequiredArgsConstructor
+@Slf4j
 public class StudyController implements StudyControllerDocs {
 
     private final StudyCommandService studyCommandService;
@@ -58,25 +61,24 @@ public class StudyController implements StudyControllerDocs {
         return Api.of(StudyApiCode.GET_ALL_STUDIES_SUCCESS, studyPages);
     }
 
-    @GetMapping("/languages")
-    public Api<List<LanguageDto>> getAllLanguages() {
-        final List<LanguageDto> result = studyQueryService.getAllLanguages();
-        return Api.of(StudyApiCode.GET_ALL_LANGUAGE_SUCCESS, result);
-    }
-
-    @GetMapping("/workbooks")
-    public Api<List<WorkbookDto>> getAllWorkbooks() {
-        final List<WorkbookDto> result = studyQueryService.getAllWorkbooks();
-        return Api.of(StudyApiCode.GET_ALL_WORKBOOK_SUCCESS, result);
-    }
-
-    @GetMapping("/{studyId}/studyInfo")
+    @GetMapping("/{studyId}/study-information")
     public Api<StudyCardDto> getStudyInfo(
         @AuthenticationPrincipal final Long userId,
         @PathVariable final Long studyId
     ) {
         final StudyCardDto result = studyQueryService.getStudyCard(studyId, userId);
         return Api.of(StudyApiCode.GET_STUDY_INFO_SUCCESS, result);
+    }
+
+    @GetMapping("/page")
+    public Api<StudyPageDto> getStudiesPage(@AuthenticationPrincipal Long userId) {
+        final GetAllStudyFilterDto noFilter = GetAllStudyFilterDto.filterNothing();
+        final List<WorkbookDto> allWorkbooks = studyQueryService.getAllWorkbooks();
+        final List<LanguageDto> allLanguages = studyQueryService.getAllLanguages();
+        final AllStudyCardDto allStudyCard = studyQueryService.getAllStudyCard(noFilter, userId);
+        final StudyPageDto result = new StudyPageDto(allWorkbooks, allLanguages, allStudyCard);
+
+        return Api.of(StudyApiCode.GET_STUDY_PAGE_SUCCESS, result);
     }
 
 }

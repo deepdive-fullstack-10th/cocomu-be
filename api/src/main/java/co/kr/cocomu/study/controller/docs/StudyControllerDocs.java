@@ -7,6 +7,7 @@ import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -54,20 +55,6 @@ public interface StudyControllerDocs {
     )
     Api<AllStudyCardDto> getAllStudyCard(Long userId, GetAllStudyFilterDto filter);
 
-    @Operation(summary = "전체 스터디 문제집 조회", description = "전체 스터디의 문제집을 조회하는 기능")
-    @ApiResponse(
-        responseCode = "200",
-        description = "전체 스터디 문제집 조회에 성공했습니다."
-    )
-    Api<List<WorkbookDto>> getAllWorkbooks();
-
-    @Operation(summary = "전체 스터디 언어 조회", description = "전체 스터디의 언어를 조회하는 기능")
-    @ApiResponse(
-        responseCode = "200",
-        description = "전체 스터디 언어 조회에 성공했습니다."
-    )
-    Api<List<LanguageDto>> getAllLanguages();
-
     @Operation(summary = "스터디 정보 페이지 조회", description = "스터디의 정보 페이지를 조회하는 기능")
     @ApiResponse(
         responseCode = "200",
@@ -79,5 +66,12 @@ public interface StudyControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<StudyCardDto> getStudyInfo(Long userId, Long studyId);
+
+    @Operation(summary = "스터디 리스트 페이지 조회", description = "스터디 목록 페이지를 조회하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "스터디 페이지 조회에 성공했습니다."
+    )
+    Api<StudyPageDto> getStudiesPage(Long userId);
 
 }
