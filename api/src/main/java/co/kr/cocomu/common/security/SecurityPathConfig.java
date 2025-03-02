@@ -14,4 +14,9 @@ public class SecurityPathConfig {
         "/api/v1/studies"
     );
 
+    public static final List<String> PUBLIC_URIS = List.of(
+        "/api/v1/studies/languages",
+        "/api/v1/studies/workbooks"
+    );
+
 }

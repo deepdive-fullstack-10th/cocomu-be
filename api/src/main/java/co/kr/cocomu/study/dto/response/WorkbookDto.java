@@ -1,9 +1,11 @@
 package co.kr.cocomu.study.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 @Schema(description = "스터디 문제집 응답")
 public class WorkbookDto {
 

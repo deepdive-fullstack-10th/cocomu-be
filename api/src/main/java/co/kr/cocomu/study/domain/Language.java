@@ -1,6 +1,6 @@
 package co.kr.cocomu.study.domain;
 
-import co.kr.cocomu.admin.dto.response.LanguageResponse;
+import co.kr.cocomu.study.dto.response.LanguageDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,8 +35,8 @@ public class Language {
         return new Language(name, imageUrl);
     }
 
-    public LanguageResponse toDto() {
-        return new LanguageResponse(this.id, this.name, this.imageUrl);
+    public LanguageDto toDto() {
+        return new LanguageDto(this.id, this.name, this.imageUrl);
     }
 
 }

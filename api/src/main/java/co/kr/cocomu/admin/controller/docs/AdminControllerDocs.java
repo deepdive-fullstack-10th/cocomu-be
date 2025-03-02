@@ -1,12 +1,12 @@
 package co.kr.cocomu.admin.controller.docs;
 
-import co.kr.cocomu.admin.dto.request.CreateWorkbookRequest;
 import co.kr.cocomu.admin.dto.request.CreateLanguageRequest;
-import co.kr.cocomu.admin.dto.response.WorkbookResponse;
-import co.kr.cocomu.admin.dto.response.LanguageResponse;
+import co.kr.cocomu.admin.dto.request.CreateWorkbookRequest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
+import co.kr.cocomu.study.dto.response.LanguageDto;
+import co.kr.cocomu.study.dto.response.WorkbookDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,14 +21,14 @@ public interface AdminControllerDocs {
         responseCode = "200",
         description = "스터디 문제집 정보가 추가되었습니다."
     )
-    Api<WorkbookResponse> addWorkbook(CreateWorkbookRequest dto);
+    Api<WorkbookDto> addWorkbook(CreateWorkbookRequest dto);
 
     @Operation(summary = "언어 정보 추가", description = "스터디에 언어 정보를 추가하는 기능")
     @ApiResponse(
         responseCode = "200",
         description = "스터디 언어 정보가 추가되었습니다."
     )
-    Api<LanguageResponse> addLanguage(CreateLanguageRequest dto);
+    Api<LanguageDto> addLanguage(CreateLanguageRequest dto);
 
     @Operation(summary = "문제집 정보 삭제", description = "스터디에 문제집 정보를 삭제하는 기능")
     @ApiResponse(

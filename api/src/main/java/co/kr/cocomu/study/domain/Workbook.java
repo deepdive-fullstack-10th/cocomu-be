@@ -1,7 +1,7 @@
 package co.kr.cocomu.study.domain;
 
 
-import co.kr.cocomu.admin.dto.response.WorkbookResponse;
+import co.kr.cocomu.study.dto.response.WorkbookDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,8 +36,8 @@ public class Workbook {
         return new Workbook(name, imageUrl);
     }
 
-    public WorkbookResponse toDto() {
-        return new WorkbookResponse(this.id, this.name, this.imageUrl);
+    public WorkbookDto toDto() {
+        return new WorkbookDto(this.id, this.name, this.imageUrl);
     }
 
 }

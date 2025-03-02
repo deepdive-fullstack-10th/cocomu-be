@@ -7,16 +7,16 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import co.kr.cocomu.admin.dto.request.CreateWorkbookRequest;
 import co.kr.cocomu.admin.dto.request.CreateLanguageRequest;
-import co.kr.cocomu.admin.dto.response.WorkbookResponse;
-import co.kr.cocomu.admin.dto.response.LanguageResponse;
+import co.kr.cocomu.admin.dto.request.CreateWorkbookRequest;
 import co.kr.cocomu.admin.exception.AdminExceptionCode;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
-import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.domain.Language;
-import co.kr.cocomu.study.repository.WorkbookJpaRepository;
+import co.kr.cocomu.study.domain.Workbook;
+import co.kr.cocomu.study.dto.response.LanguageDto;
+import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.repository.LanguageJpaRepository;
+import co.kr.cocomu.study.repository.WorkbookJpaRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,10 +43,10 @@ class AdminServiceTest {
         given(workbookJpaRepository.save(any(Workbook.class))).willReturn(savedWorkbook);
 
         // when
-        WorkbookResponse result = adminService.addWorkbook(dto);
+        WorkbookDto result = adminService.addWorkbook(dto);
 
         // then
-        assertThat(result.workbookId()).isEqualTo(1L);
+        assertThat(result.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -59,10 +59,10 @@ class AdminServiceTest {
         given(languageJpaRepository.save(any(Language.class))).willReturn(savedLanguage);
 
         // when
-        LanguageResponse result = adminService.addLanguage(dto);
+        LanguageDto result = adminService.addLanguage(dto);
 
         // then
-        assertThat(result.languageId()).isEqualTo(1L);
+        assertThat(result.getId()).isEqualTo(1L);
     }
 
     @Test
