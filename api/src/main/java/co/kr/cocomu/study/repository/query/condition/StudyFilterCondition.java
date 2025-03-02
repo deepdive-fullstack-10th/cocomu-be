@@ -26,7 +26,7 @@ public class StudyFilterCondition {
     // 스터디에 참여할 수 있는지 확인하는 조건
     public static BooleanExpression isUserJoined(final Long userId) {
         if (userId == null) {
-            return (BooleanExpression) Expressions.constant(true);
+            return Expressions.asBoolean(Expressions.constant(true)).isTrue();
         }
 
         return JPAExpressions.selectOne()

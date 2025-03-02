@@ -10,4 +10,8 @@ public class SecurityPathConfig {
         "/actuator"
     );
 
+    public static final List<String> ANONYMOUS_URIS = List.of(
+        "/api/v1/studies"
+    );
+
 }

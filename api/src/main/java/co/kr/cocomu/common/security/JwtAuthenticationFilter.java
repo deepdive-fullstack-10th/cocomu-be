@@ -1,8 +1,11 @@
 package co.kr.cocomu.common.security;
 
 import static co.kr.cocomu.admin.config.AdminConstants.ADMIN_URIS;
+import static co.kr.cocomu.common.security.SecurityPathConfig.ANONYMOUS_URIS;
 import static co.kr.cocomu.common.security.SecurityPathConfig.PUBLIC_START_URIS;
 
+import co.kr.cocomu.auth.exception.AuthExceptionCode;
+import co.kr.cocomu.common.exception.domain.UnAuthorizedException;
 import co.kr.cocomu.common.jwt.JwtProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -49,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractToken(final String authToken) {
         if (authToken == null || !authToken.startsWith("Bearer ")) {
-            throw new IllegalStateException("토큰 정보를 찾을 수 없습니다.");
+            throw new UnAuthorizedException(AuthExceptionCode.INVALID_TOKEN);
         }
 
         return authToken.substring(7);
@@ -57,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(final HttpServletRequest request) {
-        return containsSwaggerUris(request) || startsWithAllowedStartUris(request);
+        return containsSwaggerUris(request) || startsWithAllowedStartUris(request) || containsAnonymousUris(request);
     }
 
     private boolean containsSwaggerUris(final HttpServletRequest request) {
@@ -68,6 +71,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private boolean startsWithAllowedStartUris(final HttpServletRequest request) {
         return PUBLIC_START_URIS.stream()
                 .anyMatch(url -> request.getRequestURI().startsWith(url));
+    }
+
+    private boolean containsAnonymousUris(final HttpServletRequest request) {
+        return ANONYMOUS_URIS.stream()
+            .anyMatch(url -> request.getRequestURI().contains(url));
     }
 
 }

@@ -51,6 +51,7 @@ public class SecurityConfig {
             .securityMatcher("/**")
             .addFilterBefore(new JwtExceptionFilter(objectMapper), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new AnonymousUserFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .csrf(AbstractHttpConfigurer::disable)
             .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
