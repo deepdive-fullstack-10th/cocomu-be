@@ -1,19 +1,24 @@
 package co.kr.cocomu.study.service;
 
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
+import co.kr.cocomu.study.domain.Study;
+import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.domain.Workbook;
+import co.kr.cocomu.study.domain.vo.StudyUserStatus;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
+import co.kr.cocomu.study.repository.jpa.StudyRepository;
+import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
 import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
-import co.kr.cocomu.study.repository.query.StudyQueryRepository;
-import co.kr.cocomu.study.repository.query.StudyUserQueryRepository;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StudyQueryService {
 
-    private final StudyQueryRepository studyQuery;
-    private final StudyUserQueryRepository studyUserQuery;
+    private final StudyDomainService studyDomainService;
+    private final StudyRepository studyQuery;
+    private final StudyUserRepository studyUserQuery;
     private final WorkbookRepository workbookQuery;
     private final LanguageRepository languageQuery;
 
@@ -50,18 +56,6 @@ public class StudyQueryService {
             .orElseThrow(() -> new NotFoundException(StudyExceptionCode.NOT_FOUND_STUDY));
     }
 
-    private void setStudyInformation(final List<Long> studyIds, final List<StudyCardDto> studyPages) {
-        final Map<Long, List<LanguageDto>> languageByStudies = languageQuery.findLanguageByStudies(studyIds);
-        final Map<Long, List<WorkbookDto>> workbookByStudies = workbookQuery.findWorkbookByStudies(studyIds);
-        final Map<Long, LeaderDto> LeaderByStudies = studyUserQuery.findLeaderByStudies(studyIds);
-
-        for (StudyCardDto studyPage: studyPages) {
-            studyPage.setLanguages(languageByStudies.getOrDefault(studyPage.getId(), List.of()));
-            studyPage.setWorkbooks(workbookByStudies.getOrDefault(studyPage.getId(), List.of()));
-            studyPage.setLeader(LeaderByStudies.get(studyPage.getId()));
-        }
-    }
-
     public List<WorkbookDto> getAllWorkbooks() {
         final List<Workbook> workbooks = workbookQuery.findAll();
         return workbooks.stream()
@@ -74,6 +68,26 @@ public class StudyQueryService {
         return languages.stream()
             .map(Language::toDto)
             .toList();
+    }
+
+    public StudyDetailPageDto getStudyDetailPage(final Long studyId, final Long userId) {
+        final Study study = studyDomainService.getStudyWithThrow(studyId);
+        studyDomainService.validateStudyMembership(userId, study.getId());
+        final List<LanguageDto> studyLanguages = study.getLanguagesDto();
+        // todo: coding Spaces 정보 추가
+        return new StudyDetailPageDto(study.getName(), studyLanguages, null);
+    }
+
+    private void setStudyInformation(final List<Long> studyIds, final List<StudyCardDto> studyPages) {
+        final Map<Long, List<LanguageDto>> languageByStudies = languageQuery.findLanguageByStudies(studyIds);
+        final Map<Long, List<WorkbookDto>> workbookByStudies = workbookQuery.findWorkbookByStudies(studyIds);
+        final Map<Long, LeaderDto> LeaderByStudies = studyUserQuery.findLeaderByStudies(studyIds);
+
+        for (StudyCardDto studyPage: studyPages) {
+            studyPage.setLanguages(languageByStudies.getOrDefault(studyPage.getId(), List.of()));
+            studyPage.setWorkbooks(workbookByStudies.getOrDefault(studyPage.getId(), List.of()));
+            studyPage.setLeader(LeaderByStudies.get(studyPage.getId()));
+        }
     }
 
 }

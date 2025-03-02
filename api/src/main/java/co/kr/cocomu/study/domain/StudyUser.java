@@ -48,17 +48,17 @@ public class StudyUser extends TimeBaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(20)")
-    private StudyRole studyRole;
+    private StudyRole role;
 
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "varchar(20)")
-    private StudyUserStatus studyUserStatus;
+    private StudyUserStatus status;
 
-    private StudyUser(final Study study, final User user, final StudyRole studyRole) {
+    private StudyUser(final Study study, final User user, final StudyRole role) {
         this.study = study;
         this.user = user;
-        this.studyRole = studyRole;
-        this.studyUserStatus = StudyUserStatus.JOIN;
+        this.role = role;
+        this.status = StudyUserStatus.JOIN;
     }
 
     public static StudyUser joinStudy(final Study study, final User user, final StudyRole studyRole) {
@@ -68,7 +68,7 @@ public class StudyUser extends TimeBaseEntity {
 
     public void leaveStudy() {
         validateNormalRole();
-        studyUserStatus = StudyUserStatus.LEAVE;
+        status = StudyUserStatus.LEAVE;
         study.decreaseCurrentUserCount();
     }
 
@@ -76,17 +76,17 @@ public class StudyUser extends TimeBaseEntity {
         validateLeaderRole();
         study.decreaseCurrentUserCount();
         study.removeStudy();
-        studyUserStatus = StudyUserStatus.LEAVE;
+        status = StudyUserStatus.LEAVE;
     }
 
     private void validateNormalRole() {
-        if (studyRole != StudyRole.NORMAL) {
+        if (role != StudyRole.NORMAL) {
             throw new BadRequestException(StudyExceptionCode.LEADER_MUST_USE_REMOVE);
         }
     }
 
     private void validateLeaderRole() {
-        if (studyRole != StudyRole.LEADER) {
+        if (role != StudyRole.LEADER) {
             throw new BadRequestException(StudyExceptionCode.ONLY_LEADER_CAN_REMOVE_STUDY);
         }
     }

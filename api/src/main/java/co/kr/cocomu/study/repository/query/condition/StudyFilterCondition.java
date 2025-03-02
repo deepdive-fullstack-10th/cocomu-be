@@ -37,7 +37,7 @@ public class StudyFilterCondition {
             .where(
                 studyUser.study.eq(study),
                 studyUser.user.id.eq(userId),
-                studyUser.studyUserStatus.eq(StudyUserStatus.JOIN)
+                studyUser.status.eq(StudyUserStatus.JOIN)
             )
             .notExists();
     }
@@ -92,7 +92,7 @@ public class StudyFilterCondition {
             .where(
                 studyUser.study.eq(study),
                 studyUser.user.id.eq(userId),
-                studyUser.studyUserStatus.eq(StudyUserStatus.JOIN)
+                studyUser.status.eq(StudyUserStatus.JOIN)
             )
             .notExists()
             .and(study.currentUserCount.lt(study.totalUserCount));

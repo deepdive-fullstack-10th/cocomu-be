@@ -3,38 +3,48 @@ package co.kr.cocomu.study.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.exception.domain.NotFoundException;
+import co.kr.cocomu.study.domain.Language;
+import co.kr.cocomu.study.domain.Study;
+import co.kr.cocomu.study.domain.StudyLanguage;
+import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
+import co.kr.cocomu.study.repository.jpa.StudyRepository;
+import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
 import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
 import co.kr.cocomu.study.repository.query.StudyQueryRepository;
-import co.kr.cocomu.study.repository.query.StudyUserQueryRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class StudyQueryServiceTest {
 
-    @Mock private StudyQueryRepository studyQuery;
-    @Mock private StudyUserQueryRepository studyUserQuery;
+    @Mock private StudyRepository studyQuery;
+    @Mock private StudyUserRepository studyUserQuery;
     @Mock private WorkbookRepository workbookQuery;
     @Mock private LanguageRepository languageQuery;
+    @Mock private StudyDomainService studyDomainService;
 
     @InjectMocks private StudyQueryService studyQueryService;
 
@@ -132,6 +142,27 @@ class StudyQueryServiceTest {
 
         // then
         assertThat(result).hasSize(0);
+    }
+
+    @Test
+    void 스터디_상세_페이지_정보를_조회한다() {
+        // given
+        Study mockStudy = Study.createPublicStudy(new CreatePublicStudyDto("스터디", null, null, null, 0));
+        ReflectionTestUtils.setField(mockStudy, "id", 1L);
+        Language mockLanguage = Language.of("JAVA", "Image Url");
+        ReflectionTestUtils.setField(mockLanguage, "id", 1L);
+        StudyLanguage studyLanguage = StudyLanguage.of(mockStudy, mockLanguage);
+
+        when(studyDomainService.getStudyWithThrow(anyLong())).thenReturn(mockStudy);
+        doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
+
+        // when
+        StudyDetailPageDto result = studyQueryService.getStudyDetailPage(1L, 1L);
+
+        // then
+        List<LanguageDto> mockLanguageResult = mockStudy.getLanguagesDto();
+        StudyDetailPageDto mockResult = new StudyDetailPageDto(mockStudy.getName(), mockLanguageResult, null);
+        assertThat(result).isEqualTo(mockResult);
     }
 
 }

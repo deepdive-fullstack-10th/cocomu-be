@@ -1,14 +1,11 @@
 package co.kr.cocomu.study.service;
 
-import co.kr.cocomu.common.exception.domain.BadRequestException;
-import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.StudyUser;
 import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
-import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
 import co.kr.cocomu.study.repository.jpa.StudyRepository;
 import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
@@ -25,11 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class StudyCommandService {
 
+    private final StudyDomainService studyDomainService;
+    private final UserService userService;
     private final StudyRepository studyRepository;
     private final WorkbookRepository workbookRepository;
     private final LanguageRepository languageRepository;
     private final StudyUserRepository studyUserRepository;
-    private final UserService userService;
 
     @Transactional
     public Long createPublicStudy(final Long userId, final CreatePublicStudyDto dto) {
@@ -46,10 +44,10 @@ public class StudyCommandService {
 
     @Transactional
     public Long joinPublicStudy(final Long userId, final Long studyId) {
-        validateStudyUser(userId, studyId);
-
+        studyDomainService.validateStudyParticipation(userId, studyId);
         final User user = userService.getUserWithThrow(userId);
-        final Study study = getStudyWithThrow(studyId);
+        final Study study = studyDomainService.getStudyWithThrow(studyId);
+
         final StudyUser studyUser = StudyUser.joinStudy(study, user, StudyRole.NORMAL);
         studyUserRepository.save(studyUser);
 
@@ -66,17 +64,6 @@ public class StudyCommandService {
         publicStudy.addLanguages(languages);
 
         return publicStudy;
-    }
-
-    private Study getStudyWithThrow(final Long studyId) {
-        return studyRepository.findById(studyId)
-            .orElseThrow(() -> new NotFoundException(StudyExceptionCode.NOT_FOUND_STUDY));
-    }
-
-    private void validateStudyUser(final Long userId, final Long studyId) {
-        if (studyUserRepository.existsByUser_IdAndStudy_Id(userId, studyId)) {
-            throw new BadRequestException(StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
-        }
     }
 
 }

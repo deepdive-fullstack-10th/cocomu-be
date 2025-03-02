@@ -8,6 +8,7 @@ import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.service.StudyCommandService;
@@ -71,7 +72,7 @@ public class StudyController implements StudyControllerDocs {
     }
 
     @GetMapping("/page")
-    public Api<StudyPageDto> getStudiesPage(@AuthenticationPrincipal Long userId) {
+    public Api<StudyPageDto> getStudiesPage(@AuthenticationPrincipal final Long userId) {
         final GetAllStudyFilterDto noFilter = GetAllStudyFilterDto.filterNothing();
         final List<WorkbookDto> allWorkbooks = studyQueryService.getAllWorkbooks();
         final List<LanguageDto> allLanguages = studyQueryService.getAllLanguages();
@@ -79,6 +80,15 @@ public class StudyController implements StudyControllerDocs {
         final StudyPageDto result = new StudyPageDto(allWorkbooks, allLanguages, allStudyCard);
 
         return Api.of(StudyApiCode.GET_STUDY_PAGE_SUCCESS, result);
+    }
+
+    @GetMapping("/{studyId}")
+    public Api<StudyDetailPageDto> getStudyDetailPage(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        StudyDetailPageDto result = studyQueryService.getStudyDetailPage(studyId, userId);
+        return Api.of(StudyApiCode.GET_STUDY_DETAIL_SUCCESS, result);
     }
 
 }

@@ -33,8 +33,8 @@ class StudyUserTest {
         // when
         StudyUser studyUser = StudyUser.joinStudy(mockStudy, mockUser, StudyRole.LEADER);
         // then
-        assertThat(studyUser.getStudyRole()).isEqualTo(StudyRole.LEADER);
-        assertThat(studyUser.getStudyUserStatus()).isEqualTo(StudyUserStatus.JOIN);
+        assertThat(studyUser.getRole()).isEqualTo(StudyRole.LEADER);
+        assertThat(studyUser.getStatus()).isEqualTo(StudyUserStatus.JOIN);
     }
 
     @Test
@@ -43,8 +43,8 @@ class StudyUserTest {
         // when
         StudyUser studyUser = StudyUser.joinStudy(mockStudy, mockUser, StudyRole.NORMAL);
         // then
-        assertThat(studyUser.getStudyRole()).isEqualTo(StudyRole.NORMAL);
-        assertThat(studyUser.getStudyUserStatus()).isEqualTo(StudyUserStatus.JOIN);
+        assertThat(studyUser.getRole()).isEqualTo(StudyRole.NORMAL);
+        assertThat(studyUser.getStatus()).isEqualTo(StudyUserStatus.JOIN);
     }
 
     @Test
@@ -71,7 +71,7 @@ class StudyUserTest {
 
         // then
         assertThat(study.getCurrentUserCount()).isEqualTo(currentUserCount - 1);
-        assertThat(studyUser.getStudyUserStatus()).isEqualTo(StudyUserStatus.LEAVE);
+        assertThat(studyUser.getStatus()).isEqualTo(StudyUserStatus.LEAVE);
     }
 
     @Test
@@ -96,7 +96,7 @@ class StudyUserTest {
         studyUser.removeStudy();
 
         // then
-        assertThat(studyUser.getStudyUserStatus()).isEqualTo(StudyUserStatus.LEAVE);
+        assertThat(studyUser.getStatus()).isEqualTo(StudyUserStatus.LEAVE);
         assertThat(study.getStatus()).isEqualTo(StudyStatus.REMOVE);
         assertThat(study.getCurrentUserCount()).isEqualTo(currentUserCount - 1);
     }

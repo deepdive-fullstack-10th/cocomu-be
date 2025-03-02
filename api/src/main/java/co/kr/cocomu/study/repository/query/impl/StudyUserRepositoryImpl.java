@@ -27,8 +27,8 @@ public class StudyUserRepositoryImpl implements StudyUserQueryRepository {
             .join(user).on(studyUser.user.id.eq(user.id))
             .where(
                 studyUser.study.id.in(studyIds),
-                studyUser.studyRole.eq(StudyRole.LEADER),
-                studyUser.studyUserStatus.eq(StudyUserStatus.JOIN)
+                studyUser.role.eq(StudyRole.LEADER),
+                studyUser.status.eq(StudyUserStatus.JOIN)
             )
             .transform(GroupBy.groupBy(studyUser.study.id).as(
                 Projections.fields(
@@ -51,8 +51,8 @@ public class StudyUserRepositoryImpl implements StudyUserQueryRepository {
             .join(user).on(studyUser.user.id.eq(user.id))
             .where(
                 studyUser.study.id.eq(studyId),
-                studyUser.studyRole.eq(StudyRole.LEADER),
-                studyUser.studyUserStatus.eq(StudyUserStatus.JOIN)
+                studyUser.role.eq(StudyRole.LEADER),
+                studyUser.status.eq(StudyUserStatus.JOIN)
             )
             .fetchOne();
     }

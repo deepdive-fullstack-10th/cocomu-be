@@ -1,20 +1,17 @@
 package co.kr.cocomu.study.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import co.kr.cocomu.common.exception.domain.BadRequestException;
-import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.StudyUser;
 import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
-import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
 import co.kr.cocomu.study.repository.jpa.StudyRepository;
 import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
@@ -22,7 +19,6 @@ import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
 import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.service.UserService;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +34,7 @@ class StudyCommandServiceTest {
     @Mock private WorkbookRepository workbookRepository;
     @Mock private LanguageRepository languageRepository;
     @Mock private StudyUserRepository studyUserRepository;
+    @Mock private StudyDomainService studyDomainService;
     @Mock private UserService userService;
     @InjectMocks private StudyCommandService studyCommandService;
 
@@ -99,9 +96,9 @@ class StudyCommandServiceTest {
         Long userId = 1L;
         Long studyId = 1L;
 
-        when(studyUserRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(false);
+        doNothing().when(studyDomainService).validateStudyParticipation(userId, studyId);
         when(userService.getUserWithThrow(userId)).thenReturn(mockUser);
-        when(studyRepository.findById(studyId)).thenReturn(Optional.of(mockStudy));
+        when(studyDomainService.getStudyWithThrow(studyId)).thenReturn(mockStudy);
         when(studyUserRepository.save(any(StudyUser.class))).thenReturn(mockStudyUser);
 
         // when
@@ -109,44 +106,10 @@ class StudyCommandServiceTest {
 
         // then
         assertThat(result).isEqualTo(1L);
-        verify(studyUserRepository).existsByUser_IdAndStudy_Id(userId, studyId);
+        verify(studyDomainService).validateStudyParticipation(userId, studyId);
+        verify(studyDomainService).getStudyWithThrow(studyId);
         verify(userService).getUserWithThrow(userId);
-        verify(studyRepository).findById(studyId);
         verify(studyUserRepository).save(any(StudyUser.class));
-    }
-
-    @Test
-    void 이미_참여한_스터디에_다시_참여시_예외가_발생한다() {
-        // given
-        Long userId = 1L;
-        Long studyId = 1L;
-
-        when(studyUserRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(true);
-
-        // when & then
-        assertThatThrownBy(() -> studyCommandService.joinPublicStudy(userId, studyId))
-            .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
-
-        verify(studyUserRepository).existsByUser_IdAndStudy_Id(userId, studyId);
-    }
-
-    @Test
-    void 존재하지_않는_스터디면_예외가_발생한다() {
-        // given
-        Long userId = 1L;
-        Long studyId = 1L;
-
-        when(studyUserRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(false);
-        when(studyRepository.findById(studyId)).thenReturn(Optional.empty());
-
-        // when & then
-        assertThatThrownBy(() -> studyCommandService.joinPublicStudy(userId, studyId))
-            .isInstanceOf(NotFoundException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.NOT_FOUND_STUDY);
-
-        verify(studyUserRepository).existsByUser_IdAndStudy_Id(userId, studyId);
-        verify(studyRepository).findById(studyId);
     }
 
 }

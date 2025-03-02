@@ -13,6 +13,7 @@ import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.service.StudyCommandService;
@@ -129,6 +130,23 @@ class StudyControllerTest extends BaseControllerTest {
         Api<StudyPageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(StudyApiCode.GET_STUDY_PAGE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.GET_STUDY_PAGE_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockResult);
+    }
+
+    @Test
+    void test() {
+        // given
+        StudyDetailPageDto mockResult = new StudyDetailPageDto();
+        when(studyQueryService.getStudyDetailPage(1L, 1L)).thenReturn(mockResult);
+
+        // when
+        String path = PATH_PREFIX + "/1";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<StudyDetailPageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.GET_STUDY_DETAIL_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.GET_STUDY_DETAIL_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockResult);
     }
 
