@@ -9,10 +9,10 @@ import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
-import co.kr.cocomu.study.repository.LanguageJpaRepository;
-import co.kr.cocomu.study.repository.StudyJpaRepository;
-import co.kr.cocomu.study.repository.StudyUserJpaRepository;
-import co.kr.cocomu.study.repository.WorkbookJpaRepository;
+import co.kr.cocomu.study.repository.jpa.LanguageRepository;
+import co.kr.cocomu.study.repository.jpa.StudyRepository;
+import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
+import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
 import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.service.UserService;
 import java.util.List;
@@ -23,12 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class StudyService {
+public class StudyCommandService {
 
-    private final StudyJpaRepository studyJpaRepository;
-    private final WorkbookJpaRepository workbookJpaRepository;
-    private final LanguageJpaRepository languageJpaRepository;
-    private final StudyUserJpaRepository studyUserJpaRepository;
+    private final StudyRepository studyRepository;
+    private final WorkbookRepository workbookRepository;
+    private final LanguageRepository languageRepository;
+    private final StudyUserRepository studyUserRepository;
     private final UserService userService;
 
     @Transactional
@@ -36,10 +36,10 @@ public class StudyService {
         final User user = userService.getUserWithThrow(userId);
 
         final Study publicStudy = createPublicStudy(dto);
-        final Study savedStudy = studyJpaRepository.save(publicStudy);
+        final Study savedStudy = studyRepository.save(publicStudy);
 
         final StudyUser studyUser = StudyUser.joinStudy(savedStudy, user, StudyRole.LEADER);
-        studyUserJpaRepository.save(studyUser);
+        studyUserRepository.save(studyUser);
 
         return savedStudy.getId();
     }
@@ -51,14 +51,14 @@ public class StudyService {
         final User user = userService.getUserWithThrow(userId);
         final Study study = getStudyWithThrow(studyId);
         final StudyUser studyUser = StudyUser.joinStudy(study, user, StudyRole.NORMAL);
-        studyUserJpaRepository.save(studyUser);
+        studyUserRepository.save(studyUser);
 
         return studyUser.getStudyId();
     }
 
     private Study createPublicStudy(final CreatePublicStudyDto dto) {
-        final List<Workbook> workbooks = workbookJpaRepository.findAllById(dto.workbooks());
-        final List<Language> languages = languageJpaRepository.findAllById(dto.languages());
+        final List<Workbook> workbooks = workbookRepository.findAllById(dto.workbooks());
+        final List<Language> languages = languageRepository.findAllById(dto.languages());
 
         // todo: insert 여러번 발생, 책임 분리
         final Study publicStudy = Study.createPublicStudy(dto);
@@ -69,12 +69,12 @@ public class StudyService {
     }
 
     private Study getStudyWithThrow(final Long studyId) {
-        return studyJpaRepository.findById(studyId)
+        return studyRepository.findById(studyId)
             .orElseThrow(() -> new NotFoundException(StudyExceptionCode.NOT_FOUND_STUDY));
     }
 
     private void validateStudyUser(final Long userId, final Long studyId) {
-        if (studyUserJpaRepository.existsByUser_IdAndStudy_Id(userId, studyId)) {
+        if (studyUserRepository.existsByUser_IdAndStudy_Id(userId, studyId)) {
             throw new BadRequestException(StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
         }
     }

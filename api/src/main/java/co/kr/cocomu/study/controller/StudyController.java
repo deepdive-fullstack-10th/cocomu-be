@@ -3,18 +3,14 @@ package co.kr.cocomu.study.controller;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
 import co.kr.cocomu.study.controller.docs.StudyControllerDocs;
-import co.kr.cocomu.study.controller.query.StudyQueryRepository;
-import co.kr.cocomu.study.domain.Language;
-import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
-import co.kr.cocomu.study.dto.response.AllStudyPageDto;
+import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
-import co.kr.cocomu.study.dto.response.StudyPageDto;
+import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
-import co.kr.cocomu.study.repository.LanguageJpaRepository;
-import co.kr.cocomu.study.repository.WorkbookJpaRepository;
-import co.kr.cocomu.study.service.StudyService;
+import co.kr.cocomu.study.service.StudyCommandService;
+import co.kr.cocomu.study.service.StudyQueryService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -32,17 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class StudyController implements StudyControllerDocs {
 
-    private final StudyService studyService;
-    private final StudyQueryRepository studyQueryRepository;
-    private final LanguageJpaRepository languageJpaRepository;
-    private final WorkbookJpaRepository workbookJpaRepository;
+    private final StudyCommandService studyCommandService;
+    private final StudyQueryService studyQueryService;
 
     @PostMapping("/public")
     public Api<Long> createPublicStudy(
         @AuthenticationPrincipal final Long userId,
         @Valid @RequestBody final CreatePublicStudyDto dto
     ) {
-        final Long publicStudyId = studyService.createPublicStudy(userId, dto);
+        final Long publicStudyId = studyCommandService.createPublicStudy(userId, dto);
         return Api.of(StudyApiCode.CREATE_STUDY_SUCCESS, publicStudyId);
     }
 
@@ -51,39 +45,37 @@ public class StudyController implements StudyControllerDocs {
         @AuthenticationPrincipal final Long userId,
         @PathVariable final Long studyId
     ) {
-        final Long publicStudyId = studyService.joinPublicStudy(userId, studyId);
+        final Long publicStudyId = studyCommandService.joinPublicStudy(userId, studyId);
         return Api.of(StudyApiCode.JOIN_STUDY_SUCCESS, publicStudyId);
     }
 
     @GetMapping
-    public Api<AllStudyPageDto> getAllStudyPage(
+    public Api<AllStudyCardDto> getAllStudyCard(
         @AuthenticationPrincipal final Long userId,
         @ModelAttribute final GetAllStudyFilterDto filter
     ) {
-        final AllStudyPageDto studyPages = studyQueryRepository.findTop20StudyPagesWithFilter(filter, userId);
+        final AllStudyCardDto studyPages = studyQueryService.getAllStudyCard(filter, userId);
         return Api.of(StudyApiCode.GET_ALL_STUDIES_SUCCESS, studyPages);
     }
 
     @GetMapping("/languages")
     public Api<List<LanguageDto>> getAllLanguages() {
-        final List<Language> languages = languageJpaRepository.findAll();
-        final List<LanguageDto> result = languages.stream().map(Language::toDto).toList();
+        final List<LanguageDto> result = studyQueryService.getAllLanguages();
         return Api.of(StudyApiCode.GET_ALL_LANGUAGE_SUCCESS, result);
     }
 
     @GetMapping("/workbooks")
     public Api<List<WorkbookDto>> getAllWorkbooks() {
-        final List<Workbook> workbooks = workbookJpaRepository.findAll();
-        final List<WorkbookDto> result = workbooks.stream().map(Workbook::toDto).toList();
+        final List<WorkbookDto> result = studyQueryService.getAllWorkbooks();
         return Api.of(StudyApiCode.GET_ALL_WORKBOOK_SUCCESS, result);
     }
 
     @GetMapping("/{studyId}/studyInfo")
-    public Api<StudyPageDto> getStudyInfo(
+    public Api<StudyCardDto> getStudyInfo(
         @AuthenticationPrincipal final Long userId,
         @PathVariable final Long studyId
     ) {
-        final StudyPageDto result = studyQueryRepository.findStudyPagesByStudyId(studyId, userId);
+        final StudyCardDto result = studyQueryService.getStudyCard(studyId, userId);
         return Api.of(StudyApiCode.GET_STUDY_INFO_SUCCESS, result);
     }
 

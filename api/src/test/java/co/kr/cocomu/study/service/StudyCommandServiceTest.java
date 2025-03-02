@@ -15,10 +15,10 @@ import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
-import co.kr.cocomu.study.repository.LanguageJpaRepository;
-import co.kr.cocomu.study.repository.StudyJpaRepository;
-import co.kr.cocomu.study.repository.StudyUserJpaRepository;
-import co.kr.cocomu.study.repository.WorkbookJpaRepository;
+import co.kr.cocomu.study.repository.jpa.LanguageRepository;
+import co.kr.cocomu.study.repository.jpa.StudyRepository;
+import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
+import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
 import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.service.UserService;
 import java.util.List;
@@ -32,14 +32,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-class StudyServiceTest {
+class StudyCommandServiceTest {
 
-    @Mock private StudyJpaRepository studyJpaRepository;
-    @Mock private WorkbookJpaRepository workbookJpaRepository;
-    @Mock private LanguageJpaRepository languageJpaRepository;
-    @Mock private StudyUserJpaRepository studyUserJpaRepository;
+    @Mock private StudyRepository studyRepository;
+    @Mock private WorkbookRepository workbookRepository;
+    @Mock private LanguageRepository languageRepository;
+    @Mock private StudyUserRepository studyUserRepository;
     @Mock private UserService userService;
-    @InjectMocks private StudyService studyService;
+    @InjectMocks private StudyCommandService studyCommandService;
 
     private User mockUser;
     private Study mockStudy;
@@ -73,24 +73,24 @@ class StudyServiceTest {
         // given
         Long userId = 1L;
 
-        when(workbookJpaRepository.findAllById(dto.workbooks())).thenReturn(List.of(mockWorkbook1, mockWorkbook2));
-        when(languageJpaRepository.findAllById(dto.languages())).thenReturn(List.of(mockLanguage1, mockLanguage2));
-        when(studyJpaRepository.save(any(Study.class))).thenReturn(mockStudy);
+        when(workbookRepository.findAllById(dto.workbooks())).thenReturn(List.of(mockWorkbook1, mockWorkbook2));
+        when(languageRepository.findAllById(dto.languages())).thenReturn(List.of(mockLanguage1, mockLanguage2));
+        when(studyRepository.save(any(Study.class))).thenReturn(mockStudy);
         when(userService.getUserWithThrow(userId)).thenReturn(mockUser);
-        when(studyUserJpaRepository.save(any(StudyUser.class))).thenReturn(mockStudyUser);
+        when(studyUserRepository.save(any(StudyUser.class))).thenReturn(mockStudyUser);
 
         // when
-        Long result = studyService.createPublicStudy(userId, dto);
+        Long result = studyCommandService.createPublicStudy(userId, dto);
 
         // then
         assertThat(result).isEqualTo(1L);
 
         // 각 메서드 호출 검증
-        verify(workbookJpaRepository).findAllById(dto.workbooks());
-        verify(languageJpaRepository).findAllById(dto.languages());
-        verify(studyJpaRepository).save(any(Study.class));
+        verify(workbookRepository).findAllById(dto.workbooks());
+        verify(languageRepository).findAllById(dto.languages());
+        verify(studyRepository).save(any(Study.class));
         verify(userService).getUserWithThrow(userId);
-        verify(studyUserJpaRepository).save(any(StudyUser.class));
+        verify(studyUserRepository).save(any(StudyUser.class));
     }
 
     @Test
@@ -99,20 +99,20 @@ class StudyServiceTest {
         Long userId = 1L;
         Long studyId = 1L;
 
-        when(studyUserJpaRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(false);
+        when(studyUserRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(false);
         when(userService.getUserWithThrow(userId)).thenReturn(mockUser);
-        when(studyJpaRepository.findById(studyId)).thenReturn(Optional.of(mockStudy));
-        when(studyUserJpaRepository.save(any(StudyUser.class))).thenReturn(mockStudyUser);
+        when(studyRepository.findById(studyId)).thenReturn(Optional.of(mockStudy));
+        when(studyUserRepository.save(any(StudyUser.class))).thenReturn(mockStudyUser);
 
         // when
-        Long result = studyService.joinPublicStudy(userId, studyId);
+        Long result = studyCommandService.joinPublicStudy(userId, studyId);
 
         // then
         assertThat(result).isEqualTo(1L);
-        verify(studyUserJpaRepository).existsByUser_IdAndStudy_Id(userId, studyId);
+        verify(studyUserRepository).existsByUser_IdAndStudy_Id(userId, studyId);
         verify(userService).getUserWithThrow(userId);
-        verify(studyJpaRepository).findById(studyId);
-        verify(studyUserJpaRepository).save(any(StudyUser.class));
+        verify(studyRepository).findById(studyId);
+        verify(studyUserRepository).save(any(StudyUser.class));
     }
 
     @Test
@@ -121,14 +121,14 @@ class StudyServiceTest {
         Long userId = 1L;
         Long studyId = 1L;
 
-        when(studyUserJpaRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(true);
+        when(studyUserRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> studyService.joinPublicStudy(userId, studyId))
+        assertThatThrownBy(() -> studyCommandService.joinPublicStudy(userId, studyId))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
 
-        verify(studyUserJpaRepository).existsByUser_IdAndStudy_Id(userId, studyId);
+        verify(studyUserRepository).existsByUser_IdAndStudy_Id(userId, studyId);
     }
 
     @Test
@@ -137,16 +137,16 @@ class StudyServiceTest {
         Long userId = 1L;
         Long studyId = 1L;
 
-        when(studyUserJpaRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(false);
-        when(studyJpaRepository.findById(studyId)).thenReturn(Optional.empty());
+        when(studyUserRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(false);
+        when(studyRepository.findById(studyId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> studyService.joinPublicStudy(userId, studyId))
+        assertThatThrownBy(() -> studyCommandService.joinPublicStudy(userId, studyId))
             .isInstanceOf(NotFoundException.class)
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.NOT_FOUND_STUDY);
 
-        verify(studyUserJpaRepository).existsByUser_IdAndStudy_Id(userId, studyId);
-        verify(studyJpaRepository).findById(studyId);
+        verify(studyUserRepository).existsByUser_IdAndStudy_Id(userId, studyId);
+        verify(studyRepository).findById(studyId);
     }
 
 }

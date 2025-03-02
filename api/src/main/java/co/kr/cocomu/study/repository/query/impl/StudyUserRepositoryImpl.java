@@ -1,12 +1,12 @@
-package co.kr.cocomu.study.repository.query;
+package co.kr.cocomu.study.repository.query.impl;
 
 import static co.kr.cocomu.study.domain.QStudyUser.studyUser;
 import static co.kr.cocomu.user.domain.QUser.user;
 
-import co.kr.cocomu.study.controller.query.StudyUserQueryRepository;
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.domain.vo.StudyUserStatus;
 import co.kr.cocomu.study.dto.response.LeaderDto;
+import co.kr.cocomu.study.repository.query.StudyUserQueryRepository;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,7 +21,7 @@ public class StudyUserRepositoryImpl implements StudyUserQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public Map<Long, LeaderDto> findAllLeaderByStudies(final List<Long> studyIds) {
+    public Map<Long, LeaderDto> findLeaderByStudies(final List<Long> studyIds) {
         return queryFactory.select(studyUser.study.id, user)
             .from(studyUser)
             .join(user).on(studyUser.user.id.eq(user.id))

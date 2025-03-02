@@ -4,9 +4,9 @@ import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
-import co.kr.cocomu.study.dto.response.AllStudyPageDto;
+import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
-import co.kr.cocomu.study.dto.response.StudyPageDto;
+import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,8 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "003. COCOMU-STUDY", description = "코코무 스터디 관련 API")
 public interface StudyControllerDocs {
@@ -54,7 +52,7 @@ public interface StudyControllerDocs {
         responseCode = "200",
         description = "전체 스터디 조회에 성공했습니다."
     )
-    Api<AllStudyPageDto> getAllStudyPage(Long userId, GetAllStudyFilterDto filter);
+    Api<AllStudyCardDto> getAllStudyCard(Long userId, GetAllStudyFilterDto filter);
 
     @Operation(summary = "전체 스터디 문제집 조회", description = "전체 스터디의 문제집을 조회하는 기능")
     @ApiResponse(
@@ -80,6 +78,6 @@ public interface StudyControllerDocs {
         description = "존재하지 않는 스터디입니다.",
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
-    Api<StudyPageDto> getStudyInfo(Long userId, Long studyId);
+    Api<StudyCardDto> getStudyInfo(Long userId, Long studyId);
 
 }

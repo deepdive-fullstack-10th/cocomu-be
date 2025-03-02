@@ -1,10 +1,10 @@
-package co.kr.cocomu.study.repository.query;
+package co.kr.cocomu.study.repository.query.impl;
 
 import static co.kr.cocomu.study.domain.QStudyWorkbook.studyWorkbook;
 import static co.kr.cocomu.study.domain.QWorkbook.workbook;
 
-import co.kr.cocomu.study.controller.query.StudyWorkbookQueryRepository;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
+import co.kr.cocomu.study.repository.query.WorkbookQueryRepository;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class StudyWorkbookRepositoryImpl implements StudyWorkbookQueryRepository {
+public class WorkbookRepositoryImpl implements WorkbookQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public Map<Long, List<WorkbookDto>> findAllByWorkbookByStudies(final List<Long> studyIds) {
+    public Map<Long, List<WorkbookDto>> findWorkbookByStudies(final List<Long> studyIds) {
         return queryFactory.select(studyWorkbook.study.id, workbook)
             .from(studyWorkbook)
             .join(workbook).on(studyWorkbook.workbook.id.eq(workbook.id))

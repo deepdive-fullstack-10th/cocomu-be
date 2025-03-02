@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "스터디 쿼리 조회 결과")
-public class StudyPageDto {
+public class StudyCardDto {
 
     @Schema(description = "스터디 ID", example = "1")
     private Long id;
