@@ -42,12 +42,25 @@ dependencies {
     runtimeOnly 'com.h2database:h2' // test & local
     implementation 'mysql:mysql-connector-java:8.0.33' // dev & prod
 
+    // query dsl
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+
+    // 개발용 쿼리 확인
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0'
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'io.rest-assured:spring-mock-mvc'
     testImplementation 'com.squareup.okhttp3:mockwebserver'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+clean {
+    delete file('src/main/generated')
 }
 
 test {
@@ -64,7 +77,8 @@ jacoco {
 def classDirectoriesFilter = {
     project.fileTree(
             dir: it,
-            excludes: ['**/common/**', "**/CocomuApiApplication.class", "**/config/**"]
+            excludes: ['**/common/**', "**/CocomuApiApplication.class", "**/config/**", "**/query/**",
+                       '**/domain/Q*.class/**']
     )
 }
 

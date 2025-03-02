@@ -35,7 +35,10 @@ public interface AuthControllerDocs {
     )
     @ApiResponse(
         responseCode = "502",
-        description = "OAuth 로그인에 실패했습니다.\nOAuth 로그인 중 알 수 없는 에러가 발생했습니다.",
+        description = """
+            OAuth 로그인에 실패했습니다.
+            OAuth 로그인 중 알 수 없는 에러가 발생했습니다.
+        """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<AuthResponse> loginWithOAuth2(OAuthRequest request, HttpServletResponse response);

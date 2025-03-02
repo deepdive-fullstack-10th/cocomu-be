@@ -3,6 +3,8 @@ package co.kr.cocomu.study.controller.docs;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import co.kr.cocomu.study.dto.response.AllStudyPageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +21,9 @@ public interface StudyControllerDocs {
     )
     @ApiResponse(
         responseCode = "404",
-        description = "사용자를 찾을 수 없습니다.\n\"존재하지 않는 스터디입니다.\n",
+        description = """
+            사용자를 찾을 수 없습니다.
+        """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<Long> createPublicStudy(Long userId, CreatePublicStudyDto dto);
@@ -31,9 +35,19 @@ public interface StudyControllerDocs {
     )
     @ApiResponse(
         responseCode = "404",
-        description = "사용자를 찾을 수 없습니다.\n\"존재하지 않는 스터디입니다.\n",
+        description = """
+            사용자를 찾을 수 없습니다.
+            존재하지 않는 스터디입니다.
+        """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<Long> joinPublicStudy(Long userId, Long studyId);
+
+    @Operation(summary = "전체 스터디 조회", description = "전체 스터디를 각 필터링을 기준으로 조회하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "전체 스터디 조회에 성공했습니다."
+    )
+    Api<AllStudyPageDto> getAllStudyPage(Long userId, GetAllStudyFilterDto filter);
 
 }

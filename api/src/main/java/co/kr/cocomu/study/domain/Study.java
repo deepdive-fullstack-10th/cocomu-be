@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "cocomu_study")
@@ -38,6 +39,7 @@ public class Study extends TimeBaseEntity {
     private String name;
     @Column(length = 6)
     private String password;
+    @ColumnDefault("''")
     private String description;
 
     @Enumerated(value = EnumType.STRING)

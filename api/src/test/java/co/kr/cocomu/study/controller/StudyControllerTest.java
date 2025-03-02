@@ -6,10 +6,14 @@ import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.BaseControllerTest;
 import co.kr.cocomu.common.api.Api;
+import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
+import co.kr.cocomu.study.controller.query.StudyQueryRepository;
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import co.kr.cocomu.study.dto.response.AllStudyPageDto;
 import co.kr.cocomu.study.service.StudyService;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
@@ -25,6 +29,7 @@ class StudyControllerTest extends BaseControllerTest {
     private static final String PATH_PREFIX = "/api/v1/studies";
 
     @MockBean private StudyService studyService;
+    @MockBean private StudyQueryRepository studyQueryRepository;
 
     @Test
     void 공개방_생성_요청이_성공한다() {
@@ -46,7 +51,7 @@ class StudyControllerTest extends BaseControllerTest {
     @Test
     void 공개방_참여_요청이_성공한다() {
         // given
-        when(studyService.joinPublicStudy(1L, 1L, StudyRole.NORMAL)).thenReturn(1L);
+        when(studyService.joinPublicStudy(1L, 1L)).thenReturn(1L);
 
         // when
         String path = PATH_PREFIX + "/public/1/join";
@@ -57,6 +62,23 @@ class StudyControllerTest extends BaseControllerTest {
         assertThat(result.code()).isEqualTo(StudyApiCode.JOIN_STUDY_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.JOIN_STUDY_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(1L);
+    }
+
+    @Test
+    void 전체_스터디_조회_요청이_성공한다() {
+        // given
+        GetAllStudyFilterDto dto = new GetAllStudyFilterDto(null, null, null, null, null, null);
+        AllStudyPageDto mockResult = new AllStudyPageDto(10L, List.of());
+        when(studyQueryRepository.findTop20StudyPagesWithFilter(dto, 1L)).thenReturn(mockResult);
+
+        // when
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(PATH_PREFIX);
+
+        // then
+        Api<AllStudyPageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.GET_ALL_STUDIES_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.GET_ALL_STUDIES_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockResult);
     }
 
 }

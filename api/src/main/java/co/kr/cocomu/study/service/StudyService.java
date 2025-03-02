@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class StudyService {
 
     private final StudyJpaRepository studyJpaRepository;
@@ -31,27 +31,41 @@ public class StudyService {
     private final StudyUserJpaRepository studyUserJpaRepository;
     private final UserService userService;
 
+    @Transactional
     public Long createPublicStudy(final Long userId, final CreatePublicStudyDto dto) {
-        final List<Workbook> workbooks = workbookJpaRepository.findAllById(dto.workbooks());
-        final List<Language> languages = languageJpaRepository.findAllById(dto.languages());
+        final User user = userService.getUserWithThrow(userId);
 
-        final Study publicStudy = Study.createPublicStudy(dto);
-        publicStudy.addBooks(workbooks);
-        publicStudy.addLanguages(languages);
+        final Study publicStudy = createPublicStudy(dto);
+        final Study savedStudy = studyJpaRepository.save(publicStudy);
 
-        final Study saveStudy = studyJpaRepository.save(publicStudy);
-        return joinPublicStudy(userId, saveStudy.getId(), StudyRole.LEADER);
+        final StudyUser studyUser = StudyUser.joinStudy(savedStudy, user, StudyRole.LEADER);
+        studyUserJpaRepository.save(studyUser);
+
+        return savedStudy.getId();
     }
 
-    public Long joinPublicStudy(final Long userId, final Long studyId, final StudyRole studyRole) {
+    @Transactional
+    public Long joinPublicStudy(final Long userId, final Long studyId) {
         validateStudyUser(userId, studyId);
 
         final User user = userService.getUserWithThrow(userId);
         final Study study = getStudyWithThrow(studyId);
-        final StudyUser studyUser = StudyUser.joinStudy(study, user, studyRole);
+        final StudyUser studyUser = StudyUser.joinStudy(study, user, StudyRole.NORMAL);
         studyUserJpaRepository.save(studyUser);
 
         return studyUser.getStudyId();
+    }
+
+    private Study createPublicStudy(final CreatePublicStudyDto dto) {
+        final List<Workbook> workbooks = workbookJpaRepository.findAllById(dto.workbooks());
+        final List<Language> languages = languageJpaRepository.findAllById(dto.languages());
+
+        // todo: insert 여러번 발생, 책임 분리
+        final Study publicStudy = Study.createPublicStudy(dto);
+        publicStudy.addBooks(workbooks);
+        publicStudy.addLanguages(languages);
+
+        return publicStudy;
     }
 
     private Study getStudyWithThrow(final Long studyId) {

@@ -26,7 +26,7 @@ public class StudyLanguage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "study_workbook_id")
+    @Column(name = "study_language_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

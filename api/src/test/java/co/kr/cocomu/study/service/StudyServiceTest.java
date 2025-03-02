@@ -76,9 +76,7 @@ class StudyServiceTest {
         when(workbookJpaRepository.findAllById(dto.workbooks())).thenReturn(List.of(mockWorkbook1, mockWorkbook2));
         when(languageJpaRepository.findAllById(dto.languages())).thenReturn(List.of(mockLanguage1, mockLanguage2));
         when(studyJpaRepository.save(any(Study.class))).thenReturn(mockStudy);
-        when(studyJpaRepository.findById(1L)).thenReturn(Optional.of(mockStudy));
         when(userService.getUserWithThrow(userId)).thenReturn(mockUser);
-        when(studyUserJpaRepository.existsByUser_IdAndStudy_Id(userId, 1L)).thenReturn(false);
         when(studyUserJpaRepository.save(any(StudyUser.class))).thenReturn(mockStudyUser);
 
         // when
@@ -91,9 +89,7 @@ class StudyServiceTest {
         verify(workbookJpaRepository).findAllById(dto.workbooks());
         verify(languageJpaRepository).findAllById(dto.languages());
         verify(studyJpaRepository).save(any(Study.class));
-        verify(studyJpaRepository).findById(1L);
         verify(userService).getUserWithThrow(userId);
-        verify(studyUserJpaRepository).existsByUser_IdAndStudy_Id(userId, 1L);
         verify(studyUserJpaRepository).save(any(StudyUser.class));
     }
 
@@ -109,7 +105,7 @@ class StudyServiceTest {
         when(studyUserJpaRepository.save(any(StudyUser.class))).thenReturn(mockStudyUser);
 
         // when
-        Long result = studyService.joinPublicStudy(userId, studyId, StudyRole.NORMAL);
+        Long result = studyService.joinPublicStudy(userId, studyId);
 
         // then
         assertThat(result).isEqualTo(1L);
@@ -128,7 +124,7 @@ class StudyServiceTest {
         when(studyUserJpaRepository.existsByUser_IdAndStudy_Id(userId, studyId)).thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> studyService.joinPublicStudy(userId, studyId, StudyRole.NORMAL))
+        assertThatThrownBy(() -> studyService.joinPublicStudy(userId, studyId))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
 
@@ -145,7 +141,7 @@ class StudyServiceTest {
         when(studyJpaRepository.findById(studyId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> studyService.joinPublicStudy(userId, studyId, StudyRole.NORMAL))
+        assertThatThrownBy(() -> studyService.joinPublicStudy(userId, studyId))
             .isInstanceOf(NotFoundException.class)
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.NOT_FOUND_STUDY);
 
