@@ -1,0 +1,17 @@
+package co.kr.cocomu.codingspace.controller.code;
+
+import co.kr.cocomu.common.api.ApiCode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum CodingSpaceApiCode implements ApiCode {
+
+    CREATE_CODING_SPACE_SUCCESS(4000, "코딩 스페이스 생성에 성공했습니다."),
+    ;
+
+    private final int code;
+    private final String message;
+
+}
