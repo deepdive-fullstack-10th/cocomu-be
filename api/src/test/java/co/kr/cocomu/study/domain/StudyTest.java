@@ -2,6 +2,8 @@ package co.kr.cocomu.study.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
@@ -153,6 +155,32 @@ class StudyTest {
         assertThatThrownBy(study::removeStudy)
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.REMAINING_USER);
+    }
+
+    @Test
+    void 스터디에서_사용하는_언어_정보를_가져올_수_있다() {
+        // given
+        Study study = new Study();
+        Language mockLanguage = mock(Language.class);
+        when(mockLanguage.getId()).thenReturn(1L);
+        study.addLanguage(mockLanguage);
+
+        // when
+        Language result = study.getLanguage(1L);
+
+        // then
+        assertThat(result).isEqualTo(mockLanguage);
+    }
+
+    @Test
+    void 스터디에서_사용하는_언어_정보가_없다면_예외가_발생한다() {
+        // given
+        Study study = new Study();
+
+        // when & then
+        assertThatThrownBy(() -> study.getLanguage(1L))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.INVALID_STUDY_LANGUAGE);
     }
 
 }

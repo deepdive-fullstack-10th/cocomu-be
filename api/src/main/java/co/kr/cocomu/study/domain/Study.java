@@ -123,4 +123,12 @@ public class Study extends TimeBaseEntity {
             .toList();
     }
 
+    public Language getLanguage(final Long languageId) {
+        return languages.stream()
+            .filter(studyLanguage -> studyLanguage.getLanguage().getId().equals(languageId))
+            .findFirst()
+            .orElseThrow(() -> new BadRequestException(StudyExceptionCode.INVALID_STUDY_LANGUAGE))
+            .getLanguage();
+    }
+
 }
