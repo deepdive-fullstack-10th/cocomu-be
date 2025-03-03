@@ -23,6 +23,7 @@ public class CodingSpaceCommandService {
 
         final CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, study);
         final CodingSpace savedCodingSpace = codingSpaceRepository.save(codingSpace);
+
         return savedCodingSpace.getId();
     }
 

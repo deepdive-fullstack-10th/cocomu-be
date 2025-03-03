@@ -13,6 +13,7 @@ import co.kr.cocomu.codingspace.dto.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.service.StudyDomainService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +33,7 @@ class CodingSpaceCommandServiceTest {
     @Test
     void 코딩_스페이스를_생성한다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 0, 1L, "", "", "");
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 0, 1L, "", "", "", List.of());
         Study mockStudy = mock(Study.class);
         CodingSpace mockCodingSpace = mock(CodingSpace.class);
         when(mockCodingSpace.getId()).thenReturn(1L);

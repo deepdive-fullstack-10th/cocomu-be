@@ -1,11 +1,11 @@
 package co.kr.cocomu.codingspace.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
 import co.kr.cocomu.codingspace.dto.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.common.BaseControllerTest;
 import co.kr.cocomu.common.api.Api;
@@ -14,8 +14,6 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -30,7 +28,8 @@ class CodingSpaceControllerTest extends BaseControllerTest {
     @Test
     void 코딩_스페이스_생성_요청이_성공한다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 10, 30, 1L, "", "", "");
+        CreateTestCaseDto testCaseDto = new CreateTestCaseDto("input", "output");
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 10, 30, 1L, "", "", "", List.of(testCaseDto));
         when(codingSpaceCommandService.createCodingSpace(dto, 1L)).thenReturn(1L);
 
         // when

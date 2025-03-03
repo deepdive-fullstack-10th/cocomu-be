@@ -2,6 +2,7 @@ package co.kr.cocomu.codingspace.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 @Schema(description = "코딩 스페이스 생성 요청")
 public record CreateCodingSpaceDto(
@@ -18,6 +19,8 @@ public record CreateCodingSpaceDto(
     @NotNull @Schema(description = "코딩 스페이스 명", example = "[BOJ-1003, Silver3] 피보나치 함수")
     String name,
     @Schema(description = "문제 내용", example = "다음 소스는 N번째 피보나치 수를 구하는 C++ 함수이다 ...")
-    String description
+    String description,
+    @Schema(description = "문제 가본 테스트 케이스")
+    List<CreateTestCaseDto> testcases
 ) {
 }

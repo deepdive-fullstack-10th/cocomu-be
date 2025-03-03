@@ -6,6 +6,7 @@ import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -17,9 +18,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -73,6 +77,9 @@ public class CodingSpace {
     @Column(nullable = false, columnDefinition = "datetime(6)")
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "codingSpace", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TestCase> testCases = new ArrayList<>();
+
     private CodingSpace(final CreateCodingSpaceDto dto) {
         this.name = dto.name();
         this.description = dto.description();
@@ -85,10 +92,21 @@ public class CodingSpace {
 
     public static CodingSpace createCodingSpace(final CreateCodingSpaceDto dto, final Study study) {
         validateCreateCodingSpace(dto);
+
         final CodingSpace codingSpace = new CodingSpace(dto);
         codingSpace.study = study;
         codingSpace.language = study.getLanguage(dto.languageId());
+
+        dto.testcases().stream()
+            .map(TestCase::createDefaultCase)
+            .forEach(codingSpace::addTestCase);
+
         return codingSpace;
+    }
+
+    public void addTestCase(TestCase testCase) {
+        this.testCases.add(testCase);
+        testCase.setCodingSpace(this);
     }
 
     private static void validateCreateCodingSpace(final CreateCodingSpaceDto dto) {
