@@ -2,50 +2,100 @@ package co.kr.cocomu.codingspace.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
-import co.kr.cocomu.codingspace.dto.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
+import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.service.StudyDomainService;
+import co.kr.cocomu.user.domain.User;
+import co.kr.cocomu.user.service.UserService;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class CodingSpaceCommandServiceTest {
 
     @Mock private StudyDomainService studyDomainService;
     @Mock private CodingSpaceRepository codingSpaceRepository;
+    @Mock private CodingSpaceDomainService codingSpaceDomainService;
+    @Mock private UserService userService;
 
     @InjectMocks private CodingSpaceCommandService codingSpaceCommandService;
+
+    Study mockStudy;
+    User mockUser;
+    CodingSpace mockCodingSpace;
+    CodingSpaceTab mockCodingSpaceTab;
+
+    @BeforeEach
+    void setUp() {
+        mockStudy = mock(Study.class);
+        mockUser = mock(User.class);
+        mockCodingSpace = mock(CodingSpace.class);
+        mockCodingSpaceTab = mock(CodingSpaceTab.class);
+    }
 
     @Test
     void 코딩_스페이스를_생성한다() {
         // given
         CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 0, 1L, "", "", "", List.of());
-        Study mockStudy = mock(Study.class);
-        CodingSpace mockCodingSpace = mock(CodingSpace.class);
-        when(mockCodingSpace.getId()).thenReturn(1L);
-        when(studyDomainService.getStudyWithThrow(1L)).thenReturn(mockStudy);
-        doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
-        when(codingSpaceRepository.save(any(CodingSpace.class))).thenReturn(mockCodingSpace);
+        코딩_스페이스_생성_스텁();
 
         // when
         Long result = codingSpaceCommandService.createCodingSpace(dto, 1L);
 
         // then
         assertThat(result).isEqualTo(1L);
+    }
+
+    @Test
+    void 코딩_스페이스에_참여한다() {
+        // given
+        코딩_스페이스_참여_스텁();
+
+        // when
+        String result = codingSpaceCommandService.joinCodingSpace(1L, 1L);
+
+        // then
+        assertThat(result).isEqualTo("UUID");
+    }
+
+    /*
+    * ========================== SET STUB ==========================
+    * */
+
+    private void 코딩_스페이스_생성_스텁() {
+        when(mockStudy.getId()).thenReturn(1L);
+        when(mockUser.getId()).thenReturn(1L);
+        when(mockCodingSpace.getId()).thenReturn(1L);
+
+        when(studyDomainService.getStudyWithThrow(1L)).thenReturn(mockStudy);
+        when(userService.getUserWithThrow(1L)).thenReturn(mockUser);
+        doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
+        when(codingSpaceRepository.save(any(CodingSpace.class))).thenReturn(mockCodingSpace);
+    }
+
+    private void 코딩_스페이스_참여_스텁() {
+        when(mockStudy.getId()).thenReturn(1L);
+        when(mockUser.getId()).thenReturn(1L);
+        when(mockCodingSpace.getStudy()).thenReturn(mockStudy);
+        when(mockCodingSpace.joinUser(mockUser)).thenReturn(mockCodingSpaceTab);
+        when(mockCodingSpaceTab.getId()).thenReturn("UUID");
+
+        when(codingSpaceDomainService.getWaitingCodingSpaceWithThrow(1L)).thenReturn(mockCodingSpace);
+        when(userService.getUserWithThrow(1L)).thenReturn(mockUser);
+        doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
     }
 
 }

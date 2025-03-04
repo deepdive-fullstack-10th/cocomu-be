@@ -1,11 +1,12 @@
 package co.kr.cocomu.codingspace.domain;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
-import co.kr.cocomu.codingspace.dto.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
+import co.kr.cocomu.user.domain.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -80,7 +81,12 @@ public class CodingSpace {
     @OneToMany(mappedBy = "codingSpace", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestCase> testCases = new ArrayList<>();
 
-    private CodingSpace(final CreateCodingSpaceDto dto) {
+    @OneToMany(mappedBy = "codingSpace", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CodingSpaceTab> tabs = new ArrayList<>();
+
+    private CodingSpace(final CreateCodingSpaceDto dto, final Study study) {
+        this.study = study;
+        this.language = study.getLanguage(dto.languageId());
         this.name = dto.name();
         this.description = dto.description();
         this.workbookUrl = dto.workbookUrl();
@@ -88,25 +94,21 @@ public class CodingSpace {
         this.currentUserCount = 0;
         this.totalUserCount = dto.totalUserCount();
         this.status = CodingSpaceStatus.WAITING;
-    }
-
-    public static CodingSpace createCodingSpace(final CreateCodingSpaceDto dto, final Study study) {
-        validateCreateCodingSpace(dto);
-
-        final CodingSpace codingSpace = new CodingSpace(dto);
-        codingSpace.study = study;
-        codingSpace.language = study.getLanguage(dto.languageId());
 
         dto.testcases().stream()
             .map(TestCase::createDefaultCase)
-            .forEach(codingSpace::addTestCase);
-
-        return codingSpace;
+            .forEach(this::addTestCase);
     }
 
-    public void addTestCase(TestCase testCase) {
-        this.testCases.add(testCase);
-        testCase.setCodingSpace(this);
+    public static CodingSpace createCodingSpace(final CreateCodingSpaceDto dto, final Study study, final User host) {
+        validateCreateCodingSpace(dto);
+        final CodingSpace codingSpace = new CodingSpace(dto, study);
+        codingSpace.increaseCurrentUserCount();
+
+        final CodingSpaceTab tab = CodingSpaceTab.createHost(codingSpace, host);
+        codingSpace.tabs.add(tab);
+
+        return codingSpace;
     }
 
     private static void validateCreateCodingSpace(final CreateCodingSpaceDto dto) {
@@ -123,6 +125,53 @@ public class CodingSpace {
     private static void validateMinUserCount(final int totalUserCount) {
         if (totalUserCount < MIN_CODING_SPACE_USER_COUNT) {
             throw new BadRequestException(CodingSpaceExceptionCode.MIN_USER_COUNT_IS_TWO);
+        }
+    }
+
+    public void addTestCase(TestCase testCase) {
+        this.testCases.add(testCase);
+        testCase.setCodingSpace(this);
+    }
+
+    public CodingSpaceTab joinUser(final User user) {
+        validateJoin(user);
+        this.increaseCurrentUserCount();
+
+        final CodingSpaceTab tab = CodingSpaceTab.createMember(this, user);
+        this.tabs.add(tab);
+
+        return tab;
+    }
+
+
+    public void increaseCurrentUserCount() {
+        currentUserCount++;
+    }
+
+    private void validateJoin(final User user) {
+        validateWaitingStatus();
+        validateParticipation(user);
+        validateJoinable();
+    }
+
+    private void validateParticipation(final User user) {
+        final boolean participation = tabs.stream()
+            .anyMatch(tab -> tab.checkParticipation(user));
+
+        if (participation) {
+            throw new BadRequestException(CodingSpaceExceptionCode.ALREADY_PARTICIPATION_SPACE);
+        }
+    }
+
+    private void validateWaitingStatus() {
+        if (getStatus() != CodingSpaceStatus.WAITING) {
+            throw new BadRequestException(CodingSpaceExceptionCode.NOT_WAITING_STUDY);
+        }
+    }
+
+    private void validateJoinable() {
+        if (getCurrentUserCount() >= getTotalUserCount()) {
+            throw new BadRequestException(CodingSpaceExceptionCode.OVER_USER_COUNT);
         }
     }
 

@@ -3,7 +3,7 @@ package co.kr.cocomu.codingspace.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import co.kr.cocomu.codingspace.domain.vo.TestCaseType;
-import co.kr.cocomu.codingspace.dto.CreateTestCaseDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import org.junit.jupiter.api.Test;
 
 class TestCaseTest {

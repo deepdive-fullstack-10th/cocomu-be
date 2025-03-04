@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
-import co.kr.cocomu.codingspace.dto.CreateCodingSpaceDto;
-import co.kr.cocomu.codingspace.dto.CreateTestCaseDto;
+import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
+import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
+import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.common.BaseControllerTest;
 import co.kr.cocomu.common.api.Api;
@@ -36,10 +38,27 @@ class CodingSpaceControllerTest extends BaseControllerTest {
         ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(PATH_PREFIX, dto);
 
         // then
-        Api<Long> result =  response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        Api<CodingSpaceIdDto> result =  response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.CREATE_CODING_SPACE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.CREATE_CODING_SPACE_SUCCESS.getMessage());
-        assertThat(result.result()).isEqualTo(1L);
+        assertThat(result.result().codingSpaceId()).isEqualTo(1L);
+    }
+
+    @Test
+    void 코딩_스페이스_참여_요청이_성공한다() {
+        // given
+        String mockResult = "Tab_ID";
+        when(codingSpaceCommandService.joinCodingSpace(1L, 1L)).thenReturn(mockResult);
+
+        // when
+        String path = PATH_PREFIX + "/1";
+        ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
+
+        // then
+        Api<CodingSpaceTabIdDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS.getMessage());
+        assertThat(result.result().codingSpaceTabId()).isEqualTo(mockResult);
     }
 
 }
