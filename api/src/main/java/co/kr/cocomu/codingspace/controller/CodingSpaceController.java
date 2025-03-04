@@ -67,7 +67,7 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         @AuthenticationPrincipal final Long userId,
         @ModelAttribute final FilterDto dto
     ) {
-        final CodingSpacesDto result = codingSpaceQueryService.getCodingSpaces(userId, studyId, dto);
+        final CodingSpacesDto result = codingSpaceQueryService.getCodingSpaces(studyId, userId, dto);
         return Api.of(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS, result);
     }
 

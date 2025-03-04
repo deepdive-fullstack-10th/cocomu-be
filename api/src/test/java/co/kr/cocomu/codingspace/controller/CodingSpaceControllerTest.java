@@ -23,11 +23,11 @@ import co.kr.cocomu.common.template.PostRequestTemplate;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
 
 @WebMvcTest(CodingSpaceController.class)
 class CodingSpaceControllerTest extends BaseControllerTest {
@@ -90,7 +90,7 @@ class CodingSpaceControllerTest extends BaseControllerTest {
     @Test
     void 코딩_스페이스_목록_조회하기() {
         // given
-        CodingSpacesDto mockResult = CodingSpacesDto.from(List.of());
+        CodingSpacesDto mockResult = CodingSpacesDto.of(List.of(), Map.of());
         when(codingSpaceQueryService.getCodingSpaces(eq(1L), eq(1L), any(FilterDto.class))).thenReturn(mockResult);
 
         // when

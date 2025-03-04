@@ -13,7 +13,7 @@ public class CodingSpaceDto {
     @Schema(description = "코딩 스페이스 id", example = "1")
     private Long id;
     @Schema(description = "코딩 스페이스 참여 여부", example = "true")
-    private Boolean joinable;
+    private boolean joinedMe;
     @Schema(description = "코딩 스페이스명", example = "[BOJ, Silver] 1130")
     private String name;
     @Schema(description = "코딩 스페이스 언어")

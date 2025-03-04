@@ -1,6 +1,7 @@
 package co.kr.cocomu.codingspace.repository.query.impl;
 
 import static co.kr.cocomu.codingspace.domain.QCodingSpace.codingSpace;
+import static co.kr.cocomu.codingspace.domain.QCodingSpaceTab.codingSpaceTab;
 
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
@@ -8,6 +9,7 @@ import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.repository.query.CodingSpaceQuery;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,7 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                 Projections.fields(
                     CodingSpaceDto.class,
                     codingSpace.id.as("id"),
-                    // joinable 체크
+                    isUserJoined(userId).as("joinedMe"),
                     codingSpace.name.as("name"),
                     Projections.fields(
                         LanguageDto.class,
@@ -60,4 +62,14 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
         }
         return codingSpace.id.lt(lastId);
     }
+    public static BooleanExpression isUserJoined(final Long userId) {
+        return JPAExpressions.selectOne()
+            .from(codingSpaceTab)
+            .where(
+                codingSpaceTab.codingSpace.eq(codingSpace),
+                codingSpaceTab.user.id.eq(userId)
+            )
+            .exists();
+    }
+
 }
