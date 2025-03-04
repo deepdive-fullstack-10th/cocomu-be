@@ -11,7 +11,9 @@ import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
+import co.kr.cocomu.study.dto.response.WritePageDto;
 import co.kr.cocomu.study.service.StudyCommandService;
+import co.kr.cocomu.study.service.StudyDomainService;
 import co.kr.cocomu.study.service.StudyQueryService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -34,6 +36,15 @@ public class StudyController implements StudyControllerDocs {
 
     private final StudyCommandService studyCommandService;
     private final StudyQueryService studyQueryService;
+
+    @GetMapping("/write")
+    public Api<WritePageDto> getWritePageInfo(@AuthenticationPrincipal final Long userId) {
+        final List<LanguageDto> allLanguages = studyQueryService.getAllLanguages();
+        final List<WorkbookDto> allWorkbooks = studyQueryService.getAllWorkbooks();
+        final WritePageDto result = new WritePageDto(allWorkbooks, allLanguages);
+
+        return Api.of(StudyApiCode.GET_WRITE_PAGE_SUCCESS, result);
+    }
 
     @PostMapping("/public")
     public Api<Long> createPublicStudy(
