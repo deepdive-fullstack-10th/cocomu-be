@@ -56,7 +56,7 @@ public class CodingSpace {
     @JoinColumn(name = "study_id")
     private Study study;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_id")
     private Language language;
 

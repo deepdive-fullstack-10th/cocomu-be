@@ -2,10 +2,16 @@ package co.kr.cocomu.codingspace.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import co.kr.cocomu.codingspace.dto.request.FilterDto;
+import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
+import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.service.StudyDomainService;
@@ -20,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CodingSpaceQueryServiceTest {
 
     @Mock private StudyDomainService studyDomainService;
+    @Mock private CodingSpaceRepository codingSpaceQuery;
 
     @InjectMocks private CodingSpaceQueryService codingSpaceQueryService;
 
@@ -36,6 +43,32 @@ class CodingSpaceQueryServiceTest {
 
         // then
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void 빈_코딩스페이스_목록을_가져온다() {
+        List<CodingSpaceDto> mockSpaces = List.of();
+        doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
+        when(codingSpaceQuery.findSpacesWithFilter(anyLong(), anyLong(), any(FilterDto.class))).thenReturn(mockSpaces);
+
+        CodingSpacesDto codingSpaces = codingSpaceQueryService.getCodingSpaces(1L, 1L, mock(FilterDto.class));
+
+        assertThat(codingSpaces.codingSpaces()).hasSize(0);
+        assertThat(codingSpaces.lastId()).isEqualTo(0L);
+    }
+
+    @Test
+    void 코딩스페이스_목록을_가져온다() {
+        final CodingSpaceDto codingSpaceDto = new CodingSpaceDto();
+        codingSpaceDto.setId(1L);
+        List<CodingSpaceDto> mockSpaces = List.of(codingSpaceDto);
+        doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
+        when(codingSpaceQuery.findSpacesWithFilter(anyLong(), anyLong(), any(FilterDto.class))).thenReturn(mockSpaces);
+
+        CodingSpacesDto codingSpaces = codingSpaceQueryService.getCodingSpaces(1L, 1L, mock(FilterDto.class));
+
+        assertThat(codingSpaces.codingSpaces()).hasSize(1);
+        assertThat(codingSpaces.lastId()).isEqualTo(1L);
     }
 
 }

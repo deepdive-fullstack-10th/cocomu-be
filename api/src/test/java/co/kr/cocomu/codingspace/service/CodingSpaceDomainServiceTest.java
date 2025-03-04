@@ -2,7 +2,6 @@ package co.kr.cocomu.codingspace.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -42,7 +41,7 @@ class CodingSpaceDomainServiceTest {
         when(codingSpaceRepository.findById(1L)).thenReturn(Optional.of(mockCodingSpace));
 
         // when
-        CodingSpace result = codingSpaceDomainService.getWaitingCodingSpaceWithThrow(1L);
+        CodingSpace result = codingSpaceDomainService.getCodingSpaceWithThrow(1L);
 
         // then
         assertThat(result).isEqualTo(mockCodingSpace);
@@ -54,7 +53,7 @@ class CodingSpaceDomainServiceTest {
         when(codingSpaceRepository.findById(1L)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> codingSpaceDomainService.getWaitingCodingSpaceWithThrow(1L))
+        assertThatThrownBy(() -> codingSpaceDomainService.getCodingSpaceWithThrow(1L))
             .isInstanceOf(NotFoundException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_FOUND_SPACE);
     }

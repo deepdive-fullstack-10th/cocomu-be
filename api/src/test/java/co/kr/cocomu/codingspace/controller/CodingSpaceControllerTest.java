@@ -1,13 +1,18 @@
 package co.kr.cocomu.codingspace.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
+import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
+import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.WritePageDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
@@ -22,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 
 @WebMvcTest(CodingSpaceController.class)
 class CodingSpaceControllerTest extends BaseControllerTest {
@@ -79,6 +85,23 @@ class CodingSpaceControllerTest extends BaseControllerTest {
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_WRITE_PAGE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_WRITE_PAGE_SUCCESS.getMessage());
         assertThat(result.result().languages()).isEqualTo(List.of());
+    }
+
+    @Test
+    void 코딩_스페이스_목록_조회하기() {
+        // given
+        CodingSpacesDto mockResult = CodingSpacesDto.from(List.of());
+        when(codingSpaceQueryService.getCodingSpaces(eq(1L), eq(1L), any(FilterDto.class))).thenReturn(mockResult);
+
+        // when
+        String path = PATH_PREFIX + "/studies/1";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<CodingSpacesDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockResult);
     }
 
 }

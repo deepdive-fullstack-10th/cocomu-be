@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.controller.docs;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
+import co.kr.cocomu.codingspace.dto.response.WritePageDto;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "004. COCOMU-CODING-SPACE", description = "코코무 코딩 스페이스 관련 API")
 public interface CodingSpaceControllerDocs {
@@ -38,7 +41,6 @@ public interface CodingSpaceControllerDocs {
     )
     Api<CodingSpaceIdDto> createCodingSpace(CreateCodingSpaceDto dto, Long userId);
 
-
     @Operation(summary = "코딩 스페이스 참여", description = "코딩 스페이스에 참여하는 기능")
     @ApiResponse(
         responseCode = "200",
@@ -63,5 +65,12 @@ public interface CodingSpaceControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<CodingSpaceTabIdDto> joinCodingSpace(Long codingSpaceId, Long userId);
+
+    @Operation(summary = "코딩 스페이스 생성 페이지 조회", description = "코딩 스페이스 생성 페이지를 조회하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "코딩 스페이스 생성 페이지 조회에 성공했습니다."
+    )
+    Api<WritePageDto> getWritePage(Long userId, Long studyId);
 
 }

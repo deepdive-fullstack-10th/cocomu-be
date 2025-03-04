@@ -1,7 +1,6 @@
 package co.kr.cocomu.codingspace.service;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
-import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
@@ -19,7 +18,7 @@ public class CodingSpaceDomainService {
     private final CodingSpaceRepository codingSpaceRepository;
     private final CodingSpaceTabRepository codingSpaceTabRepository;
 
-    public CodingSpace getWaitingCodingSpaceWithThrow(final Long codingSpaceId) {
+    public CodingSpace getCodingSpaceWithThrow(final Long codingSpaceId) {
         return codingSpaceRepository.findById(codingSpaceId)
             .orElseThrow(() -> new NotFoundException(CodingSpaceExceptionCode.NOT_FOUND_SPACE));
     }
