@@ -8,9 +8,12 @@ import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
+import co.kr.cocomu.codingspace.dto.response.WritePageDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
+import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.BaseControllerTest;
 import co.kr.cocomu.common.api.Api;
+import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
@@ -26,6 +29,7 @@ class CodingSpaceControllerTest extends BaseControllerTest {
     private static final String PATH_PREFIX = "/api/v1/coding-spaces";
 
     @MockBean private CodingSpaceCommandService codingSpaceCommandService;
+    @MockBean private CodingSpaceQueryService codingSpaceQueryService;
 
     @Test
     void 코딩_스페이스_생성_요청이_성공한다() {
@@ -59,6 +63,22 @@ class CodingSpaceControllerTest extends BaseControllerTest {
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS.getMessage());
         assertThat(result.result().codingSpaceTabId()).isEqualTo(mockResult);
+    }
+
+    @Test
+    void 코딩_스페이스_생성_페이지_조회에_성공한다() {
+        // given
+        when(codingSpaceQueryService.getStudyLanguages(1L, 1L)).thenReturn(List.of());
+
+        // when
+        String path = PATH_PREFIX + "/write?studyId=1";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<WritePageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_WRITE_PAGE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_WRITE_PAGE_SUCCESS.getMessage());
+        assertThat(result.result().languages()).isEqualTo(List.of());
     }
 
 }
