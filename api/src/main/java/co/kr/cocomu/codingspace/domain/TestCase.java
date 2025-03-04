@@ -1,7 +1,7 @@
 package co.kr.cocomu.codingspace.domain;
 
 import co.kr.cocomu.codingspace.domain.vo.TestCaseType;
-import co.kr.cocomu.codingspace.dto.CreateTestCaseDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
