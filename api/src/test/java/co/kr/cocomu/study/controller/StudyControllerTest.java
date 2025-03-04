@@ -1,6 +1,7 @@
 package co.kr.cocomu.study.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.BaseControllerTest;
@@ -16,7 +17,9 @@ import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
+import co.kr.cocomu.study.dto.response.WritePageDto;
 import co.kr.cocomu.study.service.StudyCommandService;
+import co.kr.cocomu.study.service.StudyDomainService;
 import co.kr.cocomu.study.service.StudyQueryService;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
@@ -134,7 +137,7 @@ class StudyControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void test() {
+    void 스터디_상세_정보를_조회_요청이_성공한다() {
         // given
         StudyDetailPageDto mockResult = new StudyDetailPageDto();
         when(studyQueryService.getStudyDetailPage(1L, 1L)).thenReturn(mockResult);
@@ -148,6 +151,24 @@ class StudyControllerTest extends BaseControllerTest {
         assertThat(result.code()).isEqualTo(StudyApiCode.GET_STUDY_DETAIL_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.GET_STUDY_DETAIL_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockResult);
+    }
+
+    @Test
+    void 스터디_작성_페이지_조회_요청이_성공한다() {
+        // given
+        when(studyQueryService.getAllLanguages()).thenReturn(List.of());
+        when(studyQueryService.getAllWorkbooks()).thenReturn(List.of());
+
+        // when
+        String path = PATH_PREFIX + "/write";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<WritePageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.GET_WRITE_PAGE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.GET_WRITE_PAGE_SUCCESS.getMessage());
+        assertThat(result.result().languages()).isEmpty();
+        assertThat(result.result().workbooks()).isEmpty();
     }
 
     /*
