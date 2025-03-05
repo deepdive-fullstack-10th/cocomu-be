@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.repository.query.condition;
 import static co.kr.cocomu.codingspace.domain.QCodingSpace.codingSpace;
 import static co.kr.cocomu.codingspace.domain.QCodingSpaceTab.codingSpaceTab;
 
+import co.kr.cocomu.codingspace.domain.vo.CodingSpaceRole;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import com.querydsl.core.types.Predicate;
@@ -36,6 +37,17 @@ public class CodingSpaceCondition {
             .where(
                 codingSpaceTab.codingSpace.eq(codingSpace),
                 codingSpaceTab.user.id.eq(userId)
+            )
+            .exists();
+    }
+
+    public static BooleanExpression isHost(final Long userId) {
+        return JPAExpressions.selectOne()
+            .from(codingSpaceTab)
+            .where(
+                codingSpaceTab.codingSpace.eq(codingSpace),
+                codingSpaceTab.user.id.eq(userId),
+                codingSpaceTab.role.eq(CodingSpaceRole.HOST)
             )
             .exists();
     }

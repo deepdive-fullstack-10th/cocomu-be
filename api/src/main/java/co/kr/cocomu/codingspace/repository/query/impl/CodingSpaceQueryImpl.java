@@ -1,7 +1,9 @@
 package co.kr.cocomu.codingspace.repository.query.impl;
 
 import static co.kr.cocomu.codingspace.domain.QCodingSpace.codingSpace;
+import static co.kr.cocomu.codingspace.domain.QCodingSpaceTab.codingSpaceTab;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.getCodingSpaceCondition;
+import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.isHost;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.isUserJoined;
 import static co.kr.cocomu.study.domain.QLanguage.language;
 
@@ -12,6 +14,7 @@ import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.response.page.WaitingPage;
 import co.kr.cocomu.codingspace.repository.query.CodingSpaceQuery;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -56,12 +59,13 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
             .fetch();
     }
 
-    public WaitingPage findWaitingPage(final Long codingSpaceId) {
+    public WaitingPage findWaitingPage(final Long codingSpaceId, final Long userId) {
         return queryFactory
             .select(Projections.fields(
                 WaitingPage.class,
                 codingSpace.id.as("id"),
                 codingSpace.name.as("name"),
+                isHost(userId).as("hostMe"),
                 codingSpace.description.as("description"),
                 codingSpace.workbookUrl.as("workbookUrl"),
                 codingSpace.codingMinutes.as("codingMinutes"),

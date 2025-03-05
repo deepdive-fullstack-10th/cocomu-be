@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.producer.StompSSEProducer;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.service.StudyDomainService;
@@ -29,6 +30,7 @@ class CodingSpaceCommandServiceTest {
     @Mock private StudyDomainService studyDomainService;
     @Mock private CodingSpaceRepository codingSpaceRepository;
     @Mock private CodingSpaceDomainService codingSpaceDomainService;
+    @Mock private StompSSEProducer stompSSEProducer;
     @Mock private UserService userService;
 
     @InjectMocks private CodingSpaceCommandService codingSpaceCommandService;
@@ -73,9 +75,11 @@ class CodingSpaceCommandServiceTest {
     void 대기방_입장을_한다() {
         // given
         CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        when(mockTab.getUser()).thenReturn(mockUser);
         when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
         doNothing().when(mockTab).enterTab();
         when(mockTab.getDocumentKey()).thenReturn("UUID");
+        doNothing().when(stompSSEProducer).publishUserEnter(mockUser, 1L);
 
         // when
         String result = codingSpaceCommandService.enterWaitingSpace(1L, 1L);

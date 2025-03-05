@@ -78,7 +78,7 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         @AuthenticationPrincipal final Long userId
     ) {
         codingSpaceCommandService.enterWaitingSpace(codingSpaceId, userId);
-        final WaitingPage result = codingSpaceQueryService.extractWaitingPage(codingSpaceId);
+        final WaitingPage result = codingSpaceQueryService.extractWaitingPage(codingSpaceId, userId);
         return Api.of(CodingSpaceApiCode.ENTER_WAITING_SPACE_SUCCESS, result);
     }
 

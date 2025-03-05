@@ -20,6 +20,7 @@ public class WaitingPage {
     private String name;
     private String description;
     private String workbookUrl;
+    private boolean hostMe;
     private int codingMinutes;
     private int totalUserCount;
     private CodingSpaceStatus status;

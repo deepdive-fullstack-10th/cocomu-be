@@ -88,12 +88,12 @@ class CodingSpaceQueryServiceTest {
     void 대기방_페이지를_가져온다() {
         // given
         WaitingPage mockPage = mock(WaitingPage.class);
-        when(codingSpaceQuery.findWaitingPage(1L)).thenReturn(mockPage);
+        when(codingSpaceQuery.findWaitingPage(1L, 1L)).thenReturn(mockPage);
         when(codingSpaceTabQuery.findUsers(1L)).thenReturn(List.of());
         when(testCaseQuery.findTestCases(1L)).thenReturn(List.of());
 
         // when
-        WaitingPage result = codingSpaceQueryService.extractWaitingPage(1L);
+        WaitingPage result = codingSpaceQueryService.extractWaitingPage(1L, 1L);
 
         // then
         assertThat(result).isEqualTo(mockPage);

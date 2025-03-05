@@ -8,6 +8,6 @@ import java.util.List;
 public interface CodingSpaceQuery {
 
     List<CodingSpaceDto> findSpacesWithFilter(Long userId, Long studyId, FilterDto dto);
-    WaitingPage findWaitingPage(final Long codingSpaceId);
+    WaitingPage findWaitingPage(Long codingSpaceId, Long userId);
 
 }

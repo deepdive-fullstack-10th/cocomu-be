@@ -109,7 +109,7 @@ class CodingSpaceControllerTest extends BaseControllerTest {
         // given
         WaitingPage mockPage = new WaitingPage();
         when(codingSpaceCommandService.enterWaitingSpace(1L, 1L)).thenReturn("any");
-        when(codingSpaceQueryService.extractWaitingPage(1L)).thenReturn(mockPage);
+        when(codingSpaceQueryService.extractWaitingPage(1L, 1L)).thenReturn(mockPage);
 
         // when
         String path = PATH_PREFIX + "/1/waiting";

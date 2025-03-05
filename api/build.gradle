@@ -48,6 +48,9 @@ dependencies {
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
+    // stomp
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     // 개발용 쿼리 확인
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0'
 

@@ -48,8 +48,8 @@ public class CodingSpaceQueryService {
         return CodingSpacesDto.of(codingSpaces, usersBySpace);
     }
 
-    public WaitingPage extractWaitingPage(final Long codingSpaceId) {
-        final WaitingPage waitingPage = codingSpaceQuery.findWaitingPage(codingSpaceId);
+    public WaitingPage extractWaitingPage(final Long codingSpaceId, final Long userId) {
+        final WaitingPage waitingPage = codingSpaceQuery.findWaitingPage(codingSpaceId, userId);
         waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
         waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
         return waitingPage;
