@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.repository.query.impl;
 import static co.kr.cocomu.codingspace.domain.QCodingSpace.codingSpace;
 import static co.kr.cocomu.codingspace.domain.QCodingSpaceTab.codingSpaceTab;
 
+import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
@@ -36,7 +37,7 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                     codingSpace.name.as("name"),
                     Projections.fields(
                         LanguageDto.class,
-                        codingSpace.language.id.as("languageId"),
+                        codingSpace.language.id.as("languageIds"),
                         codingSpace.language.name.as("languageName"),
                         codingSpace.language.imageUrl.as("languageImageUrl")
                     ).as("language"),
@@ -49,11 +50,22 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
             .from(codingSpace)
             .where(
                 codingSpace.study.id.eq(studyId),
-                getSelectCondition(filter.lastId())
+                getSelectCondition(filter.lastId()),
+                getStatusCondition(filter.status()),
+                getJoinableCondition(filter.joinable(), userId),
+                getSearchCondition(filter.keyword()),
+                getLanguageCondition(filter.languageIds())
             )
             .orderBy(codingSpace.createdAt.desc(), codingSpace.id.desc())
             .limit(20)
             .fetch();
+    }
+
+    private static BooleanExpression getStatusCondition(final CodingSpaceStatus status) {
+        if (status == null) {
+            return null;
+        }
+        return codingSpace.status.eq(status);
     }
 
     private static BooleanExpression getSelectCondition(final Long lastId) {
@@ -62,7 +74,8 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
         }
         return codingSpace.id.lt(lastId);
     }
-    public static BooleanExpression isUserJoined(final Long userId) {
+
+    private static BooleanExpression isUserJoined(final Long userId) {
         return JPAExpressions.selectOne()
             .from(codingSpaceTab)
             .where(
@@ -70,6 +83,41 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                 codingSpaceTab.user.id.eq(userId)
             )
             .exists();
+    }
+
+    private BooleanExpression getJoinableCondition(final Boolean joinable, final Long userId) {
+        if (joinable == null || !joinable) {
+            return null;
+        }
+
+        return codingSpace.currentUserCount.lt(codingSpace.totalUserCount)
+            .and(codingSpace.status.eq(CodingSpaceStatus.WAITING))
+            .and(userNotJoinedCondition(userId));
+    }
+
+    private BooleanExpression userNotJoinedCondition(final Long userId) {
+        return JPAExpressions.selectOne()
+            .from(codingSpaceTab)
+            .where(
+                codingSpaceTab.codingSpace.eq(codingSpace),
+                codingSpaceTab.user.id.eq(userId)
+            )
+            .notExists();
+    }
+    private BooleanExpression getSearchCondition(final String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return null;
+        }
+
+        return codingSpace.name.containsIgnoreCase(keyword);
+    }
+
+    private BooleanExpression getLanguageCondition(final List<Long> languageIds) {
+        if (languageIds == null) {
+            return null;
+        }
+
+        return codingSpace.language.id.in(languageIds);
     }
 
 }
