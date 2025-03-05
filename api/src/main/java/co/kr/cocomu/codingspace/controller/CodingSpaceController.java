@@ -4,6 +4,7 @@ import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
 import co.kr.cocomu.codingspace.controller.docs.CodingSpaceControllerDocs;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
+import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
@@ -57,7 +58,7 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         @PathVariable final Long codingSpaceId,
         @AuthenticationPrincipal final Long userId
     ) {
-        final String tabId = codingSpaceCommandService.joinCodingSpace(codingSpaceId, userId);
+        final Long tabId = codingSpaceCommandService.joinCodingSpace(codingSpaceId, userId);
         return Api.of(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS, new CodingSpaceTabIdDto(tabId));
     }
 
@@ -68,6 +69,15 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         @ModelAttribute final FilterDto dto
     ) {
         final CodingSpacesDto result = codingSpaceQueryService.getCodingSpaces(studyId, userId, dto);
+        return Api.of(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS, result);
+    }
+
+    @GetMapping("/{codingSpaceId}")
+    public Api<CodingSpaceDto> getCodingSpace(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final CodingSpaceDto result = codingSpaceQueryService.getCodingSpace(codingSpaceId, userId);
         return Api.of(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS, result);
     }
 

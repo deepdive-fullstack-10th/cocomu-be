@@ -133,14 +133,12 @@ public class CodingSpace {
         testCase.setCodingSpace(this);
     }
 
-    public CodingSpaceTab joinUser(final User user) {
+    public void joinUser(final User user) {
         validateJoin(user);
         this.increaseCurrentUserCount();
 
         final CodingSpaceTab tab = CodingSpaceTab.createMember(this, user);
         this.tabs.add(tab);
-
-        return tab;
     }
 
 

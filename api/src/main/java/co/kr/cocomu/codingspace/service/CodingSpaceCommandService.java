@@ -33,13 +33,13 @@ public class CodingSpaceCommandService {
         return savedCodingSpace.getId();
     }
 
-    public String joinCodingSpace(final Long codingSpaceId, final Long userId) {
+    public Long joinCodingSpace(final Long codingSpaceId, final Long userId) {
         final CodingSpace codingSpace = codingSpaceDomainService.getCodingSpaceWithThrow(codingSpaceId);
         final User user = userService.getUserWithThrow(userId);
         studyDomainService.validateStudyMembership(user.getId(), codingSpace.getStudy().getId());
+        codingSpace.joinUser(user);
 
-        final CodingSpaceTab codingSpaceTab = codingSpace.joinUser(user);
-        return codingSpaceTab.getId();
+        return codingSpace.getId();
     }
 
 }

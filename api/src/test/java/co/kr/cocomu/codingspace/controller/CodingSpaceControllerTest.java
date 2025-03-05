@@ -57,8 +57,7 @@ class CodingSpaceControllerTest extends BaseControllerTest {
     @Test
     void 코딩_스페이스_참여_요청이_성공한다() {
         // given
-        String mockResult = "Tab_ID";
-        when(codingSpaceCommandService.joinCodingSpace(1L, 1L)).thenReturn(mockResult);
+        when(codingSpaceCommandService.joinCodingSpace(1L, 1L)).thenReturn(1L);
 
         // when
         String path = PATH_PREFIX + "/1";
@@ -68,7 +67,7 @@ class CodingSpaceControllerTest extends BaseControllerTest {
         Api<CodingSpaceTabIdDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS.getMessage());
-        assertThat(result.result().codingSpaceTabId()).isEqualTo(mockResult);
+        assertThat(result.result().codingSpaceTabId()).isEqualTo(1L);
     }
 
     @Test

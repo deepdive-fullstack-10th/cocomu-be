@@ -36,14 +36,12 @@ class CodingSpaceCommandServiceTest {
     Study mockStudy;
     User mockUser;
     CodingSpace mockCodingSpace;
-    CodingSpaceTab mockCodingSpaceTab;
 
     @BeforeEach
     void setUp() {
         mockStudy = mock(Study.class);
         mockUser = mock(User.class);
         mockCodingSpace = mock(CodingSpace.class);
-        mockCodingSpaceTab = mock(CodingSpaceTab.class);
     }
 
     @Test
@@ -65,10 +63,10 @@ class CodingSpaceCommandServiceTest {
         코딩_스페이스_참여_스텁();
 
         // when
-        String result = codingSpaceCommandService.joinCodingSpace(1L, 1L);
+        Long result = codingSpaceCommandService.joinCodingSpace(1L, 1L);
 
         // then
-        assertThat(result).isEqualTo("UUID");
+        assertThat(result).isEqualTo(1L);
     }
 
     /*
@@ -90,8 +88,8 @@ class CodingSpaceCommandServiceTest {
         when(mockStudy.getId()).thenReturn(1L);
         when(mockUser.getId()).thenReturn(1L);
         when(mockCodingSpace.getStudy()).thenReturn(mockStudy);
-        when(mockCodingSpace.joinUser(mockUser)).thenReturn(mockCodingSpaceTab);
-        when(mockCodingSpaceTab.getId()).thenReturn("UUID");
+        doNothing().when(mockCodingSpace).joinUser(mockUser);
+        when(mockCodingSpace.getId()).thenReturn(1L);
 
         when(codingSpaceDomainService.getCodingSpaceWithThrow(1L)).thenReturn(mockCodingSpace);
         when(userService.getUserWithThrow(1L)).thenReturn(mockUser);

@@ -12,6 +12,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -31,8 +33,12 @@ import lombok.NoArgsConstructor;
 public class CodingSpaceTab extends TimeBaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "coding_space_tab_id")
-    private String id; // UUID - Yorkie 문서 탭 아이디로 사용할 예정
+    private Long id;
+
+    @Column
+    private String documentKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coding_space_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -54,7 +60,7 @@ public class CodingSpaceTab extends TimeBaseEntity {
     private LocalDateTime solvedAt;
 
     private CodingSpaceTab(CodingSpace codingSpace, User user, CodingSpaceRole role) {
-        this.id = UUID.randomUUID().toString();
+        this.documentKey = UUID.randomUUID().toString();
         this.codingSpace = codingSpace;
         this.user = user;
         this.status = TabStatus.ACTIVE;

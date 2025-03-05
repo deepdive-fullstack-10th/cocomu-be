@@ -1,5 +1,6 @@
 package co.kr.cocomu.codingspace.service;
 
+import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
@@ -21,8 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CodingSpaceQueryService {
 
     private final StudyDomainService studyDomainService;
+    private final CodingSpaceDomainService codingSpaceDomainService;
     private final CodingSpaceRepository codingSpaceQuery;
     private final CodingSpaceTabRepository codingSpaceTabQuery;
+    private final CodingSpaceRepository codingSpaceRepository;
 
     public List<LanguageDto> getStudyLanguages(final Long userId, final Long studyId) {
         final Study study = studyDomainService.getStudyWithThrow(studyId);
@@ -37,6 +40,12 @@ public class CodingSpaceQueryService {
         final Map<Long, List<UserDto>> usersBySpace = codingSpaceTabQuery.findUsersBySpace(codingSpaceIds);
 
         return CodingSpacesDto.of(codingSpaces, usersBySpace);
+    }
+
+    public CodingSpaceDto getCodingSpace(final Long codingSpaceId, final Long userId) {
+        CodingSpace codingSpace = codingSpaceDomainService.getCodingSpaceWithThrow(codingSpaceId);
+        codingSpaceDomainService.validateCodingSpaceMemberShip(codingSpaceId, userId);
+        return null;
     }
 
 }
