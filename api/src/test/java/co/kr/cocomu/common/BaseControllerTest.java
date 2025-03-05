@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.context.WebApplicationContext;
 
 @Import(SecurityConfig.class)
-@WebMvcTest
 public class BaseControllerTest {
 
     @MockBean

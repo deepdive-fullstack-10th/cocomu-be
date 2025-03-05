@@ -7,11 +7,12 @@ import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
-import co.kr.cocomu.codingspace.dto.response.WritePageDto;
+import co.kr.cocomu.codingspace.dto.response.LanguageDto;
+import co.kr.cocomu.codingspace.dto.response.page.WaitingPage;
+import co.kr.cocomu.codingspace.dto.response.page.WritePage;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.api.Api;
-import co.kr.cocomu.study.dto.response.LanguageDto;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +35,12 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
     private final CodingSpaceQueryService codingSpaceQueryService;
 
     @GetMapping("/write")
-    public Api<WritePageDto> getWritePage(
+    public Api<WritePage> getWritePage(
         @AuthenticationPrincipal final Long userId,
         @RequestParam final Long studyId
     ) {
         final List<LanguageDto> languages = codingSpaceQueryService.getStudyLanguages(userId, studyId);
-        final WritePageDto result = new WritePageDto(languages);
+        final WritePage result = new WritePage(languages);
         return Api.of(CodingSpaceApiCode.GET_WRITE_PAGE_SUCCESS, result);
     }
 
@@ -57,7 +58,7 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         @PathVariable final Long codingSpaceId,
         @AuthenticationPrincipal final Long userId
     ) {
-        final String tabId = codingSpaceCommandService.joinCodingSpace(codingSpaceId, userId);
+        final Long tabId = codingSpaceCommandService.joinCodingSpace(codingSpaceId, userId);
         return Api.of(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS, new CodingSpaceTabIdDto(tabId));
     }
 
@@ -69,6 +70,16 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
     ) {
         final CodingSpacesDto result = codingSpaceQueryService.getCodingSpaces(studyId, userId, dto);
         return Api.of(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS, result);
+    }
+
+    @PostMapping("/{codingSpaceId}/waiting")
+    public Api<WaitingPage> enterWaitingSpace(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        codingSpaceCommandService.enterWaitingSpace(codingSpaceId, userId);
+        final WaitingPage result = codingSpaceQueryService.extractWaitingPage(codingSpaceId, userId);
+        return Api.of(CodingSpaceApiCode.ENTER_WAITING_SPACE_SUCCESS, result);
     }
 
 }

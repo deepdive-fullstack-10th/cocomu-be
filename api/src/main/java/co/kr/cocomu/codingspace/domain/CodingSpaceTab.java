@@ -2,7 +2,10 @@ package co.kr.cocomu.codingspace.domain;
 
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceRole;
+import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
+import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.repository.TimeBaseEntity;
 import co.kr.cocomu.user.domain.User;
 import jakarta.persistence.Column;
@@ -12,11 +15,12 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,8 +35,12 @@ import lombok.NoArgsConstructor;
 public class CodingSpaceTab extends TimeBaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "coding_space_tab_id")
-    private String id; // UUID - Yorkie 문서 탭 아이디로 사용할 예정
+    private Long id;
+
+    @Column
+    private String documentKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coding_space_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -50,14 +58,11 @@ public class CodingSpaceTab extends TimeBaseEntity {
     @Column(columnDefinition = "varchar(20)")
     private TabStatus status;
 
-    @Column(columnDefinition = "datetime(6)")
-    private LocalDateTime solvedAt;
-
     private CodingSpaceTab(CodingSpace codingSpace, User user, CodingSpaceRole role) {
-        this.id = UUID.randomUUID().toString();
+        this.documentKey = UUID.randomUUID().toString();
         this.codingSpace = codingSpace;
         this.user = user;
-        this.status = TabStatus.ACTIVE;
+        this.status = TabStatus.JOIN;
         this.role = role;
     }
 
@@ -71,6 +76,20 @@ public class CodingSpaceTab extends TimeBaseEntity {
 
     public boolean checkParticipation(final User user) {
         return this.user.equals(user);
+    }
+
+    public void enterTab() {
+        if (codingSpace.getStatus() == CodingSpaceStatus.FINISHED) {
+            throw new BadRequestException(CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+        }
+        this.status = TabStatus.ACTIVE;
+    }
+
+    public void leaveTab() {
+        if (codingSpace.getStatus() == CodingSpaceStatus.FINISHED) {
+            throw new BadRequestException(CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+        }
+        this.status = TabStatus.INACTIVE;
     }
 
 }

@@ -2,6 +2,7 @@ package co.kr.cocomu.study.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.BaseControllerTest;
@@ -139,7 +140,7 @@ class StudyControllerTest extends BaseControllerTest {
     @Test
     void 스터디_상세_정보를_조회_요청이_성공한다() {
         // given
-        StudyDetailPageDto mockResult = new StudyDetailPageDto();
+        StudyDetailPageDto mockResult = StudyDetailPageDto.builder().build();
         when(studyQueryService.getStudyDetailPage(1L, 1L)).thenReturn(mockResult);
 
         // when

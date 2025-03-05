@@ -6,12 +6,12 @@ import co.kr.cocomu.study.domain.Study;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 @Schema(description = "스터디 상세 페이지 조회 응답")
 public class StudyDetailPageDto {
 
@@ -25,12 +25,11 @@ public class StudyDetailPageDto {
     private Long lastId;
 
     public static StudyDetailPageDto of(final Study study, final CodingSpacesDto codingSpacesDto) {
-        return new StudyDetailPageDto(
-            study.getName(),
-            study.getLanguagesDto(),
-            codingSpacesDto.codingSpaces(),
-            codingSpacesDto.lastId()
-        );
+        return StudyDetailPageDto.builder()
+            .name(study.getName())
+            .codingSpaces(codingSpacesDto.codingSpaces())
+            .lastId(codingSpacesDto.lastId())
+            .build();
     }
 
 }

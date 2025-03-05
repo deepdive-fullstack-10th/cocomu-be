@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-@Schema(description = "코딩 스페이스 조회 응답")
+@Schema(description = "코딩 스페이스 미리보기 조회 응답")
 public class CodingSpaceDto {
 
     @Schema(description = "코딩 스페이스 id", example = "1")

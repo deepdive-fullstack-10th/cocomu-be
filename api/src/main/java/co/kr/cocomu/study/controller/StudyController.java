@@ -13,7 +13,6 @@ import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.dto.response.WritePageDto;
 import co.kr.cocomu.study.service.StudyCommandService;
-import co.kr.cocomu.study.service.StudyDomainService;
 import co.kr.cocomu.study.service.StudyQueryService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -98,7 +97,7 @@ public class StudyController implements StudyControllerDocs {
         @PathVariable final Long studyId,
         @AuthenticationPrincipal final Long userId
     ) {
-        StudyDetailPageDto result = studyQueryService.getStudyDetailPage(studyId, userId);
+        final StudyDetailPageDto result = studyQueryService.getStudyDetailPage(studyId, userId);
         return Api.of(StudyApiCode.GET_STUDY_DETAIL_SUCCESS, result);
     }
 

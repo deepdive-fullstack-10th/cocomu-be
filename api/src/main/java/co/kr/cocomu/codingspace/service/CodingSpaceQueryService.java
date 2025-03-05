@@ -3,11 +3,14 @@ package co.kr.cocomu.codingspace.service;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
+import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
+import co.kr.cocomu.codingspace.dto.response.page.WaitingPage;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
+import co.kr.cocomu.codingspace.repository.query.TestCaseQuery;
 import co.kr.cocomu.study.domain.Study;
-import co.kr.cocomu.study.dto.response.LanguageDto;
+import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.service.StudyDomainService;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +26,17 @@ public class CodingSpaceQueryService {
     private final StudyDomainService studyDomainService;
     private final CodingSpaceRepository codingSpaceQuery;
     private final CodingSpaceTabRepository codingSpaceTabQuery;
+    private final TestCaseQuery testCaseQuery;
 
     public List<LanguageDto> getStudyLanguages(final Long userId, final Long studyId) {
         final Study study = studyDomainService.getStudyWithThrow(studyId);
         studyDomainService.validateStudyMembership(userId, studyId);
-        return study.getLanguagesDto();
+
+        return study.getLanguages()
+            .stream()
+            .map(StudyLanguage::getLanguage)
+            .map(LanguageDto::from)
+            .toList();
     }
 
     public CodingSpacesDto getCodingSpaces(final Long studyId, final Long userId, final FilterDto dto) {
@@ -37,6 +46,13 @@ public class CodingSpaceQueryService {
         final Map<Long, List<UserDto>> usersBySpace = codingSpaceTabQuery.findUsersBySpace(codingSpaceIds);
 
         return CodingSpacesDto.of(codingSpaces, usersBySpace);
+    }
+
+    public WaitingPage extractWaitingPage(final Long codingSpaceId, final Long userId) {
+        final WaitingPage waitingPage = codingSpaceQuery.findWaitingPage(codingSpaceId, userId);
+        waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
+        waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
+        return waitingPage;
     }
 
 }

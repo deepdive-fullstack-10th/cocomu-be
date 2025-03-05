@@ -4,6 +4,7 @@ import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
+import co.kr.cocomu.codingspace.stomp.StompSSEProducer;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.service.StudyDomainService;
 import co.kr.cocomu.user.domain.User;
@@ -21,6 +22,7 @@ public class CodingSpaceCommandService {
     private final StudyDomainService studyDomainService;
     private final UserService userService;
     private final CodingSpaceRepository codingSpaceRepository;
+    private final StompSSEProducer stompSSEProducer;
 
     public Long createCodingSpace(final CreateCodingSpaceDto dto, final Long userId) {
         final Study study = studyDomainService.getStudyWithThrow(dto.studyId());
@@ -33,13 +35,31 @@ public class CodingSpaceCommandService {
         return savedCodingSpace.getId();
     }
 
-    public String joinCodingSpace(final Long codingSpaceId, final Long userId) {
+    public Long joinCodingSpace(final Long codingSpaceId, final Long userId) {
         final CodingSpace codingSpace = codingSpaceDomainService.getCodingSpaceWithThrow(codingSpaceId);
         final User user = userService.getUserWithThrow(userId);
         studyDomainService.validateStudyMembership(user.getId(), codingSpace.getStudy().getId());
+        codingSpace.joinUser(user);
 
-        final CodingSpaceTab codingSpaceTab = codingSpace.joinUser(user);
-        return codingSpaceTab.getId();
+        return codingSpace.getId();
+    }
+
+    public String enterWaitingSpace(final Long codingSpaceId, final Long userId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        tab.enterTab();
+
+        final User user = tab.getUser();
+        stompSSEProducer.publishUserEnter(user, codingSpaceId);
+
+        return tab.getDocumentKey();
+    }
+
+    public void leaveSpace(final Long userId, final Long codingSpaceId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        tab.leaveTab();
+
+        final User user = tab.getUser();
+        stompSSEProducer.publishUserLeave(user, codingSpaceId);
     }
 
 }

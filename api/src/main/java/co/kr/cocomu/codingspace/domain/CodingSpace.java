@@ -20,7 +20,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -133,16 +132,13 @@ public class CodingSpace {
         testCase.setCodingSpace(this);
     }
 
-    public CodingSpaceTab joinUser(final User user) {
+    public void joinUser(final User user) {
         validateJoin(user);
         this.increaseCurrentUserCount();
 
         final CodingSpaceTab tab = CodingSpaceTab.createMember(this, user);
         this.tabs.add(tab);
-
-        return tab;
     }
-
 
     public void increaseCurrentUserCount() {
         currentUserCount++;
