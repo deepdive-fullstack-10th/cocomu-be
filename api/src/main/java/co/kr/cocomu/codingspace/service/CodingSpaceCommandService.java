@@ -34,7 +34,7 @@ public class CodingSpaceCommandService {
     }
 
     public String joinCodingSpace(final Long codingSpaceId, final Long userId) {
-        final CodingSpace codingSpace = codingSpaceDomainService.getWaitingCodingSpaceWithThrow(codingSpaceId);
+        final CodingSpace codingSpace = codingSpaceDomainService.getCodingSpaceWithThrow(codingSpaceId);
         final User user = userService.getUserWithThrow(userId);
         studyDomainService.validateStudyMembership(user.getId(), codingSpace.getStudy().getId());
 

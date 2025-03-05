@@ -1,5 +1,8 @@
 package co.kr.cocomu.study.service;
 
+import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
+import co.kr.cocomu.codingspace.repository.query.CodingSpaceQuery;
+import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
@@ -21,6 +24,7 @@ import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
 import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudyQueryService {
 
     private final StudyDomainService studyDomainService;
+    private final CodingSpaceQueryService codingSpaceQueryService;
     private final StudyRepository studyQuery;
     private final StudyUserRepository studyUserQuery;
     private final WorkbookRepository workbookQuery;
@@ -73,9 +78,9 @@ public class StudyQueryService {
     public StudyDetailPageDto getStudyDetailPage(final Long studyId, final Long userId) {
         final Study study = studyDomainService.getStudyWithThrow(studyId);
         studyDomainService.validateStudyMembership(userId, study.getId());
-        final List<LanguageDto> studyLanguages = study.getLanguagesDto();
-        // todo: coding Spaces 정보 추가
-        return new StudyDetailPageDto(study.getName(), studyLanguages, null);
+        final CodingSpacesDto codingSpaces = codingSpaceQueryService.getCodingSpaces(studyId, userId, null);
+
+        return StudyDetailPageDto.of(study, codingSpaces);
     }
 
     private void setStudyInformation(final List<Long> studyIds, final List<StudyCardDto> studyPages) {

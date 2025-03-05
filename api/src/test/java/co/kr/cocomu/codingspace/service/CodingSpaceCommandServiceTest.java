@@ -93,7 +93,7 @@ class CodingSpaceCommandServiceTest {
         when(mockCodingSpace.joinUser(mockUser)).thenReturn(mockCodingSpaceTab);
         when(mockCodingSpaceTab.getId()).thenReturn("UUID");
 
-        when(codingSpaceDomainService.getWaitingCodingSpaceWithThrow(1L)).thenReturn(mockCodingSpace);
+        when(codingSpaceDomainService.getCodingSpaceWithThrow(1L)).thenReturn(mockCodingSpace);
         when(userService.getUserWithThrow(1L)).thenReturn(mockUser);
         doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
     }
