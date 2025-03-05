@@ -4,7 +4,6 @@ import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.repository.TimeBaseEntity;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
-import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -114,13 +113,6 @@ public class Study extends TimeBaseEntity {
             throw new BadRequestException(StudyExceptionCode.REMAINING_USER);
         }
         status = StudyStatus.REMOVE;
-    }
-
-    public List<LanguageDto> getLanguagesDto() {
-        return languages.stream()
-            .map(StudyLanguage::getLanguage)
-            .map(Language::toDto)
-            .toList();
     }
 
     public Language getLanguage(final Long languageId) {

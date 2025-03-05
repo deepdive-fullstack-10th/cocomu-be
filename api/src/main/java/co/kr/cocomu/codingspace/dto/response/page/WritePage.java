@@ -1,11 +1,11 @@
-package co.kr.cocomu.codingspace.dto.response;
+package co.kr.cocomu.codingspace.dto.response.page;
 
-import co.kr.cocomu.study.dto.response.LanguageDto;
+import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 @Schema(description = "코딩 스페이스 생성 페이지 응답")
-public record WritePageDto(
+public record WritePage(
     @Schema(description = "코딩 스페이스 사용 언어 목록")
     List<LanguageDto> languages
 ) {

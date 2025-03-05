@@ -1,5 +1,7 @@
 package co.kr.cocomu.study.dto.response;
 
+import co.kr.cocomu.study.domain.Language;
+import co.kr.cocomu.study.domain.StudyLanguage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,5 +19,9 @@ public class LanguageDto {
     private String name;
     @Schema(description = "스터디 언어 ICON", example = "https://cdn.cocomu.co.kr/...")
     private String imageUrl;
+
+    public static LanguageDto from(final Language language) {
+        return new LanguageDto(language.getId(), language.getName(), language.getImageUrl());
+    }
 
 }

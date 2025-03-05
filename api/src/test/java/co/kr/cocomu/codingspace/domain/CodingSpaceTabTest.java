@@ -32,7 +32,7 @@ class CodingSpaceTabTest {
         assertThat(tab.getCodingSpace()).isEqualTo(mockCodingSpace);
         assertThat(tab.getUser()).isEqualTo(mockUser);
         assertThat(tab.getDocumentKey().length()).isEqualTo(36);
-        assertThat(tab.getStatus()).isEqualTo(TabStatus.ACTIVE);
+        assertThat(tab.getStatus()).isEqualTo(TabStatus.JOIN);
     }
 
     @Test

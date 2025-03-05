@@ -1,14 +1,19 @@
 package co.kr.cocomu.codingspace.service;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
+import co.kr.cocomu.codingspace.dto.response.LanguageDto;
+import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
+import co.kr.cocomu.codingspace.dto.response.page.WaitingPage;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
+import co.kr.cocomu.codingspace.repository.query.TestCaseQuery;
 import co.kr.cocomu.study.domain.Study;
-import co.kr.cocomu.study.dto.response.LanguageDto;
+import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.service.StudyDomainService;
 import java.util.List;
 import java.util.Map;
@@ -22,15 +27,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class CodingSpaceQueryService {
 
     private final StudyDomainService studyDomainService;
-    private final CodingSpaceDomainService codingSpaceDomainService;
     private final CodingSpaceRepository codingSpaceQuery;
     private final CodingSpaceTabRepository codingSpaceTabQuery;
-    private final CodingSpaceRepository codingSpaceRepository;
+    private final TestCaseQuery testCaseQuery;
 
     public List<LanguageDto> getStudyLanguages(final Long userId, final Long studyId) {
         final Study study = studyDomainService.getStudyWithThrow(studyId);
         studyDomainService.validateStudyMembership(userId, studyId);
-        return study.getLanguagesDto();
+
+        return study.getLanguages()
+            .stream()
+            .map(StudyLanguage::getLanguage)
+            .map(LanguageDto::from)
+            .toList();
     }
 
     public CodingSpacesDto getCodingSpaces(final Long studyId, final Long userId, final FilterDto dto) {
@@ -42,10 +51,14 @@ public class CodingSpaceQueryService {
         return CodingSpacesDto.of(codingSpaces, usersBySpace);
     }
 
-    public CodingSpaceDto getCodingSpace(final Long codingSpaceId, final Long userId) {
-        CodingSpace codingSpace = codingSpaceDomainService.getCodingSpaceWithThrow(codingSpaceId);
-        codingSpaceDomainService.validateCodingSpaceMemberShip(codingSpaceId, userId);
-        return null;
+    public WaitingPage extractWaitingPage(final Long codingSpaceId) {
+        return codingSpaceQuery.findWaitingPage(codingSpaceId)
+            .map(waitingPage -> {
+                waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
+                waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
+                return waitingPage;
+            })
+            .orElseThrow();
     }
 
 }

@@ -1,15 +1,12 @@
 package co.kr.cocomu.study.service;
 
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
-import co.kr.cocomu.codingspace.repository.query.CodingSpaceQuery;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
-import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.domain.Workbook;
-import co.kr.cocomu.study.domain.vo.StudyUserStatus;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
@@ -24,7 +21,6 @@ import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
 import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,9 +74,20 @@ public class StudyQueryService {
     public StudyDetailPageDto getStudyDetailPage(final Long studyId, final Long userId) {
         final Study study = studyDomainService.getStudyWithThrow(studyId);
         studyDomainService.validateStudyMembership(userId, study.getId());
-        final CodingSpacesDto codingSpaces = codingSpaceQueryService.getCodingSpaces(studyId, userId, null);
 
-        return StudyDetailPageDto.of(study, codingSpaces);
+        final CodingSpacesDto codingSpaces = codingSpaceQueryService.getCodingSpaces(studyId, userId, null);
+        final StudyDetailPageDto studyDetailPage = StudyDetailPageDto.of(study, codingSpaces);
+        final List<LanguageDto> languages = extractLanguagesDto(study);
+        studyDetailPage.setLanguages(languages);
+
+        return studyDetailPage;
+    }
+
+    private static List<LanguageDto> extractLanguagesDto(final Study study) {
+        return study.getLanguages().stream()
+            .map(StudyLanguage::getLanguage)
+            .map(LanguageDto::from)
+            .toList();
     }
 
     private void setStudyInformation(final List<Long> studyIds, final List<StudyCardDto> studyPages) {

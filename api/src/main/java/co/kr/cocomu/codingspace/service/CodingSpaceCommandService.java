@@ -42,4 +42,11 @@ public class CodingSpaceCommandService {
         return codingSpace.getId();
     }
 
+    public String enterWaitingSpace(final Long codingSpaceId, final Long userId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        tab.enterTab();
+        // stomp로 입장 정보 전달하기
+        return tab.getDocumentKey();
+    }
+
 }

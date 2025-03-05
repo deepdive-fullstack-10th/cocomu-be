@@ -69,6 +69,21 @@ class CodingSpaceCommandServiceTest {
         assertThat(result).isEqualTo(1L);
     }
 
+    @Test
+    void 대기방_입장을_한다() {
+        // given
+        CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
+        doNothing().when(mockTab).enterTab();
+        when(mockTab.getDocumentKey()).thenReturn("UUID");
+
+        // when
+        String result = codingSpaceCommandService.enterWaitingSpace(1L, 1L);
+
+        // then
+        assertThat(result).isEqualTo("UUID");
+    }
+
     /*
     * ========================== SET STUB ==========================
     * */

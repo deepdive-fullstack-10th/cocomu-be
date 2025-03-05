@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
+import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
@@ -77,6 +78,30 @@ class CodingSpaceDomainServiceTest {
         // then
         assertThatCode(() -> codingSpaceDomainService.validateCodingSpaceMemberShip(1L, 1L))
             .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 코딩_스페이스_탭을_가져온다() {
+        // given
+        CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        when(codingSpaceTabRepository.findByUserIdAndCodingSpaceId(1L, 1L)).thenReturn(Optional.of(mockTab));
+
+        // when
+        CodingSpaceTab result = codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L);
+
+        // then
+        assertThat(result).isEqualTo(mockTab);
+    }
+
+    @Test
+    void 코딩_스페이스_탭이_없으면_예외가_발생한다() {
+        // given
+        when(codingSpaceTabRepository.findByUserIdAndCodingSpaceId(1L, 1L)).thenReturn(Optional.empty());
+
+        // when
+        assertThatThrownBy(() -> codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NO_PARTICIPATION_SPACE);
     }
 
 }

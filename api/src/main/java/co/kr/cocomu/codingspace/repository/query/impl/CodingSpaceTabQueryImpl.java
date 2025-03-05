@@ -5,7 +5,9 @@ import static co.kr.cocomu.study.domain.QStudyWorkbook.studyWorkbook;
 import static co.kr.cocomu.study.domain.QWorkbook.workbook;
 import static co.kr.cocomu.user.domain.QUser.user;
 
+import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.domain.QCodingSpaceTab;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
 import co.kr.cocomu.codingspace.repository.query.CodingSpaceTabQuery;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
@@ -41,6 +43,22 @@ public class CodingSpaceTabQueryImpl implements CodingSpaceTabQuery {
                     )
                 ))
             );
+    }
+
+    public List<UserDto> findUsers(final Long codingSpaceId) {
+        return queryFactory
+            .select(Projections.fields(UserDto.class,
+                codingSpaceTab.user.id,
+                codingSpaceTab.user.nickname,
+                codingSpaceTab.user.profileImageUrl,
+                codingSpaceTab.role
+            ))
+            .from(codingSpaceTab)
+            .where(
+                codingSpaceTab.codingSpace.id.eq(codingSpaceId),
+                codingSpaceTab.status.eq(TabStatus.ACTIVE)
+            )
+            .fetch();
     }
 
 }

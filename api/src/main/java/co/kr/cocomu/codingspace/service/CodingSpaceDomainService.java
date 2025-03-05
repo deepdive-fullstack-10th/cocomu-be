@@ -1,6 +1,7 @@
 package co.kr.cocomu.codingspace.service;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
+import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
@@ -28,6 +29,11 @@ public class CodingSpaceDomainService {
         if (codingSpaceTabRepository.existsByUserIdAndCodingSpaceId(userId, codingSpaceId)) {
             throw new BadRequestException(CodingSpaceExceptionCode.ALREADY_PARTICIPATION_SPACE);
         }
+    }
+
+    public CodingSpaceTab getCodingSpaceTabWithThrow(final Long codingSpaceId, final Long userId) {
+        return codingSpaceTabRepository.findByUserIdAndCodingSpaceId(userId, codingSpaceId)
+            .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NO_PARTICIPATION_SPACE));
     }
 
 }

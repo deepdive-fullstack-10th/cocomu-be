@@ -8,4 +8,6 @@ public interface CodingSpaceTabQuery {
 
     Map<Long, List<UserDto>> findUsersBySpace(List<Long> spaceIds);
 
+    List<UserDto> findUsers(Long codingSpaceId);
+
 }

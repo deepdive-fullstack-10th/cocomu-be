@@ -152,8 +152,8 @@ class StudyQueryServiceTest {
         // given
         Study mockStudy = mock(Study.class);
         when(mockStudy.getId()).thenReturn(1L);
-        when(mockStudy.getLanguagesDto()).thenReturn(List.of());
         when(mockStudy.getName()).thenReturn("study");
+        when(mockStudy.getLanguages()).thenReturn(List.of());
         CodingSpacesDto mockDto = mock(CodingSpacesDto.class);
         when(mockDto.codingSpaces()).thenReturn(List.of());
         when(mockDto.lastId()).thenReturn(1L);
@@ -167,7 +167,7 @@ class StudyQueryServiceTest {
 
         // then
         assertThat(result.getName()).isEqualTo(mockStudy.getName());
-        assertThat(result.getLanguages()).isEqualTo(mockStudy.getLanguagesDto());
+        assertThat(result.getLanguages()).isEqualTo(List.of());
         assertThat(result.getCodingSpaces()).isEqualTo(mockDto.codingSpaces());
         assertThat(result.getLastId()).isEqualTo(mockDto.lastId());
     }
