@@ -16,8 +16,4 @@ public class TestCaseDto {
     private String output;
     private TestCaseType type;
 
-    public static TestCaseDto from(final TestCase testCase) {
-        return new TestCaseDto(testCase.getId(), testCase.getInput(), testCase.getOutput(), testCase.getType());
-    }
-
 }

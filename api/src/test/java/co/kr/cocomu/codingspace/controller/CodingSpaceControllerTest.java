@@ -13,6 +13,7 @@ import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
+import co.kr.cocomu.codingspace.dto.response.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.response.page.WritePage;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
@@ -101,6 +102,24 @@ class CodingSpaceControllerTest extends BaseControllerTest {
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockResult);
+    }
+
+    @Test
+    void 코딩_스페이스_입장이_성공한다() {
+        // given
+        WaitingPage mockPage = new WaitingPage();
+        when(codingSpaceCommandService.enterWaitingSpace(1L, 1L)).thenReturn("any");
+        when(codingSpaceQueryService.extractWaitingPage(1L)).thenReturn(mockPage);
+
+        // when
+        String path = PATH_PREFIX + "/1/waiting";
+        ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
+
+        // then
+        Api<WaitingPage> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.ENTER_WAITING_SPACE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.ENTER_WAITING_SPACE_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockPage);
     }
 
 }

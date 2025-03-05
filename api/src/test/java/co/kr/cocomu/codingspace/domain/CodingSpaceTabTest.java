@@ -1,15 +1,20 @@
 package co.kr.cocomu.codingspace.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceRole;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
+import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class CodingSpaceTabTest {
 
@@ -18,8 +23,8 @@ class CodingSpaceTabTest {
 
     @BeforeEach
     void setUp() {
-        CodingSpace mockCodingSpace = mock(CodingSpace.class);
-        User mockUser = mock(User.class);
+        mockCodingSpace = mock(CodingSpace.class);
+        mockUser = mock(User.class);
     }
 
     @Test
@@ -53,6 +58,31 @@ class CodingSpaceTabTest {
 
         // then
         assertThat(tab.getRole()).isEqualTo(CodingSpaceRole.HOST);
+    }
+
+    @Test
+    void 코딩_스페이스에_참여한다() {
+        // given
+        when(mockCodingSpace.getStatus()).thenReturn(CodingSpaceStatus.WAITING);
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when
+        tab.enterTab();
+
+        // then
+        assertThat(tab.getStatus()).isEqualTo(TabStatus.ACTIVE);
+    }
+
+    @Test
+    void 코딩_스페이스가_종료되면_참여할_수_없다() {
+        // given
+        when(mockCodingSpace.getStatus()).thenReturn(CodingSpaceStatus.FINISHED);
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when & then
+        assertThatThrownBy(() -> tab.enterTab())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_NOT_ENTER);
     }
 
 }

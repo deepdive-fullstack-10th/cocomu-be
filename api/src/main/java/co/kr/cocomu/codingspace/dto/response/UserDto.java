@@ -22,8 +22,4 @@ public class UserDto {
     @Schema(description = "코딩 스페이스 권한", example = "HOST")
     private CodingSpaceRole role;
 
-    public static UserDto of(final User user, final CodingSpaceRole role) {
-        return new UserDto(user.getId(), user.getNickname(), user.getProfileImageUrl(), role);
-    }
-
 }

@@ -166,8 +166,12 @@ class StudyQueryServiceTest {
         StudyDetailPageDto result = studyQueryService.getStudyDetailPage(1L, 1L);
 
         // then
+        List<LanguageDto> mockResult = mockStudy.getLanguages().stream()
+            .map(StudyLanguage::getLanguage)
+            .map(LanguageDto::from)
+            .toList();
         assertThat(result.getName()).isEqualTo(mockStudy.getName());
-        assertThat(result.getLanguages()).isEqualTo(List.of());
+        assertThat(result.getLanguages()).isEqualTo(mockResult);
         assertThat(result.getCodingSpaces()).isEqualTo(mockDto.codingSpaces());
         assertThat(result.getLastId()).isEqualTo(mockDto.lastId());
     }

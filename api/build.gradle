@@ -78,7 +78,7 @@ def classDirectoriesFilter = {
     project.fileTree(
             dir: it,
             excludes: ['**/common/**', "**/CocomuApiApplication.class", "**/config/**", "**/query/**",
-                       '**/domain/Q*.class/**']
+                       '**/domain/Q*.class/**', '**/dto/**']
     )
 }
 

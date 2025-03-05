@@ -1,12 +1,9 @@
 package co.kr.cocomu.codingspace.service;
 
-import co.kr.cocomu.codingspace.domain.CodingSpace;
-import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
-import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
 import co.kr.cocomu.codingspace.dto.response.page.WaitingPage;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
@@ -52,13 +49,10 @@ public class CodingSpaceQueryService {
     }
 
     public WaitingPage extractWaitingPage(final Long codingSpaceId) {
-        return codingSpaceQuery.findWaitingPage(codingSpaceId)
-            .map(waitingPage -> {
-                waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
-                waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
-                return waitingPage;
-            })
-            .orElseThrow();
+        final WaitingPage waitingPage = codingSpaceQuery.findWaitingPage(codingSpaceId);
+        waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
+        waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
+        return waitingPage;
     }
 
 }

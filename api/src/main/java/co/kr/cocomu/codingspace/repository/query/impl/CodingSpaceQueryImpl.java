@@ -56,8 +56,8 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
             .fetch();
     }
 
-    public Optional<WaitingPage> findWaitingPage(final Long codingSpaceId) {
-        return Optional.ofNullable(queryFactory
+    public WaitingPage findWaitingPage(final Long codingSpaceId) {
+        return queryFactory
             .select(Projections.fields(
                 WaitingPage.class,
                 codingSpace.id.as("id"),
@@ -76,9 +76,8 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
             ))
             .from(codingSpace)
             .join(codingSpace.language, language)
-            .where(codingSpace.id.eq(codingSpaceId).and(codingSpace.status.eq(CodingSpaceStatus.WAITING)))
-            .fetchOne()
-        );
+            .where(codingSpace.id.eq(codingSpaceId))
+            .fetchOne();
     }
 
 }
