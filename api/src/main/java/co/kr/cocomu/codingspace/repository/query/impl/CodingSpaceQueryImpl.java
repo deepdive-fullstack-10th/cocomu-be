@@ -8,6 +8,7 @@ import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.repository.query.CodingSpaceQuery;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -37,7 +38,7 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                     codingSpace.name.as("name"),
                     Projections.fields(
                         LanguageDto.class,
-                        codingSpace.language.id.as("languageIds"),
+                        codingSpace.language.id.as("languageId"),
                         codingSpace.language.name.as("languageName"),
                         codingSpace.language.imageUrl.as("languageImageUrl")
                     ).as("language"),
@@ -48,17 +49,25 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                 )
             )
             .from(codingSpace)
-            .where(
-                codingSpace.study.id.eq(studyId),
-                getSelectCondition(filter.lastId()),
-                getStatusCondition(filter.status()),
-                getJoinableCondition(filter.joinable(), userId),
-                getSearchCondition(filter.keyword()),
-                getLanguageCondition(filter.languageIds())
-            )
+            .where(getCodingSpaceCondition(filter, userId, studyId))
             .orderBy(codingSpace.createdAt.desc(), codingSpace.id.desc())
             .limit(20)
             .fetch();
+    }
+
+    public Predicate[] getCodingSpaceCondition(final FilterDto filter, final Long userId, final Long studyId) {
+        if (filter == null) {
+            return new Predicate[] { codingSpace.study.id.eq(studyId) };
+        }
+
+        return new Predicate[] {
+            codingSpace.study.id.eq(studyId),
+            getSelectCondition(filter.lastId()),
+            getStatusCondition(filter.status()),
+            getJoinableCondition(filter.joinable(), userId),
+            getSearchCondition(filter.keyword()),
+            getLanguageCondition(filter.languageIds())
+        };
     }
 
     private static BooleanExpression getStatusCondition(final CodingSpaceStatus status) {

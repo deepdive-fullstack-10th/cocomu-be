@@ -8,6 +8,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
+import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
@@ -44,6 +46,7 @@ class StudyQueryServiceTest {
     @Mock private StudyUserRepository studyUserQuery;
     @Mock private WorkbookRepository workbookQuery;
     @Mock private LanguageRepository languageQuery;
+    @Mock private CodingSpaceQueryService codingSpaceQueryService;
     @Mock private StudyDomainService studyDomainService;
 
     @InjectMocks private StudyQueryService studyQueryService;
@@ -147,22 +150,26 @@ class StudyQueryServiceTest {
     @Test
     void 스터디_상세_페이지_정보를_조회한다() {
         // given
-        Study mockStudy = Study.createPublicStudy(new CreatePublicStudyDto("스터디", null, null, null, 0));
-        ReflectionTestUtils.setField(mockStudy, "id", 1L);
-        Language mockLanguage = Language.of("JAVA", "Image Url");
-        ReflectionTestUtils.setField(mockLanguage, "id", 1L);
-        StudyLanguage studyLanguage = StudyLanguage.of(mockStudy, mockLanguage);
+        Study mockStudy = mock(Study.class);
+        when(mockStudy.getId()).thenReturn(1L);
+        when(mockStudy.getLanguagesDto()).thenReturn(List.of());
+        when(mockStudy.getName()).thenReturn("study");
+        CodingSpacesDto mockDto = mock(CodingSpacesDto.class);
+        when(mockDto.codingSpaces()).thenReturn(List.of());
+        when(mockDto.lastId()).thenReturn(1L);
 
-        when(studyDomainService.getStudyWithThrow(anyLong())).thenReturn(mockStudy);
+        when(studyDomainService.getStudyWithThrow(1L)).thenReturn(mockStudy);
+        when(codingSpaceQueryService.getCodingSpaces(1L, 1L, null)).thenReturn(mockDto);
         doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
 
         // when
         StudyDetailPageDto result = studyQueryService.getStudyDetailPage(1L, 1L);
 
         // then
-        List<LanguageDto> mockLanguageResult = mockStudy.getLanguagesDto();
-        StudyDetailPageDto mockResult = new StudyDetailPageDto(mockStudy.getName(), mockLanguageResult, null);
-        assertThat(result).isEqualTo(mockResult);
+        assertThat(result.getName()).isEqualTo(mockStudy.getName());
+        assertThat(result.getLanguages()).isEqualTo(mockStudy.getLanguagesDto());
+        assertThat(result.getCodingSpaces()).isEqualTo(mockDto.codingSpaces());
+        assertThat(result.getLastId()).isEqualTo(mockDto.lastId());
     }
 
 }
