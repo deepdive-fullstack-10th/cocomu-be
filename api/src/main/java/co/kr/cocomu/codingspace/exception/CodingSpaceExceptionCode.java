@@ -14,7 +14,7 @@ public enum CodingSpaceExceptionCode implements ExceptionCode {
     ALREADY_PARTICIPATION_SPACE(4004, "이미 코딩 스페이스에 참여되었습니다."),
     NOT_WAITING_STUDY(4005, "대기중인 코딩 스페이스가 아닙니다."),
     OVER_USER_COUNT(4006, "코딩 스페이스 최대 인원을 초과헀습니다."),
-    CAN_NOT_ENTER(4007, "코딩 스페이스가 종료 상태 일 때는 입장 할 수 없습니다."),
+    FINISHED_CODING_SPACE(4007, "종료된 코딩 스페이스입니다."),
     NO_PARTICIPATION_SPACE(4008, "코딩 스페이스에 참여중이지 않습니다."),
     ;
 

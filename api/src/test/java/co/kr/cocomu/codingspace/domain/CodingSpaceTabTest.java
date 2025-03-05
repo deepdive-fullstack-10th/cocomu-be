@@ -2,7 +2,6 @@ package co.kr.cocomu.codingspace.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,7 +13,6 @@ import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 class CodingSpaceTabTest {
 
@@ -61,7 +59,7 @@ class CodingSpaceTabTest {
     }
 
     @Test
-    void 코딩_스페이스에_참여한다() {
+    void 코딩_스페이스에_입장한다() {
         // given
         when(mockCodingSpace.getStatus()).thenReturn(CodingSpaceStatus.WAITING);
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
@@ -74,7 +72,7 @@ class CodingSpaceTabTest {
     }
 
     @Test
-    void 코딩_스페이스가_종료되면_참여할_수_없다() {
+    void 코딩_스페이스가_종료되면_입장할_수_없다() {
         // given
         when(mockCodingSpace.getStatus()).thenReturn(CodingSpaceStatus.FINISHED);
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
@@ -82,7 +80,31 @@ class CodingSpaceTabTest {
         // when & then
         assertThatThrownBy(() -> tab.enterTab())
             .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_NOT_ENTER);
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+    }
+    @Test
+    void 코딩_스페이스에_퇴장한다() {
+        // given
+        when(mockCodingSpace.getStatus()).thenReturn(CodingSpaceStatus.WAITING);
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when
+        tab.leaveTab();
+
+        // then
+        assertThat(tab.getStatus()).isEqualTo(TabStatus.INACTIVE);
+    }
+
+    @Test
+    void 종료된_코딩_스페이스에서는_퇴장이_없다() {
+        // given
+        when(mockCodingSpace.getStatus()).thenReturn(CodingSpaceStatus.FINISHED);
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when & then
+        assertThatThrownBy(() -> tab.leaveTab())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
     }
 
 }

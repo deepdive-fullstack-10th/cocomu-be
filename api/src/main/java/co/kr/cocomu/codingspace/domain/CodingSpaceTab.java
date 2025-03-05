@@ -80,9 +80,16 @@ public class CodingSpaceTab extends TimeBaseEntity {
 
     public void enterTab() {
         if (codingSpace.getStatus() == CodingSpaceStatus.FINISHED) {
-            throw new BadRequestException(CodingSpaceExceptionCode.CAN_NOT_ENTER);
+            throw new BadRequestException(CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
         }
         this.status = TabStatus.ACTIVE;
+    }
+
+    public void leaveTab() {
+        if (codingSpace.getStatus() == CodingSpaceStatus.FINISHED) {
+            throw new BadRequestException(CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+        }
+        this.status = TabStatus.INACTIVE;
     }
 
 }

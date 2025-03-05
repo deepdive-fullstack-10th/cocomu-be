@@ -1,13 +1,10 @@
-package co.kr.cocomu.codingspace.producer;
+package co.kr.cocomu.codingspace.stomp;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.dto.message.EventMessage;
 import co.kr.cocomu.user.domain.User;
@@ -34,6 +31,19 @@ class StompSSEProducerTest {
 
         // when
         stompSSEProducer.publishUserEnter(mockUser, 1L);
+
+        // then
+        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+    }
+
+    @Test
+    void 사용자_퇴장_알림이_발행된다() {
+        // given
+        User mockUser = mock(User.class);
+        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+
+        // when
+        stompSSEProducer.publishUserLeave(mockUser, 1L);
 
         // then
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));

@@ -5,12 +5,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
-import co.kr.cocomu.codingspace.producer.StompSSEProducer;
+import co.kr.cocomu.codingspace.stomp.StompSSEProducer;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.service.StudyDomainService;
@@ -86,6 +87,22 @@ class CodingSpaceCommandServiceTest {
 
         // then
         assertThat(result).isEqualTo("UUID");
+    }
+
+    @Test
+    void 코딩스페이스_퇴장을_한다() {
+        // given
+        CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        when(mockTab.getUser()).thenReturn(mockUser);
+        when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
+        doNothing().when(mockTab).leaveTab();
+        doNothing().when(stompSSEProducer).publishUserLeave(mockUser, 1L);
+
+        // when
+        codingSpaceCommandService.leaveSpace(1L, 1L);
+
+        // then
+        verify(stompSSEProducer).publishUserLeave(mockUser, 1L);
     }
 
     /*
