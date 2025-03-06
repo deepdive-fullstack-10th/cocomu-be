@@ -49,4 +49,17 @@ class StompSSEProducerTest {
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
     }
 
+    @Test
+    void 사용자_시작_알림이_발행된다() {
+        // given
+        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+
+        // when
+        stompSSEProducer.publishStartSpace(1L);
+
+        // then
+        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+    }
+
+
 }

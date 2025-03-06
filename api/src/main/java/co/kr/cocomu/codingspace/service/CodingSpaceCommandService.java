@@ -44,14 +44,12 @@ public class CodingSpaceCommandService {
         return codingSpace.getId();
     }
 
-    public String enterWaitingSpace(final Long codingSpaceId, final Long userId) {
+    public void enterWaitingSpace(final Long codingSpaceId, final Long userId) {
         final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
         tab.enterTab();
 
         final User user = tab.getUser();
         stompSSEProducer.publishUserEnter(user, codingSpaceId);
-
-        return tab.getDocumentKey();
     }
 
     public void leaveSpace(final Long userId, final Long codingSpaceId) {
@@ -60,6 +58,13 @@ public class CodingSpaceCommandService {
 
         final User user = tab.getUser();
         stompSSEProducer.publishUserLeave(user, codingSpaceId);
+    }
+
+    public void startSpace(final Long codingSpaceId, final Long userId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        tab.start();
+
+        stompSSEProducer.publishStartSpace(codingSpaceId);
     }
 
 }

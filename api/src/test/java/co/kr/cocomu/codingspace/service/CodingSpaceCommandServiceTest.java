@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -79,14 +80,13 @@ class CodingSpaceCommandServiceTest {
         when(mockTab.getUser()).thenReturn(mockUser);
         when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
         doNothing().when(mockTab).enterTab();
-        when(mockTab.getDocumentKey()).thenReturn("UUID");
         doNothing().when(stompSSEProducer).publishUserEnter(mockUser, 1L);
 
         // when
-        String result = codingSpaceCommandService.enterWaitingSpace(1L, 1L);
+        codingSpaceCommandService.enterWaitingSpace(1L, 1L);
 
         // then
-        assertThat(result).isEqualTo("UUID");
+        verify(stompSSEProducer).publishUserEnter(mockUser, 1L);
     }
 
     @Test
@@ -103,6 +103,21 @@ class CodingSpaceCommandServiceTest {
 
         // then
         verify(stompSSEProducer).publishUserLeave(mockUser, 1L);
+    }
+
+    @Test
+    void 코딩_스페이스_시작을_한다() {
+        // given
+        CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
+        doNothing().when(mockTab).start();
+        doNothing().when(stompSSEProducer).publishStartSpace(1L);
+
+        // when
+        codingSpaceCommandService.startSpace(1L, 1L);
+
+        // then
+        verify(stompSSEProducer).publishStartSpace(1L);
     }
 
     /*

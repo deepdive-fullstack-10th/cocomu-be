@@ -8,11 +8,12 @@ import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
-import co.kr.cocomu.codingspace.dto.response.page.WaitingPage;
-import co.kr.cocomu.codingspace.dto.response.page.WritePage;
+import co.kr.cocomu.codingspace.dto.page.WaitingPage;
+import co.kr.cocomu.codingspace.dto.page.WritePage;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.api.Api;
+import co.kr.cocomu.common.api.NoContent;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -80,6 +81,15 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         codingSpaceCommandService.enterWaitingSpace(codingSpaceId, userId);
         final WaitingPage result = codingSpaceQueryService.extractWaitingPage(codingSpaceId, userId);
         return Api.of(CodingSpaceApiCode.ENTER_WAITING_SPACE_SUCCESS, result);
+    }
+
+    @PostMapping("/{codingSpaceId}/start")
+    public NoContent startCodingSpace(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        codingSpaceCommandService.startSpace(codingSpaceId, userId);
+        return NoContent.from(CodingSpaceApiCode.START_CODING_SPACE);
     }
 
 }

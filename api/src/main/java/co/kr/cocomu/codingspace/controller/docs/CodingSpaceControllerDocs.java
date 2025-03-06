@@ -5,7 +5,7 @@ import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
-import co.kr.cocomu.codingspace.dto.response.page.WritePage;
+import co.kr.cocomu.codingspace.dto.page.WritePage;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
 import io.swagger.v3.oas.annotations.Operation;

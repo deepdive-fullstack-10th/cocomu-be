@@ -92,4 +92,18 @@ public class CodingSpaceTab extends TimeBaseEntity {
         this.status = TabStatus.INACTIVE;
     }
 
+    public boolean isActive() {
+        return this.status == TabStatus.ACTIVE;
+    }
+
+    public void start() {
+        if (status != TabStatus.ACTIVE) {
+            throw new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE);
+        }
+        if (role == CodingSpaceRole.MEMBER) {
+            throw new BadRequestException(CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+        }
+        codingSpace.start();
+    }
+
 }

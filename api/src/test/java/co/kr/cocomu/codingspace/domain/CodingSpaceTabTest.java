@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceRole;
@@ -105,6 +106,67 @@ class CodingSpaceTabTest {
         assertThatThrownBy(() -> tab.leaveTab())
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+    }
+
+    @Test
+    void 입장한_상태가_아니다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when
+        boolean result = tab.isActive();
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void 입장한_상태다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when
+        boolean result = tab.isActive();
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void 방장은_코딩_스페이스를_시작할_수_있다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when
+        tab.start();
+
+        // then
+        verify(mockCodingSpace).start();
+    }
+
+    @Test
+    void 입장하지_않았다면_시작_할_수_없다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when & then
+        assertThatThrownBy(() -> tab.start())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ENTER_SPACE);
+    }
+
+    @Test
+    void 방장이_아니라면_시작할_수_없다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createMember(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when & then
+        assertThatThrownBy(() -> tab.start())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
     }
 
 }

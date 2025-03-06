@@ -34,4 +34,11 @@ public class StompSSEProducer {
         log.info("===사용자 퇴장 알림 발행===> {}", message);
     }
 
+    public void publishStartSpace(final Long codingSpaceId) {
+        final EventMessage<Void> message = new EventMessage<>(EventType.STUDY_START, null);
+        final String destination = String.format(CODING_SPACE_PATH_FORMAT, codingSpaceId);
+        messagingTemplate.convertAndSend(destination, message);
+        log.info("===스터디 시작 알림 발행===> {}", message);
+    }
+
 }

@@ -144,6 +144,20 @@ public class CodingSpace {
         currentUserCount++;
     }
 
+    public void start() {
+        validateEnteredUserCount();
+        status = CodingSpaceStatus.RUNNING;
+        startTime = LocalDateTime.now();
+    }
+
+    private void validateEnteredUserCount() {
+        final long count = tabs.stream().filter(CodingSpaceTab::isActive).count();
+        if (count < 2) {
+            throw new BadRequestException(CodingSpaceExceptionCode.START_MINIMUM_USER_COUNT);
+        }
+    }
+
+
     private void validateJoin(final User user) {
         validateWaitingStatus();
         validateParticipation(user);

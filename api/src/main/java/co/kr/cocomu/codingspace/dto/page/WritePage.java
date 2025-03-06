@@ -1,4 +1,4 @@
-package co.kr.cocomu.codingspace.dto.response.page;
+package co.kr.cocomu.codingspace.dto.page;
 
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import io.swagger.v3.oas.annotations.media.Schema;

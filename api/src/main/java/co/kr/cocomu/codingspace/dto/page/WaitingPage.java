@@ -1,4 +1,4 @@
-package co.kr.cocomu.codingspace.dto.response.page;
+package co.kr.cocomu.codingspace.dto.page;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;

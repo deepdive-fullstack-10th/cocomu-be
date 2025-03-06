@@ -13,6 +13,7 @@ import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.user.domain.User;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -122,8 +123,19 @@ class CodingSpaceTest {
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.ALREADY_PARTICIPATION_SPACE);
     }
 
+    @Test
     void 코딩_테스트가_대기중이_아닐_경우_참여하면_예외가_발생한다() {
-        // todo: 코드 시작 및 종료 등을 작업 후 테스트
+        // given
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+        codingSpace.joinUser(otherUser);
+        codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
+        codingSpace.start();
+
+        // when & then
+        assertThatThrownBy(() -> codingSpace.joinUser(otherUser))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_WAITING_STUDY);
     }
 
     @Test
@@ -141,6 +153,33 @@ class CodingSpaceTest {
         assertThatThrownBy(() -> codingSpace.joinUser(otherUser2))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.OVER_USER_COUNT);
+    }
+
+    @Test
+    void 코딩_스페이스_시작이_된다() {
+        // given
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+        codingSpace.joinUser(mock(User.class));
+        codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
+
+        // when
+        codingSpace.start();
+
+        // then
+        assertThat(codingSpace.getStatus()).isEqualTo(CodingSpaceStatus.RUNNING);
+        assertThat(codingSpace.getStartTime()).isBefore(LocalDateTime.now());
+    }
+
+    @Test
+    void 입장한_인원이_2명_미만이라면_코딩스페이스_시작이_안된다() {
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+
+        // when & then
+        assertThatThrownBy(codingSpace::start)
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.START_MINIMUM_USER_COUNT);
     }
 
 }
