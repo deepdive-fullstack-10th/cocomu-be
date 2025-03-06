@@ -172,6 +172,21 @@ class CodingSpaceTest {
     }
 
     @Test
+    void 코딩_스페이스를_재시작하면_예외가_발생한다() {
+        // given
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+        codingSpace.joinUser(mock(User.class));
+        codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
+        codingSpace.start();
+
+        // when & then
+        assertThatThrownBy(codingSpace::start)
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.ALREADY_STARTING_SPACE);
+    }
+
+    @Test
     void 입장한_인원이_2명_미만이라면_코딩스페이스_시작이_안된다() {
         CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);

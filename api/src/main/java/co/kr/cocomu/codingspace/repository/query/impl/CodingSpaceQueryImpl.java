@@ -1,11 +1,15 @@
 package co.kr.cocomu.codingspace.repository.query.impl;
 
 import static co.kr.cocomu.codingspace.domain.QCodingSpace.codingSpace;
+import static co.kr.cocomu.codingspace.domain.QCodingSpaceTab.codingSpaceTab;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.getCodingSpaceCondition;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.isHost;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.isUserJoined;
 import static co.kr.cocomu.study.domain.QLanguage.language;
 
+import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
+import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
@@ -75,9 +79,49 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                     codingSpace.language.imageUrl.as("languageImageUrl")
                 ).as("language")
             ))
-            .from(codingSpace)
+            .from(codingSpaceTab)
+            .join(codingSpaceTab.codingSpace, codingSpace)
             .join(codingSpace.language, language)
-            .where(codingSpace.id.eq(codingSpaceId))
+            .where(
+                codingSpace.status.eq(CodingSpaceStatus.WAITING),
+                codingSpace.id.eq(codingSpaceId),
+                codingSpaceTab.status.eq(TabStatus.ACTIVE),
+                codingSpaceTab.user.id.eq(userId)
+            )
+            .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<StartingPage> findStartingPage(final Long codingSpaceId, final Long userId) {
+        return Optional.ofNullable(queryFactory
+            .select(Projections.fields(
+                StartingPage.class,
+                codingSpace.id.as("id"),
+                codingSpace.name.as("name"),
+                codingSpace.description.as("description"),
+                codingSpace.workbookUrl.as("workbookUrl"),
+                isHost(userId).as("hostMe"),
+                codingSpace.codingMinutes.as("codingMinutes"),
+                codingSpace.startTime.as("startTime"),
+                codingSpaceTab.id.as("tabId"),
+                codingSpaceTab.documentKey.as("documentKey"),
+                Projections.fields(
+                    LanguageDto.class,
+                    codingSpace.language.id.as("languageId"),
+                    codingSpace.language.name.as("languageName"),
+                    codingSpace.language.imageUrl.as("languageImageUrl")
+                ).as("language")
+            ))
+            .from(codingSpaceTab)
+            .join(codingSpaceTab.codingSpace, codingSpace)
+            .join(codingSpace.language, language)
+            .where(
+                codingSpace.status.eq(CodingSpaceStatus.RUNNING),
+                codingSpace.id.eq(codingSpaceId),
+                codingSpaceTab.status.eq(TabStatus.ACTIVE),
+                codingSpaceTab.user.id.eq(userId)
+            )
             .fetchOne()
         );
     }

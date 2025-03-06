@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.controller;
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
 import co.kr.cocomu.codingspace.controller.docs.CodingSpaceControllerDocs;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
+import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
@@ -100,6 +101,15 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
     ) {
         codingSpaceCommandService.startSpace(codingSpaceId, userId);
         return NoContent.from(CodingSpaceApiCode.START_CODING_SPACE);
+    }
+
+    @GetMapping("/{codingSpaceId}/starting-page")
+    public Api<StartingPage> getStartingPage(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final StartingPage result = codingSpaceQueryService.extractStaringPage(codingSpaceId, userId);
+        return Api.of(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS, result);
     }
 
 }

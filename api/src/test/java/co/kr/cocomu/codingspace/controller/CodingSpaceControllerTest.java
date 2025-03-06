@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
+import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
@@ -154,7 +155,23 @@ class CodingSpaceControllerTest extends BaseControllerTest {
         NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.START_CODING_SPACE.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.START_CODING_SPACE.getMessage());
+    }
 
+    @Test
+    void 코딩_스페이스_시작페이지_조회_요청이_성공한다() {
+        // given
+        StartingPage mockPage = new StartingPage();
+        when(codingSpaceQueryService.extractStaringPage(1L, 1L)).thenReturn(mockPage);
+
+        // when
+        String path = PATH_PREFIX + "/1/starting-page";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<StartingPage> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockPage);
     }
 
 }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
@@ -111,6 +112,32 @@ class CodingSpaceQueryServiceTest {
 
         // when & then
         assertThatThrownBy(() -> codingSpaceQueryService.extractWaitingPage(1L, 1L))
+            .isInstanceOf(NotFoundException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_FOUND_SPACE);
+    }
+
+    @Test
+    void 시작_페이지를_가져온다() {
+        // given
+        StartingPage mockPage = mock(StartingPage.class);
+        when(codingSpaceQuery.findStartingPage(1L, 1L)).thenReturn(Optional.of(mockPage));
+        when(codingSpaceTabQuery.findUsers(1L)).thenReturn(List.of());
+        when(testCaseQuery.findTestCases(1L)).thenReturn(List.of());
+
+        // when
+        StartingPage result = codingSpaceQueryService.extractStaringPage(1L, 1L);
+
+        // then
+        assertThat(result).isEqualTo(mockPage);
+    }
+
+    @Test
+    void 시작_페이지를_가져오지_못한다() {
+        // given
+        when(codingSpaceQuery.findStartingPage(1L, 1L)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> codingSpaceQueryService.extractStaringPage(1L, 1L))
             .isInstanceOf(NotFoundException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_FOUND_SPACE);
     }

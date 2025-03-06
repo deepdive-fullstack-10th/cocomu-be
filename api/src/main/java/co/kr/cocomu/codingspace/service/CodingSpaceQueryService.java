@@ -1,5 +1,6 @@
 package co.kr.cocomu.codingspace.service;
 
+import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
@@ -56,6 +57,16 @@ public class CodingSpaceQueryService {
                 waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
                 waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
                 return waitingPage;
+            })
+            .orElseThrow(() -> new NotFoundException(CodingSpaceExceptionCode.NOT_FOUND_SPACE));
+    }
+
+    public StartingPage extractStaringPage(final Long codingSpaceId, final Long userId) {
+        return codingSpaceQuery.findStartingPage(codingSpaceId, userId)
+            .map(startingPage -> {
+                startingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
+                startingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
+                return startingPage;
             })
             .orElseThrow(() -> new NotFoundException(CodingSpaceExceptionCode.NOT_FOUND_SPACE));
     }
