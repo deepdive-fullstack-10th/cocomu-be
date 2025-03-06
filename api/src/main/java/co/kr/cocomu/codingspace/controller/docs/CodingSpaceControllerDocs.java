@@ -5,6 +5,7 @@ import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
+import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
@@ -18,8 +19,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "004. COCOMU-CODING-SPACE", description = "코코무 코딩 스페이스 관련 API")
 public interface CodingSpaceControllerDocs {
@@ -202,5 +205,12 @@ public interface CodingSpaceControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     NoContent finishSpace(Long codingSpaceId, Long userId);
+
+    @Operation(summary = "코딩 스페이스 최종 코드 저장", description = "피드백 후 최종 코드를 저장하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "최종 코드 저장이 성공했습니다."
+    )
+    NoContent saveFinalCode(Long codingSpaceId, SaveCodeDto dto, Long userId);
 
 }

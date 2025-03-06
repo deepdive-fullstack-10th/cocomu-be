@@ -7,6 +7,7 @@ import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
+import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
@@ -138,6 +139,16 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
     ) {
         codingSpaceCommandService.finishSpace(codingSpaceId, userId);
         return NoContent.from(CodingSpaceApiCode.FINISH_SPACE_SUCCESS);
+    }
+
+    @PostMapping("/{codingSpaceId}/save")
+    public NoContent saveFinalCode(
+        @PathVariable final Long codingSpaceId,
+        @RequestBody @Valid final SaveCodeDto dto,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        codingSpaceCommandService.saveFinalCode(codingSpaceId, userId, dto.code());
+        return NoContent.from(CodingSpaceApiCode.SAVE_FINAL_CODE_SUCCESS);
     }
 
 }

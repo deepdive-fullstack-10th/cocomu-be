@@ -50,6 +50,9 @@ public class CodingSpaceTab extends TimeBaseEntity {
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
+    @Column(columnDefinition = "text")
+    private String finalCode;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(20)")
     private CodingSpaceRole role;
@@ -128,6 +131,10 @@ public class CodingSpaceTab extends TimeBaseEntity {
         if (role == CodingSpaceRole.MEMBER) {
             throw new BadRequestException(CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
         }
+    }
+
+    public void saveCode(final String code) {
+        this.finalCode = code;
     }
 
 }

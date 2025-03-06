@@ -252,4 +252,16 @@ class CodingSpaceTabTest {
         assertThat(tab.getStatus()).isEqualTo(TabStatus.FINISH);
     }
 
+    @Test
+    void 탭에서_작성된_최종_코드_저장을_한다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when
+        tab.saveCode("code");
+
+        // then
+        assertThat(tab.getFinalCode()).isEqualTo("code");
+    }
+
 }
