@@ -108,6 +108,16 @@ public class CodingSpaceTab extends TimeBaseEntity {
         codingSpace.startFeedBack();
     }
 
+    public void finishSpace() {
+        validateEnteredSpace();
+        validateHostRole();
+        codingSpace.finishSpace();
+    }
+
+    public void finish() {
+        this.status = TabStatus.FINISH;
+    }
+
     private void validateEnteredSpace() {
         if (status != TabStatus.ACTIVE) {
             throw new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE);

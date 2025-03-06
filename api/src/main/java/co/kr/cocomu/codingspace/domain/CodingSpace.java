@@ -1,6 +1,7 @@
 package co.kr.cocomu.codingspace.domain;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
@@ -158,6 +159,14 @@ public class CodingSpace {
         }
         status = CodingSpaceStatus.FEEDBACK;
         finishTime = LocalDateTime.now();
+    }
+
+    public void finishSpace() {
+        if (status != CodingSpaceStatus.FEEDBACK) {
+            throw new BadRequestException(CodingSpaceExceptionCode.CAN_NOT_FINISH);
+        }
+        status = CodingSpaceStatus.FINISHED;
+        tabs.stream().filter(CodingSpaceTab::isActive).forEach(CodingSpaceTab::finish);
     }
 
     private void validateStartStatus() {

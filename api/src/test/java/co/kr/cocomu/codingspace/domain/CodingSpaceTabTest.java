@@ -182,7 +182,7 @@ class CodingSpaceTabTest {
     }
 
     @Test
-    void 입장하지_않았다면_시작_할_수_없다() {
+    void 입장하지_않았다면_피드백을_시작_할_수_없다() {
         // given
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
 
@@ -202,6 +202,54 @@ class CodingSpaceTabTest {
         assertThatThrownBy(() -> tab.startFeedback())
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+    }
+
+    @Test
+    void 방장은_스터디_종료를_할_수_있다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when
+        tab.finishSpace();
+
+        // then
+        verify(mockCodingSpace).finishSpace();
+    }
+
+    @Test
+    void 입장하지_않았다면_스터디를_종료_할_수_없다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when & then
+        assertThatThrownBy(() -> tab.finishSpace())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ENTER_SPACE);
+    }
+
+    @Test
+    void 방장이_아니라면_스터디_종료를_할_수_없다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createMember(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when & then
+        assertThatThrownBy(() -> tab.finishSpace())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+    }
+
+    @Test
+    void 스페이스_종료_상태로_바뀐다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when
+        tab.finish();
+
+        // then
+        assertThat(tab.getStatus()).isEqualTo(TabStatus.FINISH);
     }
 
 }

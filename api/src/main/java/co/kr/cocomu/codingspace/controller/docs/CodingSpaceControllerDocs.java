@@ -1,5 +1,6 @@
 package co.kr.cocomu.codingspace.controller.docs;
 
+import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
@@ -140,7 +141,6 @@ public interface CodingSpaceControllerDocs {
     )
     NoContent startCodingSpace(Long codingSpaceId, Long userId);
 
-
     @Operation(summary = "코딩 스페이스 시작 페이지 조회", description = "코딩 스페이스 시작 페에지를 조회하는 기능")
     @ApiResponse(
         responseCode = "200",
@@ -166,10 +166,41 @@ public interface CodingSpaceControllerDocs {
                 코딩 스페이스에 참여중이지 않습니다.
                 코딩 스페이스 시작은 방장만 할 수 있습니다.
                 코딩 스페이스에 입장하지 않았습니다.
-                피드백 모드를 실행할 수 없습니다.
+                스터디 시작 상태일 때만 피드백 모드를 진행할 수 있습니다.
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     NoContent startFeedback(Long codingSpaceId, Long userId);
+
+    @Operation(summary = "코딩 스페이스 피드백 페이지 조회", description = "코딩 스페이스 피드백 페에지를 조회하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "코딩 테스트 피드백 페이지 조회에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = """
+            존재하지 않는 코딩 스페이스입니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    Api<FeedbackPage> getFeedbackPage(Long codingSpaceId, Long userId);
+
+    @Operation(summary = "코딩 스페이스 종료", description = "코딩 스페이스를 종료하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "코딩 스페이스 종료가 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "400",
+        description = """
+                코딩 스페이스에 참여중이지 않습니다.
+                코딩 스페이스에 입장하지 않았습니다.
+                코딩 스페이스 시작은 방장만 할 수 있습니다.
+                스터디 피드백 상태일 때만 종료할 수 있습니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    NoContent finishSpace(Long codingSpaceId, Long userId);
 
 }

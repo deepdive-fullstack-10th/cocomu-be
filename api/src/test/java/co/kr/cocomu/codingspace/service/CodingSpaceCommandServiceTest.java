@@ -137,6 +137,21 @@ class CodingSpaceCommandServiceTest {
         verify(stompSSEProducer).publishFeedback(1L);
     }
 
+    @Test
+    void 코딩_스페이스_종료를_한다() {
+        // given
+        CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
+        doNothing().when(mockTab).finishSpace();
+        doNothing().when(stompSSEProducer).publishFinish(1L);
+
+        // when
+        codingSpaceCommandService.finishSpace(1L, 1L);
+
+        // then
+        verify(stompSSEProducer).publishFinish(1L);
+    }
+
     /*
     * ========================== SET STUB ==========================
     * */

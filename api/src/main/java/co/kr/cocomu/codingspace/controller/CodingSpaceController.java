@@ -131,4 +131,13 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         return Api.of(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS, result);
     }
 
+    @PostMapping("/{codingSpaceId}/finish")
+    public NoContent finishSpace(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        codingSpaceCommandService.finishSpace(codingSpaceId, userId);
+        return NoContent.from(CodingSpaceApiCode.FINISH_SPACE_SUCCESS);
+    }
+
 }
