@@ -134,7 +134,7 @@ class CodingSpaceTabTest {
     }
 
     @Test
-    void 방장은_코딩_스페이스를_시작할_수_있다() {
+    void 방장은_코딩_스터디를_시작할_수_있다() {
         // given
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
         tab.enterTab();
@@ -147,7 +147,7 @@ class CodingSpaceTabTest {
     }
 
     @Test
-    void 입장하지_않았다면_시작_할_수_없다() {
+    void 입장하지_않았다면_코딩_스터디를_시작_할_수_없다() {
         // given
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
 
@@ -158,13 +158,48 @@ class CodingSpaceTabTest {
     }
 
     @Test
-    void 방장이_아니라면_시작할_수_없다() {
+    void 방장이_아니라면_코딩_스터디를_시작할_수_없다() {
         // given
         CodingSpaceTab tab = CodingSpaceTab.createMember(mockCodingSpace, mockUser);
         tab.enterTab();
 
         // when & then
         assertThatThrownBy(() -> tab.start())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+    }
+    @Test
+    void 방장은_코딩_스터디_피드백을_시작할_수_있다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when
+        tab.startFeedback();
+
+        // then
+        verify(mockCodingSpace).startFeedBack();
+    }
+
+    @Test
+    void 입장하지_않았다면_시작_할_수_없다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when & then
+        assertThatThrownBy(() -> tab.startFeedback())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ENTER_SPACE);
+    }
+
+    @Test
+    void 방장이_아니라면_피드백을_시작할_수_없다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createMember(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when & then
+        assertThatThrownBy(() -> tab.startFeedback())
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
     }

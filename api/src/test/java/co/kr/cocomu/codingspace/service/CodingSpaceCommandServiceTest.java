@@ -122,6 +122,21 @@ class CodingSpaceCommandServiceTest {
         verify(stompSSEProducer).publishStartSpace(1L);
     }
 
+    @Test
+    void 코딩_스페이스_피드맥_모드를_시작_한다() {
+        // given
+        CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
+        doNothing().when(mockTab).startFeedback();
+        doNothing().when(stompSSEProducer).publishFeedback(1L);
+
+        // when
+        codingSpaceCommandService.startFeedback(1L, 1L);
+
+        // then
+        verify(stompSSEProducer).publishFeedback(1L);
+    }
+
     /*
     * ========================== SET STUB ==========================
     * */

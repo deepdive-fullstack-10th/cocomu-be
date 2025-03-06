@@ -112,4 +112,13 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         return Api.of(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS, result);
     }
 
+    @PostMapping("/{codingSpaceId}/feedback")
+    public NoContent startFeedback(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        codingSpaceCommandService.startFeedback(codingSpaceId, userId);
+        return NoContent.from(CodingSpaceApiCode.START_FEEDBACK_MODE);
+    }
+
 }

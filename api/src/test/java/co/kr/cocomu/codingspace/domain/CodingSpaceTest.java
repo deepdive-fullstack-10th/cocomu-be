@@ -197,4 +197,33 @@ class CodingSpaceTest {
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.START_MINIMUM_USER_COUNT);
     }
 
+    @Test
+    void 코딩_스페이스_피드백_시작이_된다() {
+        // given
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+        codingSpace.joinUser(mock(User.class));
+        codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
+        codingSpace.start();
+
+        // when
+        codingSpace.startFeedBack();
+
+        // then
+        assertThat(codingSpace.getStatus()).isEqualTo(CodingSpaceStatus.FEEDBACK);
+        assertThat(codingSpace.getFinishTime()).isBefore(LocalDateTime.now());
+    }
+
+    @Test
+    void 코딩_스페이스가_시작_상태가_아니라면_피드백을_진행할_수_없다() {
+        // given
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+
+        // when & then
+        assertThatThrownBy(codingSpace::startFeedBack)
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_NOT_FEEDBACK);
+    }
+
 }

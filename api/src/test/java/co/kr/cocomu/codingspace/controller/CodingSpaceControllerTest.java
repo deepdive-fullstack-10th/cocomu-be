@@ -174,4 +174,20 @@ class CodingSpaceControllerTest extends BaseControllerTest {
         assertThat(result.result()).isEqualTo(mockPage);
     }
 
+    @Test
+    void 코딩_스페이스_피드백_모드_시작_요청이_성공한다() {
+        // given
+        doNothing().when(codingSpaceCommandService).startFeedback(1L, 1L);
+
+        // when
+        String path = PATH_PREFIX + "/1/feedback";
+        ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
+
+        // then
+        NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {
+        });
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.START_FEEDBACK_MODE.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.START_FEEDBACK_MODE.getMessage());
+    }
+
 }
