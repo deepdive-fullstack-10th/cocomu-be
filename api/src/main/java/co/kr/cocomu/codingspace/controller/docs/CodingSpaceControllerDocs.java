@@ -1,5 +1,6 @@
 package co.kr.cocomu.codingspace.controller.docs;
 
+import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
@@ -121,14 +122,15 @@ public interface CodingSpaceControllerDocs {
     )
     Api<WaitingPage> getWaitingPage(Long codingSpaceId, Long userId);
 
-    @Operation(summary = "코딩 스페이스 대기방 페이지 조회", description = "코딩 스페이스 대기방을 조회하는 기능")
+    @Operation(summary = "코딩 스페이스 시작", description = "코딩 스페이스 시작을 하는 기능")
     @ApiResponse(
         responseCode = "200",
-        description = "코딩 테스트 대기방 조회에 성공했습니다."
+        description = "코딩 스페이스 시작이 성공했습니다."
     )
     @ApiResponse(
         responseCode = "400",
         description = """
+                이미 시작된 코딩 스페이스입니다.
                 코딩 스페이스에 참여중이지 않습니다.
                 코딩 스페이스 시작은 방장만 할 수 있습니다.
                 코딩 스페이스에 입장하지 않았습니다.
@@ -137,5 +139,20 @@ public interface CodingSpaceControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     NoContent startCodingSpace(Long codingSpaceId, Long userId);
+
+
+    @Operation(summary = "코딩 스페이스 시작 페이지 조회", description = "코딩 스페이스 시작 페에지를 조회하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "코딩 테스트 시작 페이지 조회에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = """
+            존재하지 않는 코딩 스페이스입니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    Api<StartingPage> getStartingPage(Long codingSpaceId, Long userId);
 
 }

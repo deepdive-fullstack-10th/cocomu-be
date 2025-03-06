@@ -19,7 +19,7 @@ public enum CodingSpaceExceptionCode implements ExceptionCode {
     START_MINIMUM_USER_COUNT(4009, "스터디 시작 최소 인원은 2명입니다."),
     NOT_ENTER_SPACE(4010, "코딩 스페이스에 입장하지 않았습니다."),
     MEMBER_CAN_NOT_START(4011, "코딩 스페이스 시작은 방장만 할 수 있습니다."),
-    ALREADY_STARTING_SPACE(4012, "이미 시작된 스페이스입니다.");
+    ALREADY_STARTING_SPACE(4012, "이미 시작된 코딩 스페이스입니다.");
 
     private final int code;
     private final String message;
