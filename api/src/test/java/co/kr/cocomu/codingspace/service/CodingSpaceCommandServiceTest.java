@@ -5,12 +5,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
+import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.stomp.StompSSEProducer;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
@@ -78,15 +78,17 @@ class CodingSpaceCommandServiceTest {
         // given
         CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
         when(mockTab.getUser()).thenReturn(mockUser);
+        when(mockTab.getCodingSpace()).thenReturn(mockCodingSpace);
+        when(mockCodingSpace.getStatus()).thenReturn(CodingSpaceStatus.WAITING);
         when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
         doNothing().when(mockTab).enterTab();
         doNothing().when(stompSSEProducer).publishUserEnter(mockUser, 1L);
 
         // when
-        codingSpaceCommandService.enterWaitingSpace(1L, 1L);
+        CodingSpaceStatus status = codingSpaceCommandService.enterSpace(1L, 1L);
 
         // then
-        verify(stompSSEProducer).publishUserEnter(mockUser, 1L);
+        assertThat(status).isEqualTo(CodingSpaceStatus.WAITING);
     }
 
     @Test

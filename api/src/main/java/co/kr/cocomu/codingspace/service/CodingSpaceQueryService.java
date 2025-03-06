@@ -6,9 +6,11 @@ import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
+import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
 import co.kr.cocomu.codingspace.repository.query.TestCaseQuery;
+import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.service.StudyDomainService;
@@ -49,10 +51,13 @@ public class CodingSpaceQueryService {
     }
 
     public WaitingPage extractWaitingPage(final Long codingSpaceId, final Long userId) {
-        final WaitingPage waitingPage = codingSpaceQuery.findWaitingPage(codingSpaceId, userId);
-        waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
-        waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
-        return waitingPage;
+        return codingSpaceQuery.findWaitingPage(codingSpaceId, userId)
+            .map(waitingPage -> {
+                waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
+                waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
+                return waitingPage;
+            })
+            .orElseThrow(() -> new NotFoundException(CodingSpaceExceptionCode.NOT_FOUND_SPACE));
     }
 
 }

@@ -2,6 +2,7 @@ package co.kr.cocomu.codingspace.service;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
+import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.stomp.StompSSEProducer;
@@ -44,12 +45,14 @@ public class CodingSpaceCommandService {
         return codingSpace.getId();
     }
 
-    public void enterWaitingSpace(final Long codingSpaceId, final Long userId) {
+    public CodingSpaceStatus enterSpace(final Long codingSpaceId, final Long userId) {
         final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
         tab.enterTab();
 
         final User user = tab.getUser();
         stompSSEProducer.publishUserEnter(user, codingSpaceId);
+
+        return tab.getCodingSpace().getStatus();
     }
 
     public void leaveSpace(final Long userId, final Long codingSpaceId) {

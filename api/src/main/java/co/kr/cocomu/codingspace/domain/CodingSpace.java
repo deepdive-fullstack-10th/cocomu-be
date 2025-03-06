@@ -157,7 +157,6 @@ public class CodingSpace {
         }
     }
 
-
     private void validateJoin(final User user) {
         validateWaitingStatus();
         validateParticipation(user);

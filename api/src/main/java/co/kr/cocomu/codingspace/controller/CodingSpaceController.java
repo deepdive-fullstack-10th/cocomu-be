@@ -2,6 +2,7 @@ package co.kr.cocomu.codingspace.controller;
 
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
 import co.kr.cocomu.codingspace.controller.docs.CodingSpaceControllerDocs;
+import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
@@ -10,6 +11,7 @@ import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.page.WritePage;
+import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.api.Api;
@@ -73,14 +75,22 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         return Api.of(CodingSpaceApiCode.GET_CODING_SPACES_SUCCESS, result);
     }
 
-    @PostMapping("/{codingSpaceId}/waiting")
-    public Api<WaitingPage> enterWaitingSpace(
+    @PostMapping("/{codingSpaceId}/enter")
+    public Api<SpaceStatusDto> enterSpace(
         @PathVariable final Long codingSpaceId,
         @AuthenticationPrincipal final Long userId
     ) {
-        codingSpaceCommandService.enterWaitingSpace(codingSpaceId, userId);
+        final CodingSpaceStatus status = codingSpaceCommandService.enterSpace(codingSpaceId, userId);
+        return Api.of(CodingSpaceApiCode.ENTER_SPACE_SUCCESS, new SpaceStatusDto(status));
+    }
+
+    @GetMapping("/{codingSpaceId}/waiting-page")
+    public Api<WaitingPage> getWaitingPage(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
         final WaitingPage result = codingSpaceQueryService.extractWaitingPage(codingSpaceId, userId);
-        return Api.of(CodingSpaceApiCode.ENTER_WAITING_SPACE_SUCCESS, result);
+        return Api.of(CodingSpaceApiCode.GET_WAITING_PAGE_SUCCESS, result);
     }
 
     @PostMapping("/{codingSpaceId}/start")

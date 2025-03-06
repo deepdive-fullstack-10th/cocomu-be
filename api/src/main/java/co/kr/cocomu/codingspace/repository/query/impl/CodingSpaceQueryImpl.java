@@ -14,6 +14,7 @@ import co.kr.cocomu.codingspace.repository.query.CodingSpaceQuery;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -55,8 +56,8 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
             .fetch();
     }
 
-    public WaitingPage findWaitingPage(final Long codingSpaceId, final Long userId) {
-        return queryFactory
+    public Optional<WaitingPage> findWaitingPage(final Long codingSpaceId, final Long userId) {
+        return Optional.ofNullable(queryFactory
             .select(Projections.fields(
                 WaitingPage.class,
                 codingSpace.id.as("id"),
@@ -77,7 +78,8 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
             .from(codingSpace)
             .join(codingSpace.language, language)
             .where(codingSpace.id.eq(codingSpaceId))
-            .fetchOne();
+            .fetchOne()
+        );
     }
 
 }

@@ -1,13 +1,11 @@
 package co.kr.cocomu.codingspace.dto.page;
 
-import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

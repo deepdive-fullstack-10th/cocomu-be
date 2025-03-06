@@ -12,7 +12,8 @@ public enum CodingSpaceApiCode implements ApiCode {
     JOIN_CODING_SPACE_SUCCESS(4000, "코딩 스페이스 참여에 성공했습니다."),
     GET_WRITE_PAGE_SUCCESS(4000, "코딩 스페이스 생성 페이지 조회에 성공했습니다."),
     GET_CODING_SPACES_SUCCESS(4000, "코딩 스페이스 목록 조회에 성공했습니다."),
-    ENTER_WAITING_SPACE_SUCCESS(4000, "코딩 스페이스 대기방 입장에 성공했습니다."),
+    ENTER_SPACE_SUCCESS(4000, "코딩 스페이스 입장에 성공했습니다."),
+    GET_WAITING_PAGE_SUCCESS(4000, "코딩 스페이스 대기방 조회에 성공했습니다."),
     START_CODING_SPACE(4000, "코딩 스페이스 시작이 성공했습니다.");
 
     private final int code;
