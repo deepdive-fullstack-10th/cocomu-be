@@ -48,6 +48,7 @@ public class CodingSpace {
     private Long id;
 
     private String name;
+    @Column(columnDefinition = "text")
     private String description;
     private String workbookUrl;
 
@@ -142,6 +143,26 @@ public class CodingSpace {
 
     public void increaseCurrentUserCount() {
         currentUserCount++;
+    }
+
+    public void start() {
+        validateStartStatus();
+        validateEnteredUserCount();
+        status = CodingSpaceStatus.RUNNING;
+        startTime = LocalDateTime.now();
+    }
+
+    private void validateStartStatus() {
+        if (status == CodingSpaceStatus.RUNNING) {
+            throw new BadRequestException(CodingSpaceExceptionCode.ALREADY_STARTING_SPACE);
+        }
+    }
+
+    private void validateEnteredUserCount() {
+        final long count = tabs.stream().filter(CodingSpaceTab::isActive).count();
+        if (count < 2) {
+            throw new BadRequestException(CodingSpaceExceptionCode.START_MINIMUM_USER_COUNT);
+        }
     }
 
     private void validateJoin(final User user) {

@@ -8,13 +8,14 @@ import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCon
 import static co.kr.cocomu.study.domain.QLanguage.language;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
+import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
-import co.kr.cocomu.codingspace.dto.response.page.WaitingPage;
+import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.repository.query.CodingSpaceQuery;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -59,8 +60,8 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
             .fetch();
     }
 
-    public WaitingPage findWaitingPage(final Long codingSpaceId, final Long userId) {
-        return queryFactory
+    public Optional<WaitingPage> findWaitingPage(final Long codingSpaceId, final Long userId) {
+        return Optional.ofNullable(queryFactory
             .select(Projections.fields(
                 WaitingPage.class,
                 codingSpace.id.as("id"),
@@ -78,10 +79,51 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                     codingSpace.language.imageUrl.as("languageImageUrl")
                 ).as("language")
             ))
-            .from(codingSpace)
+            .from(codingSpaceTab)
+            .join(codingSpaceTab.codingSpace, codingSpace)
             .join(codingSpace.language, language)
-            .where(codingSpace.id.eq(codingSpaceId))
-            .fetchOne();
+            .where(
+                codingSpace.status.eq(CodingSpaceStatus.WAITING),
+                codingSpace.id.eq(codingSpaceId),
+                codingSpaceTab.status.eq(TabStatus.ACTIVE),
+                codingSpaceTab.user.id.eq(userId)
+            )
+            .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<StartingPage> findStartingPage(final Long codingSpaceId, final Long userId) {
+        return Optional.ofNullable(queryFactory
+            .select(Projections.fields(
+                StartingPage.class,
+                codingSpace.id.as("id"),
+                codingSpace.name.as("name"),
+                codingSpace.description.as("description"),
+                codingSpace.workbookUrl.as("workbookUrl"),
+                isHost(userId).as("hostMe"),
+                codingSpace.codingMinutes.as("codingMinutes"),
+                codingSpace.startTime.as("startTime"),
+                codingSpaceTab.id.as("tabId"),
+                codingSpaceTab.documentKey.as("documentKey"),
+                Projections.fields(
+                    LanguageDto.class,
+                    codingSpace.language.id.as("languageId"),
+                    codingSpace.language.name.as("languageName"),
+                    codingSpace.language.imageUrl.as("languageImageUrl")
+                ).as("language")
+            ))
+            .from(codingSpaceTab)
+            .join(codingSpaceTab.codingSpace, codingSpace)
+            .join(codingSpace.language, language)
+            .where(
+                codingSpace.status.eq(CodingSpaceStatus.RUNNING),
+                codingSpace.id.eq(codingSpaceId),
+                codingSpaceTab.status.eq(TabStatus.ACTIVE),
+                codingSpaceTab.user.id.eq(userId)
+            )
+            .fetchOne()
+        );
     }
 
 }
