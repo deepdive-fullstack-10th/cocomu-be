@@ -9,6 +9,7 @@ import static co.kr.cocomu.study.domain.QLanguage.language;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
+import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
@@ -118,6 +119,39 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
             .join(codingSpace.language, language)
             .where(
                 codingSpace.status.eq(CodingSpaceStatus.RUNNING),
+                codingSpace.id.eq(codingSpaceId),
+                codingSpaceTab.status.eq(TabStatus.ACTIVE),
+                codingSpaceTab.user.id.eq(userId)
+            )
+            .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<FeedbackPage> findFeedbackPage(final Long codingSpaceId, final Long userId) {
+        return Optional.ofNullable(queryFactory
+            .select(Projections.fields(
+                FeedbackPage.class,
+                codingSpace.id.as("id"),
+                codingSpace.name.as("name"),
+                codingSpace.description.as("description"),
+                codingSpace.workbookUrl.as("workbookUrl"),
+                isHost(userId).as("hostMe"),
+                codingSpace.codingMinutes.as("codingMinutes"),
+                codingSpace.startTime.as("startTime"),
+                codingSpace.finishTime.as("finishTime"),
+                Projections.fields(
+                    LanguageDto.class,
+                    codingSpace.language.id.as("languageId"),
+                    codingSpace.language.name.as("languageName"),
+                    codingSpace.language.imageUrl.as("languageImageUrl")
+                ).as("language")
+            ))
+            .from(codingSpaceTab)
+            .join(codingSpaceTab.codingSpace, codingSpace)
+            .join(codingSpace.language, language)
+            .where(
+                codingSpace.status.eq(CodingSpaceStatus.FEEDBACK),
                 codingSpace.id.eq(codingSpaceId),
                 codingSpaceTab.status.eq(TabStatus.ACTIVE),
                 codingSpaceTab.user.id.eq(userId)

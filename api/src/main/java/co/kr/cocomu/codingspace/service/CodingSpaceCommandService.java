@@ -70,4 +70,11 @@ public class CodingSpaceCommandService {
         stompSSEProducer.publishStartSpace(codingSpaceId);
     }
 
+    public void startFeedback(final Long codingSpaceId, final Long userId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        tab.startFeedback();
+
+        stompSSEProducer.publishFeedback(codingSpaceId);
+    }
+
 }

@@ -97,13 +97,27 @@ public class CodingSpaceTab extends TimeBaseEntity {
     }
 
     public void start() {
+        validateEnteredSpace();
+        validateHostRole();
+        codingSpace.start();
+    }
+
+    public void startFeedback() {
+        validateEnteredSpace();
+        validateHostRole();
+        codingSpace.startFeedBack();
+    }
+
+    private void validateEnteredSpace() {
         if (status != TabStatus.ACTIVE) {
             throw new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE);
         }
+    }
+
+    private void validateHostRole() {
         if (role == CodingSpaceRole.MEMBER) {
             throw new BadRequestException(CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
         }
-        codingSpace.start();
     }
 
 }

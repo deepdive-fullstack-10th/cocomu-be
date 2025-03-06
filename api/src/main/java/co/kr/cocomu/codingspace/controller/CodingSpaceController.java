@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.controller;
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
 import co.kr.cocomu.codingspace.controller.docs.CodingSpaceControllerDocs;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
+import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
@@ -109,6 +110,24 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         @AuthenticationPrincipal final Long userId
     ) {
         final StartingPage result = codingSpaceQueryService.extractStaringPage(codingSpaceId, userId);
+        return Api.of(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS, result);
+    }
+
+    @PostMapping("/{codingSpaceId}/feedback")
+    public NoContent startFeedback(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        codingSpaceCommandService.startFeedback(codingSpaceId, userId);
+        return NoContent.from(CodingSpaceApiCode.START_FEEDBACK_MODE);
+    }
+
+    @GetMapping("/{codingSpaceId}/feedback-page")
+    public Api<FeedbackPage> getFeedbackPage(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final FeedbackPage result = codingSpaceQueryService.extractFeedbackPage(codingSpaceId, userId);
         return Api.of(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS, result);
     }
 

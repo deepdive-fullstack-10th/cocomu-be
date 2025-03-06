@@ -50,7 +50,7 @@ class StompSSEProducerTest {
     }
 
     @Test
-    void 사용자_시작_알림이_발행된다() {
+    void 코딩_스터디_시작_알림이_발행된다() {
         // given
         doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
 
@@ -61,5 +61,16 @@ class StompSSEProducerTest {
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
     }
 
+    @Test
+    void 코딩_스터디_피드백_알림이_발행된다() {
+        // given
+        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+
+        // when
+        stompSSEProducer.publishFeedback(1L);
+
+        // then
+        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+    }
 
 }

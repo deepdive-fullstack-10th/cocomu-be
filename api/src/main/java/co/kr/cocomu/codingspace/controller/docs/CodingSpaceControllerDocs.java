@@ -155,4 +155,21 @@ public interface CodingSpaceControllerDocs {
     )
     Api<StartingPage> getStartingPage(Long codingSpaceId, Long userId);
 
+    @Operation(summary = "코딩 스페이스 피드백 시작", description = "코딩 스페이스 피드백을 시작 하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "피드백 모드가 시작되었습니다."
+    )
+    @ApiResponse(
+        responseCode = "400",
+        description = """
+                코딩 스페이스에 참여중이지 않습니다.
+                코딩 스페이스 시작은 방장만 할 수 있습니다.
+                코딩 스페이스에 입장하지 않았습니다.
+                피드백 모드를 실행할 수 없습니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    NoContent startFeedback(Long codingSpaceId, Long userId);
+
 }

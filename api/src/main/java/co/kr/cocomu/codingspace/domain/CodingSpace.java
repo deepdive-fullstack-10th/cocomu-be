@@ -152,8 +152,16 @@ public class CodingSpace {
         startTime = LocalDateTime.now();
     }
 
+    public void startFeedBack() {
+        if (status != CodingSpaceStatus.RUNNING) {
+            throw new BadRequestException(CodingSpaceExceptionCode.CAN_NOT_FEEDBACK);
+        }
+        status = CodingSpaceStatus.FEEDBACK;
+        finishTime = LocalDateTime.now();
+    }
+
     private void validateStartStatus() {
-        if (status == CodingSpaceStatus.RUNNING) {
+        if (status != CodingSpaceStatus.WAITING) {
             throw new BadRequestException(CodingSpaceExceptionCode.ALREADY_STARTING_SPACE);
         }
     }
