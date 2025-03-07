@@ -6,17 +6,22 @@ import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCon
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.isHost;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.isUserJoined;
 import static co.kr.cocomu.study.domain.QLanguage.language;
+import static co.kr.cocomu.study.domain.QStudyUser.studyUser;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
+import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.repository.query.CodingSpaceQuery;
+import co.kr.cocomu.study.domain.QStudy;
+import co.kr.cocomu.study.domain.QStudyUser;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -155,6 +160,36 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                 codingSpace.id.eq(codingSpaceId),
                 codingSpaceTab.status.eq(TabStatus.ACTIVE),
                 codingSpaceTab.user.id.eq(userId)
+            )
+            .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<FinishPage> findFinishPage(final Long codingSpaceId, final Long userId) {
+        return Optional.ofNullable(queryFactory
+            .select(Projections.fields(
+                FinishPage.class,
+                codingSpace.id.as("id"),
+                codingSpace.name.as("name"),
+                codingSpace.description.as("description"),
+                codingSpace.workbookUrl.as("workbookUrl"),
+                codingSpace.codingMinutes.as("codingMinutes"),
+                codingSpace.startTime.as("startTime"),
+                codingSpace.finishTime.as("finishTime")
+            ))
+            .from(codingSpace)
+            .where(
+                codingSpace.status.eq(CodingSpaceStatus.FINISHED),
+                codingSpace.id.eq(codingSpaceId),
+                JPAExpressions
+                    .selectOne()
+                    .from(studyUser)
+                    .where(
+                        studyUser.study.id.eq(codingSpace.study.id),
+                        studyUser.user.id.eq(userId)
+                    )
+                    .exists()
             )
             .fetchOne()
         );

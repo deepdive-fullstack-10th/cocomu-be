@@ -9,6 +9,7 @@ import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.domain.QCodingSpaceTab;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.response.AllTabDto;
+import co.kr.cocomu.codingspace.dto.response.FinishTabDto;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
 import co.kr.cocomu.codingspace.repository.query.CodingSpaceTabQuery;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
@@ -79,6 +80,27 @@ public class CodingSpaceTabQueryImpl implements CodingSpaceTabQuery {
             .where(
                 codingSpaceTab.codingSpace.id.eq(codingSpaceId),
                 codingSpaceTab.status.eq(TabStatus.ACTIVE)
+            )
+            .fetch();
+    }
+
+    @Override
+    public List<FinishTabDto> findAllFinishedTabs(final Long codingSpaceId) {
+        return queryFactory
+            .select(Projections.fields(
+                FinishTabDto.class,
+                codingSpaceTab.id.as("tabId"),
+                codingSpaceTab.finalCode.as("code"),
+                codingSpaceTab.user.id.as("userId"),
+                codingSpaceTab.user.nickname.as("nickname"),
+                codingSpaceTab.user.profileImageUrl.as("profileImageUrl"),
+                codingSpaceTab.role.as("role")
+            ))
+            .from(codingSpaceTab)
+            .join(codingSpaceTab.user, user)
+            .where(
+                codingSpaceTab.codingSpace.id.eq(codingSpaceId),
+                codingSpaceTab.status.eq(TabStatus.FINISH)
             )
             .fetch();
     }

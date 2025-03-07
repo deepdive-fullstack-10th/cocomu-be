@@ -9,23 +9,24 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
+import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
+import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
-import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
 import co.kr.cocomu.codingspace.repository.query.TestCaseQuery;
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.service.StudyDomainService;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -113,8 +114,8 @@ class CodingSpaceQueryServiceTest {
 
         // when & then
         assertThatThrownBy(() -> codingSpaceQueryService.extractWaitingPage(1L, 1L))
-            .isInstanceOf(NotFoundException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_FOUND_SPACE);
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ENTER_SPACE);
     }
 
     @Test
@@ -139,8 +140,8 @@ class CodingSpaceQueryServiceTest {
 
         // when & then
         assertThatThrownBy(() -> codingSpaceQueryService.extractStaringPage(1L, 1L))
-            .isInstanceOf(NotFoundException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_FOUND_SPACE);
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ENTER_SPACE);
     }
 
     @Test
@@ -165,8 +166,34 @@ class CodingSpaceQueryServiceTest {
 
         // when & then
         assertThatThrownBy(() -> codingSpaceQueryService.extractFeedbackPage(1L, 1L))
-            .isInstanceOf(NotFoundException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_FOUND_SPACE);
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ENTER_SPACE);
+    }
+
+    @Test
+    void 종료_페이지를_가져온다() {
+        // given
+        FinishPage mockPage = mock(FinishPage.class);
+        when(codingSpaceQuery.findFinishPage(1L, 1L)).thenReturn(Optional.of(mockPage));
+        when(codingSpaceTabQuery.findAllFinishedTabs(1L)).thenReturn(List.of());
+        when(testCaseQuery.findTestCases(1L)).thenReturn(List.of());
+
+        // when
+        FinishPage result = codingSpaceQueryService.extractFinishPage(1L, 1L);
+
+        // then
+        assertThat(result).isEqualTo(mockPage);
+    }
+
+    @Test
+    void 종료_페이지를_가져오지_못한다() {
+        // given
+        when(codingSpaceQuery.findFinishPage(1L, 1L)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> codingSpaceQueryService.extractFinishPage(1L, 1L))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NO_STUDY_MEMBERSHIP);
     }
 
 }

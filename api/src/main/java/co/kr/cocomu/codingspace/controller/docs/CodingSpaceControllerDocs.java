@@ -1,6 +1,7 @@
 package co.kr.cocomu.codingspace.controller.docs;
 
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
+import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
@@ -118,9 +119,9 @@ public interface CodingSpaceControllerDocs {
         description = "코딩 테스트 대기방 조회에 성공했습니다."
     )
     @ApiResponse(
-        responseCode = "404",
+        responseCode = "400",
         description = """
-            존재하지 않는 코딩 스페이스입니다.
+            코딩 스페이스에 입장하지 않았습니다.
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
@@ -147,12 +148,12 @@ public interface CodingSpaceControllerDocs {
     @Operation(summary = "코딩 스페이스 시작 페이지 조회", description = "코딩 스페이스 시작 페에지를 조회하는 기능")
     @ApiResponse(
         responseCode = "200",
-        description = "코딩 테스트 시작 페이지 조회에 성공했습니다."
+        description = "코딩 스페이스 시작 페이지 조회에 성공했습니다."
     )
     @ApiResponse(
-        responseCode = "404",
+        responseCode = "400",
         description = """
-            존재하지 않는 코딩 스페이스입니다.
+            코딩 스페이스에 입장하지 않았습니다.
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
@@ -181,9 +182,9 @@ public interface CodingSpaceControllerDocs {
         description = "코딩 테스트 피드백 페이지 조회에 성공했습니다."
     )
     @ApiResponse(
-        responseCode = "404",
+        responseCode = "400",
         description = """
-            존재하지 않는 코딩 스페이스입니다.
+            코딩 스페이스에 입장하지 않았습니다.
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
@@ -212,5 +213,19 @@ public interface CodingSpaceControllerDocs {
         description = "최종 코드 저장이 성공했습니다."
     )
     NoContent saveFinalCode(Long codingSpaceId, SaveCodeDto dto, Long userId);
+
+    @Operation(summary = "코딩 스페이스 종료 페이지 조회", description = "스터디 종료 페이지를 조회하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "코딩 스페이스 종료 페이지 조회에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "400",
+        description = """
+            스터디에 참여한 회원이 아닙니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    Api<FinishPage> getFinishPage(Long codingSpaceId, Long userId);
 
 }

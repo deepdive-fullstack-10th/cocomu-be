@@ -1,17 +1,19 @@
 package co.kr.cocomu.codingspace.service;
 
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
+import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
+import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
-import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
 import co.kr.cocomu.codingspace.repository.query.TestCaseQuery;
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.StudyLanguage;
@@ -59,7 +61,7 @@ public class CodingSpaceQueryService {
                 waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
                 return waitingPage;
             })
-            .orElseThrow(() -> new NotFoundException(CodingSpaceExceptionCode.NOT_FOUND_SPACE));
+            .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE));
     }
 
     public StartingPage extractStaringPage(final Long codingSpaceId, final Long userId) {
@@ -69,17 +71,27 @@ public class CodingSpaceQueryService {
                 startingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
                 return startingPage;
             })
-            .orElseThrow(() -> new NotFoundException(CodingSpaceExceptionCode.NOT_FOUND_SPACE));
+            .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE));
     }
 
     public FeedbackPage extractFeedbackPage(final Long codingSpaceId, final Long userId) {
         return codingSpaceQuery.findFeedbackPage(codingSpaceId, userId)
-            .map(startingPage -> {
-                startingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
-                startingPage.setActiveTabs(codingSpaceTabQuery.findAllTabs(codingSpaceId));
-                return startingPage;
+            .map(feedbackPage -> {
+                feedbackPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
+                feedbackPage.setActiveTabs(codingSpaceTabQuery.findAllTabs(codingSpaceId));
+                return feedbackPage;
             })
-            .orElseThrow(() -> new NotFoundException(CodingSpaceExceptionCode.NOT_FOUND_SPACE));
+            .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE));
+    }
+
+    public FinishPage extractFinishPage(final Long codingSpaceId, final Long userId) {
+        return codingSpaceQuery.findFinishPage(codingSpaceId, userId)
+            .map(finishPage -> {
+                finishPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
+                finishPage.setAllFinishedTabs(codingSpaceTabQuery.findAllFinishedTabs(codingSpaceId));
+                return finishPage;
+            })
+            .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NO_STUDY_MEMBERSHIP));
     }
 
 }
