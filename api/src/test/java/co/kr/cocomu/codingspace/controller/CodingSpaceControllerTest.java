@@ -4,21 +4,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
+import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
+import co.kr.cocomu.codingspace.dto.page.WaitingPage;
+import co.kr.cocomu.codingspace.dto.page.WritePage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
+import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
-import co.kr.cocomu.codingspace.dto.page.WaitingPage;
-import co.kr.cocomu.codingspace.dto.page.WritePage;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
@@ -203,10 +204,57 @@ class CodingSpaceControllerTest extends BaseControllerTest {
 
         // then
         Api<FeedbackPage> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_STARTING_PAGE_SUCCESS.getMessage());
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_FEEDBACK_PAGE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_FEEDBACK_PAGE_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockPage);
     }
 
+    @Test
+    void 코딩_스페이스_종료_요청이_성공한다() {
+        // given
+        doNothing().when(codingSpaceCommandService).finishSpace(1L, 1L);
+
+        // when
+        String path = PATH_PREFIX + "/1/finish";
+        ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
+
+        // then
+        NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.FINISH_SPACE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.FINISH_SPACE_SUCCESS.getMessage());
+    }
+
+    @Test
+    void 코딩_스페이스_최종_코드_저장_요청이_성공한다() {
+        // given
+        SaveCodeDto dto = new SaveCodeDto("code");
+        doNothing().when(codingSpaceCommandService).saveFinalCode(1L, 1L, "code");
+
+        // when
+        String path = PATH_PREFIX + "/1/save";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
+
+        // then
+        NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.SAVE_FINAL_CODE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.SAVE_FINAL_CODE_SUCCESS.getMessage());
+    }
+
+    @Test
+    void 코딩_스페이스_종료_페이지_조회_요청이_성공한다() {
+        // given
+        FinishPage mockPage = new FinishPage();
+        when(codingSpaceQueryService.extractFinishPage(1L, 1L)).thenReturn(mockPage);
+
+        // when
+        String path = PATH_PREFIX + "/1/finish-page";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<FinishPage> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_FINISH_PAGE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_FINISH_PAGE_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockPage);
+    }
 
 }

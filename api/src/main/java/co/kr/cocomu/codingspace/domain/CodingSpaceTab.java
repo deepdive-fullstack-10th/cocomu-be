@@ -50,6 +50,9 @@ public class CodingSpaceTab extends TimeBaseEntity {
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
+    @Column(columnDefinition = "text")
+    private String finalCode;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(20)")
     private CodingSpaceRole role;
@@ -86,10 +89,9 @@ public class CodingSpaceTab extends TimeBaseEntity {
     }
 
     public void leaveTab() {
-        if (codingSpace.getStatus() == CodingSpaceStatus.FINISHED) {
-            throw new BadRequestException(CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+        if (codingSpace.getStatus() != CodingSpaceStatus.FINISHED) {
+            this.status = TabStatus.INACTIVE;
         }
-        this.status = TabStatus.INACTIVE;
     }
 
     public boolean isActive() {
@@ -106,6 +108,20 @@ public class CodingSpaceTab extends TimeBaseEntity {
         validateEnteredSpace();
         validateHostRole();
         codingSpace.startFeedBack();
+    }
+
+    public void finishSpace() {
+        validateEnteredSpace();
+        validateHostRole();
+        codingSpace.finishSpace();
+    }
+
+    public void saveCode(final String code) {
+        if (status != TabStatus.ACTIVE) {
+            throw new BadRequestException(CodingSpaceExceptionCode.CAN_SAVE_ONLY_ACTIVE);
+        }
+        this.finalCode = code;
+        this.status = TabStatus.FINISH;
     }
 
     private void validateEnteredSpace() {

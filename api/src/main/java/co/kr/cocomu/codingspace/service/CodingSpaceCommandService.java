@@ -77,4 +77,16 @@ public class CodingSpaceCommandService {
         stompSSEProducer.publishFeedback(codingSpaceId);
     }
 
+    public void finishSpace(final Long codingSpaceId, final Long userId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        tab.finishSpace();
+
+        stompSSEProducer.publishFinish(codingSpaceId);
+    }
+
+    public void saveFinalCode(final Long codingSpaceId, final Long userId, final String code) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        tab.saveCode(code);
+    }
+
 }

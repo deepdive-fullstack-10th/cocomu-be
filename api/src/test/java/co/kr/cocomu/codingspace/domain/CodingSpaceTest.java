@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
@@ -224,6 +225,38 @@ class CodingSpaceTest {
         assertThatThrownBy(codingSpace::startFeedBack)
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_NOT_FEEDBACK);
+    }
+
+    @Test
+    void 코딩_스페이스_종료가_된다() {
+        // given
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+        codingSpace.joinUser(mock(User.class));
+        codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
+        codingSpace.start();
+        codingSpace.startFeedBack();
+
+        // when
+        codingSpace.finishSpace();
+
+        // then
+        assertThat(codingSpace.getStatus()).isEqualTo(CodingSpaceStatus.FINISHED);
+    }
+
+    @Test
+    void 코딩_스페이스가_피드백_상태가_아니라면_종료_할_수_없다() {
+        // given
+        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+        codingSpace.joinUser(mock(User.class));
+        codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
+        codingSpace.start();
+
+        // when & then
+        assertThatThrownBy(codingSpace::finishSpace)
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_NOT_FINISH);
     }
 
 }

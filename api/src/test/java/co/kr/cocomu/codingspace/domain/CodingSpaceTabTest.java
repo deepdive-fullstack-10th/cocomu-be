@@ -1,6 +1,7 @@
 package co.kr.cocomu.codingspace.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -103,9 +104,8 @@ class CodingSpaceTabTest {
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
 
         // when & then
-        assertThatThrownBy(() -> tab.leaveTab())
-            .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+        assertThatCode(() -> tab.leaveTab()).doesNotThrowAnyException();
+
     }
 
     @Test
@@ -182,7 +182,7 @@ class CodingSpaceTabTest {
     }
 
     @Test
-    void 입장하지_않았다면_시작_할_수_없다() {
+    void 입장하지_않았다면_피드백을_시작_할_수_없다() {
         // given
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
 
@@ -202,6 +202,68 @@ class CodingSpaceTabTest {
         assertThatThrownBy(() -> tab.startFeedback())
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+    }
+
+    @Test
+    void 방장은_스터디_종료를_할_수_있다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when
+        tab.finishSpace();
+
+        // then
+        verify(mockCodingSpace).finishSpace();
+    }
+
+    @Test
+    void 입장하지_않았다면_스터디를_종료_할_수_없다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+
+        // when & then
+        assertThatThrownBy(() -> tab.finishSpace())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ENTER_SPACE);
+    }
+
+    @Test
+    void 방장이_아니라면_스터디_종료를_할_수_없다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createMember(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when & then
+        assertThatThrownBy(() -> tab.finishSpace())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+    }
+
+    @Test
+    void 탭에서_작성된_최종_코드_저장을_한다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
+
+        // when
+        tab.saveCode("code");
+
+        // then
+        assertThat(tab.getFinalCode()).isEqualTo("code");
+    }
+
+    @Test
+    void 코드_스페이스_종료_후_코드_저장이_되지않는다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
+        tab.saveCode("code");
+
+        // when & then
+        assertThatThrownBy(() -> tab.saveCode("code"))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_SAVE_ONLY_ACTIVE);
     }
 
 }

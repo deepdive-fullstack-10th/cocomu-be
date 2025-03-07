@@ -1,6 +1,7 @@
 package co.kr.cocomu.codingspace.domain;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
@@ -9,11 +10,13 @@ import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.user.domain.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -57,7 +60,7 @@ public class CodingSpace {
     private Study study;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "language_id")
+    @JoinColumn(name = "language_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Language language;
 
     private int codingMinutes;
@@ -158,6 +161,13 @@ public class CodingSpace {
         }
         status = CodingSpaceStatus.FEEDBACK;
         finishTime = LocalDateTime.now();
+    }
+
+    public void finishSpace() {
+        if (status != CodingSpaceStatus.FEEDBACK) {
+            throw new BadRequestException(CodingSpaceExceptionCode.CAN_NOT_FINISH);
+        }
+        status = CodingSpaceStatus.FINISHED;
     }
 
     private void validateStartStatus() {
