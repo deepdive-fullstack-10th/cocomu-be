@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.context.WebApplicationContext;
 
 @Import(SecurityConfig.class)
-public class BaseControllerTest {
+public class BaseExecutorControllerTest {
 
     @MockBean
     private JwtProvider jwtProvider;

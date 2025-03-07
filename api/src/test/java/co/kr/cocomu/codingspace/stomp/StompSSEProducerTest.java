@@ -20,8 +20,7 @@ class StompSSEProducerTest {
 
     @Mock private SimpMessagingTemplate simpMessagingTemplate;
 
-    @InjectMocks
-    private StompSSEProducer stompSSEProducer;
+    @InjectMocks private StompSSEProducer stompSSEProducer;
 
     @Test
     void 사용자_입장_알림이_발행된다() {

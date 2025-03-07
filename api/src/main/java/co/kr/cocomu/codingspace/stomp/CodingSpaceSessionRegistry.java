@@ -13,7 +13,7 @@ public class CodingSpaceSessionRegistry {
 
     public void registerSession(final String sessionId, final Long userId, final Long codingSpaceId) {
         sessions.put(sessionId, new SessionInfo(userId, codingSpaceId));
-        log.info("세션 등록: sessionId={}, userId={}, codingSpaceId={}", sessionId, userId, codingSpaceId);
+        log.info("세션 등록: sessionId={}, userId={}, tabId={}", sessionId, userId, codingSpaceId);
     }
 
     public SessionInfo getSessionInfo(final String sessionId) {

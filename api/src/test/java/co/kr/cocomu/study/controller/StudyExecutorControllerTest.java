@@ -1,11 +1,10 @@
 package co.kr.cocomu.study.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import co.kr.cocomu.common.BaseControllerTest;
+import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
@@ -20,7 +19,6 @@ import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.dto.response.WritePageDto;
 import co.kr.cocomu.study.service.StudyCommandService;
-import co.kr.cocomu.study.service.StudyDomainService;
 import co.kr.cocomu.study.service.StudyQueryService;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
@@ -32,7 +30,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
 @WebMvcTest(StudyController.class)
-class StudyControllerTest extends BaseControllerTest {
+class StudyExecutorControllerTest extends BaseExecutorControllerTest {
 
     private static final String PATH_PREFIX = "/api/v1/studies";
 

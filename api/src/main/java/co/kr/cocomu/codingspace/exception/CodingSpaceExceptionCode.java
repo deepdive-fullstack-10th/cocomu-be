@@ -23,7 +23,8 @@ public enum CodingSpaceExceptionCode implements ExceptionCode {
     CAN_NOT_FEEDBACK(4013, "스터디 시작 상태일 때만 피드백 모드를 진행할 수 있습니다."),
     CAN_NOT_FINISH(4014, "스터디 피드백 상태일 때만 종료할 수 있습니다."),
     NO_STUDY_MEMBERSHIP(4015, "스터디에 참여한 회원이 아닙니다."),
-    CAN_SAVE_ONLY_ACTIVE(4016, "최종 코드 저장은 입장 중 일 때만 가능합니다.");
+    CAN_SAVE_ONLY_ACTIVE(4016, "최종 코드 저장은 입장 중 일 때만 가능합니다."),
+    NOT_ACTIVE_TAB(4017, "활성화 되지 않은 탭 입니다.");
 
     private final int code;
     private final String message;

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
@@ -102,6 +103,26 @@ class CodingSpaceDomainServiceTest {
         assertThatThrownBy(() -> codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NO_PARTICIPATION_SPACE);
+    }
+
+    @Test
+    void 코딩_스페이스_특정_탭이_실행되고_있다() {
+        // given
+        when(codingSpaceTabRepository.existsByIdAndStatus(1L, TabStatus.ACTIVE)).thenReturn(true);
+
+        // then
+        assertThatCode(() -> codingSpaceDomainService.validateActiveTab(1L)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void 코딩_스페이스_특정_탭이_실행되지_않고_있다면_예외가_발생한다() {
+        // given
+        when(codingSpaceTabRepository.existsByIdAndStatus(1L, TabStatus.ACTIVE)).thenReturn(false);
+
+        // then
+        assertThatThrownBy(() -> codingSpaceDomainService.validateActiveTab(1L))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ACTIVE_TAB);
     }
 
 }

@@ -23,7 +23,7 @@ import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
-import co.kr.cocomu.common.BaseControllerTest;
+import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.template.GetRequestTemplate;
@@ -38,7 +38,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
 @WebMvcTest(CodingSpaceController.class)
-class CodingSpaceControllerTest extends BaseControllerTest {
+class CodingSpaceExecutorControllerTest extends BaseExecutorControllerTest {
 
     private static final String PATH_PREFIX = "/api/v1/coding-spaces";
 
