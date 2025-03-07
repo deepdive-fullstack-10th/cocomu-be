@@ -12,6 +12,9 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
     open-in-view: false
+  security:
+    cors:
+      allowed-origins: ${ALLOWED_ORIGINS}
 
 springdoc:
   swagger-ui:
