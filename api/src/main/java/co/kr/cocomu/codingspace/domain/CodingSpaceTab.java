@@ -89,10 +89,9 @@ public class CodingSpaceTab extends TimeBaseEntity {
     }
 
     public void leaveTab() {
-        if (codingSpace.getStatus() == CodingSpaceStatus.FINISHED) {
-            throw new BadRequestException(CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+        if (codingSpace.getStatus() != CodingSpaceStatus.FINISHED) {
+            this.status = TabStatus.INACTIVE;
         }
-        this.status = TabStatus.INACTIVE;
     }
 
     public boolean isActive() {
@@ -117,7 +116,11 @@ public class CodingSpaceTab extends TimeBaseEntity {
         codingSpace.finishSpace();
     }
 
-    public void finish() {
+    public void saveCode(final String code) {
+        if (status != TabStatus.ACTIVE) {
+            throw new BadRequestException(CodingSpaceExceptionCode.CAN_SAVE_ONLY_ACTIVE);
+        }
+        this.finalCode = code;
         this.status = TabStatus.FINISH;
     }
 
@@ -131,10 +134,6 @@ public class CodingSpaceTab extends TimeBaseEntity {
         if (role == CodingSpaceRole.MEMBER) {
             throw new BadRequestException(CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
         }
-    }
-
-    public void saveCode(final String code) {
-        this.finalCode = code;
     }
 
 }

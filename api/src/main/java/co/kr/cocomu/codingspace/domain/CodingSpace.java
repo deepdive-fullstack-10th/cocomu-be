@@ -168,7 +168,6 @@ public class CodingSpace {
             throw new BadRequestException(CodingSpaceExceptionCode.CAN_NOT_FINISH);
         }
         status = CodingSpaceStatus.FINISHED;
-        tabs.stream().filter(CodingSpaceTab::isActive).forEach(CodingSpaceTab::finish);
     }
 
     private void validateStartStatus() {

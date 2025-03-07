@@ -241,11 +241,7 @@ class CodingSpaceTest {
         codingSpace.finishSpace();
 
         // then
-        List<CodingSpaceTab> tabs = codingSpace.getTabs();
         assertThat(codingSpace.getStatus()).isEqualTo(CodingSpaceStatus.FINISHED);
-        for (CodingSpaceTab tab : tabs) {
-            assertThat(tab.getStatus()).isEqualTo(TabStatus.FINISH);
-        }
     }
 
     @Test

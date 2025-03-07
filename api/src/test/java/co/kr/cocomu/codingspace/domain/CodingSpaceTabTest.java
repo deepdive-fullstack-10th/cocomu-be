@@ -1,6 +1,7 @@
 package co.kr.cocomu.codingspace.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -103,9 +104,8 @@ class CodingSpaceTabTest {
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
 
         // when & then
-        assertThatThrownBy(() -> tab.leaveTab())
-            .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.FINISHED_CODING_SPACE);
+        assertThatCode(() -> tab.leaveTab()).doesNotThrowAnyException();
+
     }
 
     @Test
@@ -241,27 +241,29 @@ class CodingSpaceTabTest {
     }
 
     @Test
-    void 스페이스_종료_상태로_바뀐다() {
-        // given
-        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
-
-        // when
-        tab.finish();
-
-        // then
-        assertThat(tab.getStatus()).isEqualTo(TabStatus.FINISH);
-    }
-
-    @Test
     void 탭에서_작성된_최종_코드_저장을_한다() {
         // given
         CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
 
         // when
         tab.saveCode("code");
 
         // then
         assertThat(tab.getFinalCode()).isEqualTo("code");
+    }
+
+    @Test
+    void 코드_스페이스_종료_후_코드_저장이_되지않는다() {
+        // given
+        CodingSpaceTab tab = CodingSpaceTab.createHost(mockCodingSpace, mockUser);
+        tab.enterTab();
+        tab.saveCode("code");
+
+        // when & then
+        assertThatThrownBy(() -> tab.saveCode("code"))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_SAVE_ONLY_ACTIVE);
     }
 
 }
