@@ -54,6 +54,7 @@ public class SecurityConfig {
             .addFilterBefore(new AnonymousUserFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
             .csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults())
             .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
             .build();
     }
@@ -61,7 +62,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://cocomu.co.kr"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://cocomu.co.kr", "http://localhost:4173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
 
