@@ -8,12 +8,12 @@ import co.kr.cocomu.docker.DockerCommander;
 import java.nio.file.Path;
 import java.util.List;
 
-public class CppContainer {
+public class NodeContainer {
 
-    private static final String CPP_IMAGE = "cpp-code-executor";
-    private static final String CPP_COMMAND_FORMAT = """
-        # Compilation
-        compilation_output=$(g++ -o Main Main.cpp -std=c++17 2>&1); \
+    private static final String NODE_IMAGE = "js-code-executor";
+    private static final String NODE_COMMAND_FORMAT = """
+        # Syntax check
+        compilation_output=$(node --check Main.js 2>&1); \
         compilation_status=$?; \
         echo "$compilation_output" > compile.log; \
         if [ $compilation_status -ne 0 ]; then \
@@ -22,7 +22,7 @@ public class CppContainer {
         
         # Execution
         { \
-            output=$(echo '%s' | timeout 2 /usr/bin/time -f "%%e\\n%%M" ./Main 2>&1); \
+            output=$(echo '%s' | timeout 2 /usr/bin/time -f "%%e\\n%%M" node Main.js 2>&1); \
             exit_code=$?; \
             echo "$output" > output.log; \
             if [ $exit_code -eq 124 ]; then \
@@ -35,16 +35,15 @@ public class CppContainer {
 
     public static List<String> generate(final String containerId, final Path tempDir, final String input) {
         return DockerCommander.builder()
-            .withRun()
-            .withRemove()
-            .withLimits(DEFAULT_MEMORY, DEFAULT_CPUS)
-            .withSecurity()
-            .withName(containerId)
-            .withVolume(tempDir)
-            .withWorkDir(DEFAULT_WORK_DIR)
-            .withImage(CPP_IMAGE)
-            .withCommand(String.format(CPP_COMMAND_FORMAT, input))
-            .build();
+                .withRun()
+                .withRemove()
+                .withLimits(DEFAULT_MEMORY, DEFAULT_CPUS)
+                .withSecurity()
+                .withName(containerId)
+                .withVolume(tempDir)
+                .withWorkDir(DEFAULT_WORK_DIR)
+                .withImage(NODE_IMAGE)
+                .withCommand(String.format(NODE_COMMAND_FORMAT, input))
+                .build();
     }
-
 }
