@@ -25,4 +25,10 @@ public class StompSseProducer {
         log.info("ide running message 전송 완료 - {}", message);
     }
 
+    public void publishResult(final EventMessage<ExecutionMessage> result) {
+        final String destination = String.format(EXECUTION_LOCATION_FORMAT, result.getData().tabId());
+        messagingTemplate.convertAndSend(destination, result);
+        log.info("ide result message 전송 완료 - {}", result);
+    }
+
 }

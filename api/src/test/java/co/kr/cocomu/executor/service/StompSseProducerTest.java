@@ -6,6 +6,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 import co.kr.cocomu.executor.dto.message.EventMessage;
+import co.kr.cocomu.executor.dto.message.EventType;
+import co.kr.cocomu.executor.dto.message.ExecutionMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +30,20 @@ class StompSseProducerTest {
 
         // when
         stompSseProducer.publishRunning(1L);
+
+        // then
+        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+    }
+
+    @Test
+    void 코드_실행_결과_알림이_발생한다() {
+        // given
+        ExecutionMessage executionMessage = new ExecutionMessage(1L, "", 0, 0);
+        EventMessage<ExecutionMessage> message = new EventMessage<>(EventType.SUCCESS, executionMessage);
+        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+
+        // when
+        stompSseProducer.publishResult(message);
 
         // then
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
