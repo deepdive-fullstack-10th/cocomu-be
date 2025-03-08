@@ -12,7 +12,7 @@ import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
 import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
-import co.kr.cocomu.codingspace.dto.page.WritePage;
+import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
@@ -88,7 +88,7 @@ class CodingSpaceExecutorControllerTest extends BaseExecutorControllerTest {
         ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
 
         // then
-        Api<WritePage> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        Api<StudyInformationPage> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_WRITE_PAGE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_WRITE_PAGE_SUCCESS.getMessage());
         assertThat(result.result().languages()).isEqualTo(List.of());

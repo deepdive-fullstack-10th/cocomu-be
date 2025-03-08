@@ -6,7 +6,7 @@ import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
-import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
+import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.page.StudyPageDto;
 import co.kr.cocomu.study.dto.response.FilterOptionsDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -73,7 +73,7 @@ public interface StudyControllerDocs {
     )
     Api<StudyPageDto> getStudiesPage(Long userId);
 
-    @Operation(summary = "스터디 상세 페이지 조회", description = "스터디 상세 페이지를 조회하는 기능", deprecated = true)
+    @Operation(summary = "스터디 상세 페이지 조회", description = "스터디 상세 페이지를 조회하는 기능")
     @ApiResponse(
         responseCode = "200",
         description = "스터디 상세 페이지 조회에 성공했습니다."
@@ -90,10 +90,10 @@ public interface StudyControllerDocs {
     )
     Api<StudyDetailPageDto> getStudyDetailPage(Long studyId, Long userId);
 
-    @Operation(summary = "스터디 작성 페이지 조회", description = "스터디 작성 페이지를 조회하는 기능")
+    @Operation(summary = "스터디 필터 옵션 조회", description = "스터디 필터 옵션들을 조회하는 기능")
     @ApiResponse(
         responseCode = "200",
-        description = "스터디 작성 페이지 조회에 성공했습니다."
+        description = "스터디 필터 옵션 조회에 성공했습니다."
     )
-    Api<FilterOptionsDto> getWritePageInfo(Long userId);
+    Api<FilterOptionsDto> getFilterOptions(Long userId);
 }

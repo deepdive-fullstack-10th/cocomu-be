@@ -40,7 +40,6 @@ public class CodingSpaceQueryService {
 
         return study.getLanguages()
             .stream()
-            .map(StudyLanguage::getLanguage)
             .map(LanguageDto::from)
             .toList();
     }

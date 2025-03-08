@@ -123,4 +123,10 @@ public class Study extends TimeBaseEntity {
             .getLanguage();
     }
 
+    public List<Language> getLanguages() {
+        return languages.stream()
+            .map(StudyLanguage::getLanguage)
+            .toList();
+    }
+
 }

@@ -1,6 +1,5 @@
 package co.kr.cocomu.study.service;
 
-import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
@@ -12,7 +11,7 @@ import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
-import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
+import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
@@ -74,20 +73,7 @@ public class StudyQueryService {
     public StudyDetailPageDto getStudyDetailPage(final Long studyId, final Long userId) {
         final Study study = studyDomainService.getStudyWithThrow(studyId);
         studyDomainService.validateStudyMembership(userId, study.getId());
-
-        final CodingSpacesDto codingSpaces = codingSpaceQueryService.getCodingSpaces(studyId, userId, null);
-        final StudyDetailPageDto studyDetailPage = StudyDetailPageDto.of(study, codingSpaces);
-        final List<LanguageDto> languages = extractLanguagesDto(study);
-        studyDetailPage.setLanguages(languages);
-
-        return studyDetailPage;
-    }
-
-    private static List<LanguageDto> extractLanguagesDto(final Study study) {
-        return study.getLanguages().stream()
-            .map(StudyLanguage::getLanguage)
-            .map(LanguageDto::from)
-            .toList();
+        return StudyDetailPageDto.from(study);
     }
 
     private void setStudyInformation(final List<Long> studyIds, final List<StudyCardDto> studyPages) {

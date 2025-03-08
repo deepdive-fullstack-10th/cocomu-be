@@ -14,7 +14,7 @@ import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
-import co.kr.cocomu.codingspace.dto.page.WritePage;
+import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
@@ -42,12 +42,13 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
     private final CodingSpaceQueryService codingSpaceQueryService;
 
     @GetMapping("/write")
-    public Api<WritePage> getWritePage(
+    @Deprecated
+    public Api<StudyInformationPage> getStudyInformation(
         @AuthenticationPrincipal final Long userId,
         @RequestParam final Long studyId
     ) {
         final List<LanguageDto> languages = codingSpaceQueryService.getStudyLanguages(userId, studyId);
-        final WritePage result = new WritePage(languages);
+        final StudyInformationPage result = new StudyInformationPage(languages);
         return Api.of(CodingSpaceApiCode.GET_WRITE_PAGE_SUCCESS, result);
     }
 

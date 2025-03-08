@@ -8,7 +8,7 @@ import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
-import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
+import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.page.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.dto.response.FilterOptionsDto;
@@ -37,12 +37,12 @@ public class StudyController implements StudyControllerDocs {
     private final StudyQueryService studyQueryService;
 
     @GetMapping("/filter-options")
-    public Api<FilterOptionsDto> getWritePageInfo(@AuthenticationPrincipal final Long userId) {
+    public Api<FilterOptionsDto> getFilterOptions(@AuthenticationPrincipal final Long userId) {
         final List<LanguageDto> allLanguages = studyQueryService.getAllLanguages();
         final List<WorkbookDto> allWorkbooks = studyQueryService.getAllWorkbooks();
         final FilterOptionsDto result = new FilterOptionsDto(allWorkbooks, allLanguages);
 
-        return Api.of(StudyApiCode.GET_WRITE_PAGE_SUCCESS, result);
+        return Api.of(StudyApiCode.GET_FILTER_OPTIONS_SUCCESS, result);
     }
 
     @PostMapping("/public")
@@ -94,7 +94,6 @@ public class StudyController implements StudyControllerDocs {
     }
 
     @GetMapping("/{studyId}")
-    @Deprecated
     public Api<StudyDetailPageDto> getStudyDetailPage(
         @PathVariable final Long studyId,
         @AuthenticationPrincipal final Long userId
