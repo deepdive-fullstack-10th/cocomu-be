@@ -73,7 +73,7 @@ public interface StudyControllerDocs {
     )
     Api<StudyPageDto> getStudiesPage(Long userId);
 
-    @Operation(summary = "스터디 상세 페이지 조회", description = "스터디 상세 페이지를 조회하는 기능")
+    @Operation(summary = "스터디 상세 페이지 조회", description = "스터디 상세 페이지를 조회하는 기능", deprecated = true)
     @ApiResponse(
         responseCode = "200",
         description = "스터디 상세 페이지 조회에 성공했습니다."

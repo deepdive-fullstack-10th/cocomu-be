@@ -82,6 +82,7 @@ public class StudyController implements StudyControllerDocs {
     }
 
     @GetMapping("/page")
+    @Deprecated
     public Api<StudyPageDto> getStudiesPage(@AuthenticationPrincipal final Long userId) {
         final GetAllStudyFilterDto noFilter = GetAllStudyFilterDto.filterNothing();
         final List<WorkbookDto> allWorkbooks = studyQueryService.getAllWorkbooks();
@@ -93,6 +94,7 @@ public class StudyController implements StudyControllerDocs {
     }
 
     @GetMapping("/{studyId}")
+    @Deprecated
     public Api<StudyDetailPageDto> getStudyDetailPage(
         @PathVariable final Long studyId,
         @AuthenticationPrincipal final Long userId
