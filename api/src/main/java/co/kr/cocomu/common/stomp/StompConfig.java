@@ -2,6 +2,7 @@ package co.kr.cocomu.common.stomp;
 
 import co.kr.cocomu.common.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -22,10 +23,15 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtProvider jwtProvider;
 
+    @Value("${spring.security.cors.allowed-origins}")
+    private String allowedOrigins;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        final String[] origins = allowedOrigins.split(",");
+
         registry.addEndpoint("/stomp")
-            .setAllowedOriginPatterns("http://localhost:3000", "https://cocomu.co.kr")
+            .setAllowedOriginPatterns(origins)
             .withSockJS();
     }
 

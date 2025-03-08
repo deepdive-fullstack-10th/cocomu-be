@@ -30,7 +30,7 @@ public class StompEventListener {
             final Long userId = extractUserId(accessor);
             final Long codingSpaceId = extractCodingSpaceId(destination);
             codingSpaceSessionRegistry.registerSession(sessionId, userId, codingSpaceId);
-            log.info("STOMP 구독 처리: sessionId={}, userId={}, codingSpaceId={}", sessionId, userId, codingSpaceId);
+            log.info("STOMP 구독 처리: sessionId={}, userId={}, tabId={}", sessionId, userId, codingSpaceId);
         }
     }
 

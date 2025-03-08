@@ -13,9 +13,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 public class AdminUserConfig {
 
     @Bean
-    public UserDetailsService createSwaggerAdmin(
-        @Value("${admin.swagger.username}") final String username,
-        @Value("${admin.swagger.password}") final String password
+    public UserDetailsService createAdmin(
+        @Value("${admin.username}") final String username,
+        @Value("${admin.password}") final String password
     ) {
        return new InMemoryUserDetailsManager(
            User.withUsername(username)

@@ -2,6 +2,7 @@ package co.kr.cocomu.codingspace.service;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
+import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
@@ -34,6 +35,12 @@ public class CodingSpaceDomainService {
     public CodingSpaceTab getCodingSpaceTabWithThrow(final Long codingSpaceId, final Long userId) {
         return codingSpaceTabRepository.findByUserIdAndCodingSpaceId(userId, codingSpaceId)
             .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NO_PARTICIPATION_SPACE));
+    }
+
+    public void validateActiveTab(final Long codingSpaceTabId) {
+        if (!codingSpaceTabRepository.existsByIdAndStatus(codingSpaceTabId, TabStatus.ACTIVE)) {
+            throw new BadRequestException(CodingSpaceExceptionCode.NOT_ACTIVE_TAB);
+        }
     }
 
 }

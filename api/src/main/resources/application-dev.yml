@@ -6,13 +6,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${HIBERNATE_DDL}
 
 admin:
+  username: ${ADMIN_USERNAME:cocomu}
+  password: ${ADMIN_PASSWORD:cocomu1!}
   swagger:
     url: ${SWAGGER_URL}
-    username: ${SWAGGER_USERNAME}
-    password: ${SWAGGER_PASSWORD}
 
 logging:
   level:

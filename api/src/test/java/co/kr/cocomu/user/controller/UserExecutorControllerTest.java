@@ -4,7 +4,7 @@ package co.kr.cocomu.user.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import co.kr.cocomu.common.BaseControllerTest;
+import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
@@ -22,7 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
 @WebMvcTest(UserController.class)
-class UserControllerTest extends BaseControllerTest {
+class UserExecutorControllerTest extends BaseExecutorControllerTest {
 
     private static final String PATH_PREFIX = "/api/v1/users";
 

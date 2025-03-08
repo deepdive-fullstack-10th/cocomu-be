@@ -54,6 +54,10 @@ dependencies {
     // 개발용 쿼리 확인
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0'
 
+    // rabbitmq
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    testImplementation 'org.springframework.amqp:spring-rabbit-test'
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

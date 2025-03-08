@@ -17,7 +17,6 @@ import co.kr.cocomu.auth.service.CookieService;
 import co.kr.cocomu.auth.service.GithubService;
 import co.kr.cocomu.auth.service.GoogleService;
 import co.kr.cocomu.auth.service.KakaoService;
-import co.kr.cocomu.common.BaseControllerTest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.jwt.JwtProvider;
 import co.kr.cocomu.common.security.SecurityConfig;
@@ -34,12 +33,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.context.WebApplicationContext;
 
 @WebMvcTest(AuthController.class)
 @Import(value = {SecurityConfig.class})
-class AuthControllerTest {
+class AuthExecutorControllerTest {
 
     private static final String PATH_PREFIX = "/api/v1/auth";
 
