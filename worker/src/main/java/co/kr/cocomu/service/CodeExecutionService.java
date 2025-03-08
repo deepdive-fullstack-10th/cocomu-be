@@ -3,6 +3,7 @@ package co.kr.cocomu.service;
 import co.kr.cocomu.dto.CodeExecutionMessage;
 import co.kr.cocomu.dto.EventMessage;
 import co.kr.cocomu.dto.ExecutionMessage;
+import co.kr.cocomu.service.impl.CppCodeExecutor;
 import co.kr.cocomu.service.impl.JavaCodeExecutor;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ public class CodeExecutionService {
 
     public CodeExecutionService() {
         executors.put("java", new JavaCodeExecutor());
+        executors.put("cpp", new CppCodeExecutor());
     }
 
     public EventMessage<ExecutionMessage> execute(final CodeExecutionMessage message) {
