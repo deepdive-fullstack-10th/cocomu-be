@@ -6,6 +6,7 @@ import co.kr.cocomu.dto.ExecutionMessage;
 import co.kr.cocomu.service.impl.CppCodeExecutor;
 import co.kr.cocomu.service.impl.JavaCodeExecutor;
 import co.kr.cocomu.service.impl.NodeCodeExecutor;
+import co.kr.cocomu.service.impl.PythonCodeExecutor;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ public class CodeExecutionService {
         executors.put("java", new JavaCodeExecutor());
         executors.put("cpp", new CppCodeExecutor());
         executors.put("javascript", new NodeCodeExecutor());
+        executors.put("python", new PythonCodeExecutor());
     }
 
     public EventMessage<ExecutionMessage> execute(final CodeExecutionMessage message) {
