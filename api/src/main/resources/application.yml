@@ -45,10 +45,10 @@ jwt:
   refresh-exp: 86400000
 
 admin:
+  username: cocomu
+  password: cocomu1!
   swagger:
     url: http://localhost:8080
-    username: cocomu
-    password: cocomu1!
 
 oauth:
   github:

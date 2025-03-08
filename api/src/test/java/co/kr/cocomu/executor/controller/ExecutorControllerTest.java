@@ -36,7 +36,7 @@ class ExecutorControllerTest extends BaseExecutorControllerTest {
         doNothing().when(codingSpaceDomainService).validateActiveTab(1L);
         doNothing().when(codeExecutionProducer).publishCode(any(ExecuteDto.class));
         doNothing().when(stompSseProducer).publishRunning(1L);
-        ExecuteDto dto = new ExecuteDto(1L, 1L, "", "", "");
+        ExecuteDto dto = new ExecuteDto(1L, "", "", "");
 
         // when
         String path = PATH_PREFIX + "/execution";
