@@ -1,7 +1,6 @@
 package co.kr.cocomu.study.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.BaseExecutorControllerTest;
@@ -9,15 +8,15 @@ import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
+import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
+import co.kr.cocomu.study.dto.page.StudyPageDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
+import co.kr.cocomu.study.dto.response.FilterOptionsDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
-import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
-import co.kr.cocomu.study.dto.response.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
-import co.kr.cocomu.study.dto.response.WritePageDto;
 import co.kr.cocomu.study.service.StudyCommandService;
 import co.kr.cocomu.study.service.StudyQueryService;
 import io.restassured.common.mapper.TypeRef;
@@ -138,7 +137,7 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
     @Test
     void 스터디_상세_정보를_조회_요청이_성공한다() {
         // given
-        StudyDetailPageDto mockResult = StudyDetailPageDto.builder().build();
+        StudyDetailPageDto mockResult = new StudyDetailPageDto();
         when(studyQueryService.getStudyDetailPage(1L, 1L)).thenReturn(mockResult);
 
         // when
@@ -159,13 +158,13 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
         when(studyQueryService.getAllWorkbooks()).thenReturn(List.of());
 
         // when
-        String path = PATH_PREFIX + "/write";
-        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+        String path = PATH_PREFIX + "/filter-options";
+        ValidatableMockMvcResponse response = GetRequestTemplate.executeNoAuth(path);
 
         // then
-        Api<WritePageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(StudyApiCode.GET_WRITE_PAGE_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(StudyApiCode.GET_WRITE_PAGE_SUCCESS.getMessage());
+        Api<FilterOptionsDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.GET_FILTER_OPTIONS_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.GET_FILTER_OPTIONS_SUCCESS.getMessage());
         assertThat(result.result().languages()).isEmpty();
         assertThat(result.result().workbooks()).isEmpty();
     }

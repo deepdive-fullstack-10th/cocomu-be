@@ -3,7 +3,6 @@ package co.kr.cocomu.study.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,23 +10,20 @@ import static org.mockito.Mockito.when;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
-import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.StudyLanguage;
-import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
-import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
 import co.kr.cocomu.study.repository.jpa.StudyRepository;
 import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
 import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
-import co.kr.cocomu.study.repository.query.StudyQueryRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +33,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class StudyQueryServiceTest {
@@ -154,26 +149,17 @@ class StudyQueryServiceTest {
         when(mockStudy.getId()).thenReturn(1L);
         when(mockStudy.getName()).thenReturn("study");
         when(mockStudy.getLanguages()).thenReturn(List.of());
-        CodingSpacesDto mockDto = mock(CodingSpacesDto.class);
-        when(mockDto.codingSpaces()).thenReturn(List.of());
-        when(mockDto.lastId()).thenReturn(1L);
 
         when(studyDomainService.getStudyWithThrow(1L)).thenReturn(mockStudy);
-        when(codingSpaceQueryService.getCodingSpaces(1L, 1L, null)).thenReturn(mockDto);
         doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
 
         // when
         StudyDetailPageDto result = studyQueryService.getStudyDetailPage(1L, 1L);
 
         // then
-        List<LanguageDto> mockResult = mockStudy.getLanguages().stream()
-            .map(StudyLanguage::getLanguage)
-            .map(LanguageDto::from)
-            .toList();
+        assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo(mockStudy.getName());
-        assertThat(result.getLanguages()).isEqualTo(mockResult);
-        assertThat(result.getCodingSpaces()).isEqualTo(mockDto.codingSpaces());
-        assertThat(result.getLastId()).isEqualTo(mockDto.lastId());
+        assertThat(result.getLanguages()).isEqualTo(List.of());
     }
 
 }

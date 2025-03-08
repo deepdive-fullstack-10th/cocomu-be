@@ -56,12 +56,7 @@ class CodingSpaceQueryServiceTest {
         List<LanguageDto> result = codingSpaceQueryService.getStudyLanguages(1L, 1L);
 
         // then
-        List<LanguageDto> mockResult = mockStudy.getLanguages()
-            .stream()
-            .map(StudyLanguage::getLanguage)
-            .map(LanguageDto::from)
-            .toList();
-        assertThat(result).isEqualTo(mockResult);
+        assertThat(result).isEqualTo(List.of());
     }
 
     @Test

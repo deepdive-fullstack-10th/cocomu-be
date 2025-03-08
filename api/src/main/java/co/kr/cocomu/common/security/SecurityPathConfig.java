@@ -15,7 +15,8 @@ public class SecurityPathConfig {
     );
 
     public static final List<String> PUBLIC_URIS = List.of(
-        "/favicon.ico"
+        "/favicon.ico",
+        "/api/v1/studies/filter-options"
     );
 
     public static final List<String> ANONYMOUS_URIS = List.of(
