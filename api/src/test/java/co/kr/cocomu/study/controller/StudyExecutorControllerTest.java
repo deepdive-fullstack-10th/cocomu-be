@@ -15,9 +15,9 @@ import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.response.StudyDetailPageDto;
-import co.kr.cocomu.study.dto.response.StudyPageDto;
+import co.kr.cocomu.study.dto.page.StudyPageDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
-import co.kr.cocomu.study.dto.response.WritePageDto;
+import co.kr.cocomu.study.dto.response.FilterOptionsDto;
 import co.kr.cocomu.study.service.StudyCommandService;
 import co.kr.cocomu.study.service.StudyQueryService;
 import io.restassured.common.mapper.TypeRef;
@@ -159,11 +159,11 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
         when(studyQueryService.getAllWorkbooks()).thenReturn(List.of());
 
         // when
-        String path = PATH_PREFIX + "/write";
-        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+        String path = PATH_PREFIX + "/filter-options";
+        ValidatableMockMvcResponse response = GetRequestTemplate.executeNoAuth(path);
 
         // then
-        Api<WritePageDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        Api<FilterOptionsDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(StudyApiCode.GET_WRITE_PAGE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.GET_WRITE_PAGE_SUCCESS.getMessage());
         assertThat(result.result().languages()).isEmpty();

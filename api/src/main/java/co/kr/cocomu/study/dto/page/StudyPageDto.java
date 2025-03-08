@@ -1,5 +1,8 @@
-package co.kr.cocomu.study.dto.response;
+package co.kr.cocomu.study.dto.page;
 
+import co.kr.cocomu.study.dto.response.AllStudyCardDto;
+import co.kr.cocomu.study.dto.response.LanguageDto;
+import co.kr.cocomu.study.dto.response.WorkbookDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AllArgsConstructor;
