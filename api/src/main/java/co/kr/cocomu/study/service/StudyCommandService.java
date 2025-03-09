@@ -1,10 +1,12 @@
 package co.kr.cocomu.study.service;
 
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
 import co.kr.cocomu.study.repository.jpa.StudyRepository;
 import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
@@ -12,6 +14,7 @@ import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +66,22 @@ public class StudyCommandService {
         study.addWorkBooks(workbooks);
 
         return studyRepository.save(study).getId();
+    }
+
+    public Long joinPrivateStudy(final Long userId, final Long studyId, final String password) {
+        studyDomainService.validateStudyParticipation(userId, studyId);
+        final User user = userService.getUserWithThrow(userId);
+        final Study study = studyDomainService.getStudyWithThrow(studyId);
+        validatePrivateStudyPassword(password, study.getPassword());
+        study.joinMember(user);
+
+        return study.getId();
+    }
+
+    private void validatePrivateStudyPassword(final String password, final String encodedPassword) {
+        if (!passwordEncoder.matches(password, encodedPassword)) {
+            throw new BadRequestException(StudyExceptionCode.STUDY_PASSWORD_WRONG);
+        }
     }
 
 }

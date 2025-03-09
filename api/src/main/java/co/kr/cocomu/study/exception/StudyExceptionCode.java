@@ -17,7 +17,8 @@ public enum StudyExceptionCode implements ExceptionCode {
     INVALID_STUDY_LANGUAGE(3007, "해당 스터디에서 사용하지 않는 언어입니다."),
     STUDY_IS_FULL(3008, "스터디 최대 인원이 초과되었습니다."),
     ALREADY_LEADER_EXISTS(3009, "이미 방장이 존재합니다."),
-    STUDY_REQUIRES_LEADER(3010, "스터디는 리더가 필요합니다.");
+    STUDY_REQUIRES_LEADER(3010, "스터디는 리더가 필요합니다."),
+    STUDY_PASSWORD_WRONG(3011, "스터디 비밀번호가 잘못됐습니다.");
 
     private final int code;
     private final String message;

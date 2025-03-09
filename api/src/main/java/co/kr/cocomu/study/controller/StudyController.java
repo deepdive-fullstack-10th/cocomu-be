@@ -6,6 +6,7 @@ import co.kr.cocomu.study.controller.docs.StudyControllerDocs;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
@@ -110,6 +111,16 @@ public class StudyController implements StudyControllerDocs {
     ) {
         final Long privateStudyId = studyCommandService.createPrivateStudy(dto, userId);
         return Api.of(StudyApiCode.CREATE_STUDY_SUCCESS, privateStudyId);
+    }
+
+    @PostMapping("/private/{studyId}/join")
+    public Api<Long> createPrivateStudy(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId,
+        @Valid @RequestBody final JoinPrivateStudyDto dto
+    ) {
+        final Long publicStudyId = studyCommandService.joinPrivateStudy(userId, studyId, dto.password());
+        return Api.of(StudyApiCode.JOIN_STUDY_SUCCESS, publicStudyId);
     }
 
 }
