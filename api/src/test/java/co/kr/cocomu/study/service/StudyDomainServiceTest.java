@@ -4,11 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
+import co.kr.cocomu.study.domain.StudyUser;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.StudyRepository;
@@ -104,8 +106,33 @@ class StudyDomainServiceTest {
         when(studyUserRepository.isUserJoinedStudy(userId, studyId)).thenReturn(true);
 
         // when & then
-        assertThatCode(() ->studyDomainService.validateStudyMembership(userId, studyId))
+        assertThatCode(() -> studyDomainService.validateStudyMembership(userId, studyId))
             .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 스터디_사용자를_찾을_수_있다() {
+        // given
+        StudyUser mockStudyUser = mock(StudyUser.class);
+
+        when(studyUserRepository.findByUserIdAndStudyId(anyLong(), anyLong())).thenReturn(Optional.of(mockStudyUser));
+
+        // when
+        StudyUser result = studyDomainService.getStudyUserWithThrow(1L, 1L);
+
+        // then
+        assertThat(result).isEqualTo(mockStudyUser);
+    }
+
+    @Test
+    void 스터디_사용자가_없으면_예외가_발생한다() {
+        // given
+        when(studyUserRepository.findByUserIdAndStudyId(anyLong(), anyLong())).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> studyDomainService.getStudyUserWithThrow(1L, 1L))
+            .isInstanceOf(NotFoundException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.NOT_FOUND_STUDY_USER);
     }
 
 }

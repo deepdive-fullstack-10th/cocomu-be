@@ -13,6 +13,7 @@ import co.kr.cocomu.study.dto.page.StudyPageDto;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.FilterOptionsDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
@@ -184,6 +185,39 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
         Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(StudyApiCode.CREATE_STUDY_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.CREATE_STUDY_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(1L);
+    }
+
+    @Test
+    void 비공개_스터디_참여_요청이_성공한다() {
+        // given
+        JoinPrivateStudyDto dto = new JoinPrivateStudyDto("1234");
+        when(studyCommandService.joinPrivateStudy(1L, 1L, "1234")).thenReturn(1L);
+
+        // when
+        String path = PATH_PREFIX + "/private/1/join";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
+
+        // then
+        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.JOIN_STUDY_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.JOIN_STUDY_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(1L);
+    }
+
+    @Test
+    void 스터디_나가기_요청이_성공한다() {
+        // given
+        when(studyCommandService.leaveStudy(1L, 1L)).thenReturn(1L);
+
+        // when
+        String path = PATH_PREFIX + "/1/leave";
+        ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
+
+        // then
+        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.LEAVE_STUDY_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.LEAVE_STUDY_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(1L);
     }
 

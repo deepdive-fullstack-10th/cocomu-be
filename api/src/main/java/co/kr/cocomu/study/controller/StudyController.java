@@ -123,4 +123,13 @@ public class StudyController implements StudyControllerDocs {
         return Api.of(StudyApiCode.JOIN_STUDY_SUCCESS, publicStudyId);
     }
 
+    @PostMapping("/{studyId}/leave")
+    public Api<Long> leaveStudy(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final Long leavedStudyId = studyCommandService.leaveStudy(userId, studyId);
+        return Api.of(StudyApiCode.LEAVE_STUDY_SUCCESS, leavedStudyId);
+    }
+
 }
