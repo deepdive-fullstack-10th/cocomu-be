@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
+import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.user.domain.User;
@@ -25,6 +26,18 @@ class StudyTest {
 
         // then
         assertThat(publicStudy.getCurrentUserCount()).isEqualTo(0);
+    }
+
+    @Test
+    void 비공개_스터디_생성_시_비밀번호가_입력된다() {
+        // given
+        CreatePrivateStudyDto dto = new CreatePrivateStudyDto("코딩 스터디", "", List.of(), List.of(), "스터디", 10);
+
+        // when
+        Study privateStudy = Study.createPrivateStudy(dto, "password");
+
+        // then
+        assertThat(privateStudy.getPassword()).isEqualTo("password");
     }
 
     @Test

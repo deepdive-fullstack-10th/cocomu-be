@@ -10,6 +10,7 @@ import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
 import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.page.StudyPageDto;
+import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
@@ -167,6 +168,23 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
         assertThat(result.message()).isEqualTo(StudyApiCode.GET_FILTER_OPTIONS_SUCCESS.getMessage());
         assertThat(result.result().languages()).isEmpty();
         assertThat(result.result().workbooks()).isEmpty();
+    }
+
+    @Test
+    void 비공개_스터디_생성_요청이_성공한다() {
+        // given
+        CreatePrivateStudyDto dto = new CreatePrivateStudyDto("123", "1234", List.of(), List.of(), "", 50);
+        when(studyCommandService.createPrivateStudy(dto, 1L)).thenReturn(1L);
+
+        // when
+        String path = PATH_PREFIX + "/private";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
+
+        // then
+        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.CREATE_STUDY_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.CREATE_STUDY_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(1L);
     }
 
     /*

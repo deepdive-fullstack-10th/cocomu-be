@@ -1,12 +1,13 @@
 package co.kr.cocomu.study.domain;
 
+import static co.kr.cocomu.study.domain.vo.StudyStatus.PRIVATE;
 import static co.kr.cocomu.study.domain.vo.StudyStatus.PUBLIC;
 import static co.kr.cocomu.study.domain.vo.StudyStatus.REMOVE;
 
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.repository.TimeBaseEntity;
-import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
+import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.user.domain.User;
@@ -27,6 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Table(name = "cocomu_study")
@@ -82,6 +84,10 @@ public class Study extends TimeBaseEntity {
 
     public static Study createPublicStudy(final CreatePublicStudyDto dto) {
         return new Study(dto.name(), null, dto.description(), PUBLIC, dto.totalUserCount());
+    }
+
+    public static Study createPrivateStudy(final CreatePrivateStudyDto dto, final String password) {
+        return new Study(dto.name(), password, dto.description(), PRIVATE, dto.totalUserCount());
     }
 
     public void joinLeader(final User user) {

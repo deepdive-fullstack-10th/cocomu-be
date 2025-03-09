@@ -14,7 +14,8 @@ public enum StudyApiCode implements ApiCode {
     GET_STUDY_INFO_SUCCESS(3000, "스터디 정보 조회에 성공했습니다."),
     GET_STUDY_PAGE_SUCCESS(3000, "스터디 페이지 조회에 성공했습니다."),
     GET_STUDY_DETAIL_SUCCESS(3000, "스터디 디테일 페이지 조회에 성공했습니다."),
-    GET_FILTER_OPTIONS_SUCCESS(3000, "스터디 필터 옵션 조회에 성공했습니다.");
+    GET_FILTER_OPTIONS_SUCCESS(3000, "스터디 필터 옵션 조회에 성공했습니다."),
+    ;
 
     private final int code;
     private final String message;

@@ -3,6 +3,7 @@ package co.kr.cocomu.study.controller;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
 import co.kr.cocomu.study.controller.docs.StudyControllerDocs;
+import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
@@ -100,6 +101,15 @@ public class StudyController implements StudyControllerDocs {
     ) {
         final StudyDetailPageDto result = studyQueryService.getStudyDetailPage(studyId, userId);
         return Api.of(StudyApiCode.GET_STUDY_DETAIL_SUCCESS, result);
+    }
+
+    @PostMapping("/private")
+    public Api<Long> createPrivateStudy(
+        @RequestBody @Valid final CreatePrivateStudyDto dto,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final Long privateStudyId = studyCommandService.createPrivateStudy(dto, userId);
+        return Api.of(StudyApiCode.CREATE_STUDY_SUCCESS, privateStudyId);
     }
 
 }
