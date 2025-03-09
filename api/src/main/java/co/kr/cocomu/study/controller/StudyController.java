@@ -132,4 +132,13 @@ public class StudyController implements StudyControllerDocs {
         return Api.of(StudyApiCode.LEAVE_STUDY_SUCCESS, leavedStudyId);
     }
 
+    @PostMapping("/{studyId}/remove")
+    public Api<Long> removeStudy(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final Long leavedStudyId = studyCommandService.removeStudy(userId, studyId);
+        return Api.of(StudyApiCode.REMOVE_STUDY_SUCCESS, leavedStudyId);
+    }
+
 }

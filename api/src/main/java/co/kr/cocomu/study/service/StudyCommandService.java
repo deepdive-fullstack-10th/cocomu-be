@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class StudyCommandService {
 
     private final StudyDomainService studyDomainService;
@@ -31,7 +31,6 @@ public class StudyCommandService {
     private final WorkbookRepository workbookRepository;
     private final LanguageRepository languageRepository;
     private final PasswordEncoder passwordEncoder;
-    private final StudyUserRepository studyUserRepository;
 
     public Long createPublicStudy(final Long userId, final CreatePublicStudyDto dto) {
         final User user = userService.getUserWithThrow(userId);
@@ -46,7 +45,6 @@ public class StudyCommandService {
         return studyRepository.save(study).getId();
     }
 
-    @Transactional
     public Long joinPublicStudy(final Long userId, final Long studyId) {
         studyDomainService.validateStudyParticipation(userId, studyId);
         final User user = userService.getUserWithThrow(userId);
@@ -87,6 +85,12 @@ public class StudyCommandService {
         return studyUser.getStudyId();
     }
 
+    public Long removeStudy(final Long userId, final Long studyId) {
+        final StudyUser studyUser = studyDomainService.getStudyUserWithThrow(studyId, userId);
+        studyUser.removeStudy();
+
+        return studyUser.getStudyId();
+    }
 
     private void validatePrivateStudyPassword(final String password, final String encodedPassword) {
         if (!passwordEncoder.matches(password, encodedPassword)) {

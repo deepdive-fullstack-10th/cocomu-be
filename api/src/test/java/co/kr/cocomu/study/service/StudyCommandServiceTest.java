@@ -148,4 +148,19 @@ class StudyCommandServiceTest {
         assertThat(result).isEqualTo(1L);
     }
 
+    @Test
+    void 스터디를_삭제한다() {
+        // given
+        StudyUser mockStudyUser = mock(StudyUser.class);
+        doNothing().when(mockStudyUser).removeStudy();
+        when(mockStudyUser.getStudyId()).thenReturn(1L);
+        when(studyDomainService.getStudyUserWithThrow(1L, 1L)).thenReturn(mockStudyUser);
+
+        // when
+        Long result = studyCommandService.removeStudy(1L, 1L);
+
+        // then
+        assertThat(result).isEqualTo(1L);
+    }
+
 }

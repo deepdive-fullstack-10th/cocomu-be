@@ -221,6 +221,22 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
         assertThat(result.result()).isEqualTo(1L);
     }
 
+    @Test
+    void 스터디_삭제_요청이_성공한다() {
+        // given
+        when(studyCommandService.removeStudy(1L, 1L)).thenReturn(1L);
+
+        // when
+        String path = PATH_PREFIX + "/1/remove";
+        ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
+
+        // then
+        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.REMOVE_STUDY_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.REMOVE_STUDY_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(1L);
+    }
+
     /*
     ===================   아래로 공통 테스트 설정입니다.  ===================
      */
