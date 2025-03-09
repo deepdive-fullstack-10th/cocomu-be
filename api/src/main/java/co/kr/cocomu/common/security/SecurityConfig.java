@@ -27,27 +27,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-
-    private final UserDetailsService adminUserDetailsService;
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
 
     @Value("${spring.security.cors.allowed-origins}")
     private String allowedOrigins;
-
-    @Bean
-    @Order(1)
-    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
-        return http
-            .securityMatcher(AdminConstants.getAllAdminUris())
-            .authorizeHttpRequests(auth -> AdminUriGroup.getAdminUriGroups()
-                .forEach(group -> auth.requestMatchers(group.getUrisArray()).hasRole(group.requiredRole())
-            ))
-            .httpBasic(Customizer.withDefaults())
-            .userDetailsService(adminUserDetailsService)
-            .csrf(AbstractHttpConfigurer::disable)
-            .build();
-    }
 
     @Bean
     @Order(2)
