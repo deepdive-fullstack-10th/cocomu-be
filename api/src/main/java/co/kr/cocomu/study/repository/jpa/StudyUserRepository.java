@@ -14,6 +14,6 @@ public interface StudyUserRepository extends JpaRepository<StudyUser, Long>, Stu
     """)
     boolean isUserJoinedStudy(Long userId, Long studyId);
 
-    Optional<StudyUser> findByUserIdAndStudyId(Long userId, Long studyId);
+    Optional<StudyUser> findByUser_IdAndStudy_Id(Long userId, Long studyId);
 
 }

@@ -12,6 +12,7 @@ import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.page.StudyPageDto;
+import co.kr.cocomu.study.dto.response.StudyMemberDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.dto.response.FilterOptionsDto;
 import co.kr.cocomu.study.service.StudyCommandService;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -139,6 +141,16 @@ public class StudyController implements StudyControllerDocs {
     ) {
         final Long leavedStudyId = studyCommandService.removeStudy(userId, studyId);
         return Api.of(StudyApiCode.REMOVE_STUDY_SUCCESS, leavedStudyId);
+    }
+
+    @GetMapping("/{studyId}/members")
+    public Api<List<StudyMemberDto>> getStudyMembers(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId,
+        @RequestParam(required = false) final String lastNickname
+    ) {
+        final List<StudyMemberDto> allMembers = studyQueryService.findAllMembers(userId, studyId, lastNickname);
+        return Api.of(StudyApiCode.GET_ALL_MEMBERS_SUCCESS, allMembers);
     }
 
 }

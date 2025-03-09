@@ -115,7 +115,7 @@ class StudyDomainServiceTest {
         // given
         StudyUser mockStudyUser = mock(StudyUser.class);
 
-        when(studyUserRepository.findByUserIdAndStudyId(anyLong(), anyLong())).thenReturn(Optional.of(mockStudyUser));
+        when(studyUserRepository.findByUser_IdAndStudy_Id(anyLong(), anyLong())).thenReturn(Optional.of(mockStudyUser));
 
         // when
         StudyUser result = studyDomainService.getStudyUserWithThrow(1L, 1L);
@@ -127,7 +127,7 @@ class StudyDomainServiceTest {
     @Test
     void 스터디_사용자가_없으면_예외가_발생한다() {
         // given
-        when(studyUserRepository.findByUserIdAndStudyId(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(studyUserRepository.findByUser_IdAndStudy_Id(anyLong(), anyLong())).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> studyDomainService.getStudyUserWithThrow(1L, 1L))
