@@ -161,7 +161,7 @@ public class Study extends TimeBaseEntity {
     }
 
     private void validateLeaderExists() {
-        if (this.studyUsers.isEmpty() || this.studyUsers.stream().noneMatch(StudyUser::isLeader)) {
+        if (this.studyUsers.stream().noneMatch(StudyUser::isLeader)) {
             throw new BadRequestException(StudyExceptionCode.STUDY_REQUIRES_LEADER);
         }
     }

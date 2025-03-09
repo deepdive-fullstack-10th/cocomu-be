@@ -18,6 +18,7 @@ import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.FilterOptionsDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyMemberDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.service.StudyCommandService;
 import co.kr.cocomu.study.service.StudyQueryService;
@@ -235,6 +236,22 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
         assertThat(result.code()).isEqualTo(StudyApiCode.REMOVE_STUDY_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.REMOVE_STUDY_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(1L);
+    }
+
+    @Test
+    void 스터디원_조회_요청이_성공한다() {
+        // given
+        when(studyQueryService.findAllMembers(1L, 1L, "")).thenReturn(List.of());
+
+        // when
+        String path = PATH_PREFIX + "/1/members";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<List<StudyMemberDto>> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.GET_ALL_MEMBERS_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.GET_ALL_MEMBERS_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(List.of());
     }
 
     /*

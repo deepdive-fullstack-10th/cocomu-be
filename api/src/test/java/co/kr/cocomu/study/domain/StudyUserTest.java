@@ -102,4 +102,47 @@ class StudyUserTest {
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.ONLY_LEADER_CAN_REMOVE_STUDY);
     }
 
+    @Test
+    void 스터디_식별자를_가져올_수_있다() {
+        // given
+        Study mockStudy = mock(Study.class);
+        when(mockStudy.getId()).thenReturn(1L);
+        User mockUser = mock(User.class);
+        StudyUser studyUser = StudyUser.createMember(mockStudy, mockUser);
+
+        // when
+        Long studyId = studyUser.getStudyId();
+
+        // then
+        assertThat(studyId).isEqualTo(1L);
+    }
+
+    @Test
+    void 스터디_리더인지_알_수_있다() {
+        // given
+        Study mockStudy = mock(Study.class);
+        User mockUser = mock(User.class);
+        StudyUser studyUser = StudyUser.createLeader(mockStudy, mockUser);
+
+        // when
+        boolean leader = studyUser.isLeader();
+
+        // then
+        assertThat(leader).isTrue();
+    }
+
+    @Test
+    void 스터디_리더가_아닌지_알_수_있다() {
+        // given
+        Study mockStudy = mock(Study.class);
+        User mockUser = mock(User.class);
+        StudyUser studyUser = StudyUser.createMember(mockStudy, mockUser);
+
+        // when
+        boolean leader = studyUser.isLeader();
+
+        // then
+        assertThat(leader).isFalse();
+    }
+
 }

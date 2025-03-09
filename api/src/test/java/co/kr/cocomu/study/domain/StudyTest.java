@@ -113,6 +113,23 @@ class StudyTest {
     }
 
     @Test
+    void 스터디에서_회원이_탈퇴하면_현재_인원수가_감소한다() {
+        // given
+        CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 2);
+        Study publicStudy = Study.createPublicStudy(dto);
+        User mockUser = mock(User.class);
+        publicStudy.joinLeader(mockUser);
+        publicStudy.joinMember(mockUser);
+        int currentUserCount = publicStudy.getCurrentUserCount();
+
+        // when
+        publicStudy.leaveUser();
+
+        // then
+        assertThat(publicStudy.getCurrentUserCount()).isEqualTo(currentUserCount - 1);
+    }
+
+    @Test
     void 스터디장은_스터디를_삭제할_수_있다() {
         // given
         CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 2);
