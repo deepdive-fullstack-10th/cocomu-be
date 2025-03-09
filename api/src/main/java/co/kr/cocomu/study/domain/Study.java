@@ -1,10 +1,15 @@
 package co.kr.cocomu.study.domain;
 
+import static co.kr.cocomu.study.domain.vo.StudyStatus.PUBLIC;
+import static co.kr.cocomu.study.domain.vo.StudyStatus.REMOVE;
+
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.repository.TimeBaseEntity;
+import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
+import co.kr.cocomu.user.domain.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,6 +57,9 @@ public class Study extends TimeBaseEntity {
     private int totalUserCount;
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudyUser> studyUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyWorkbook> workbooks = new ArrayList<>();
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -73,46 +81,40 @@ public class Study extends TimeBaseEntity {
     }
 
     public static Study createPublicStudy(final CreatePublicStudyDto dto) {
-        return new Study(dto.name(), null, dto.description(), StudyStatus.PUBLIC, dto.totalUserCount());
+        return new Study(dto.name(), null, dto.description(), PUBLIC, dto.totalUserCount());
     }
 
-    public void increaseCurrentUserCount() {
+    public void joinLeader(final User user) {
+        validateNoLeaderExists();
+
+        final StudyUser leaderUser = StudyUser.createLeader(this, user);
+        this.studyUsers.add(leaderUser);
         this.currentUserCount++;
     }
 
-    public void decreaseCurrentUserCount() {
-        if (this.currentUserCount > 0) {
-            this.currentUserCount--;
-        }
+    public void joinMember(final User user) {
+        validateCanJoin();
+        validateLeaderExists();
+
+        final StudyUser memberUser = StudyUser.createMember(this, user);
+        this.studyUsers.add(memberUser);
+        this.currentUserCount++;
     }
 
-    public void addBooks(final List<Workbook> workbooks) {
-        for (Workbook workBook : workbooks) {
-            addBook(workBook);
+    public void addWorkBooks(final List<Workbook> workbooks) {
+        this.workbooks.clear();
+        for (final Workbook workBook : workbooks) {
+            final StudyWorkbook studyWorkbook = StudyWorkbook.of(this, workBook);
+            this.workbooks.add(studyWorkbook);
         }
-    }
-
-    public void addBook(final Workbook workBook) {
-        final StudyWorkbook studyWorkbook = StudyWorkbook.of(this, workBook);
-        this.workbooks.add(studyWorkbook);
     }
 
     public void addLanguages(final List<Language> languages) {
-        for (Language language : languages) {
-            addLanguage(language);
+        this.languages.clear();
+        for (final Language language : languages) {
+            final StudyLanguage studyLanguage = StudyLanguage.of(this, language);
+            this.languages.add(studyLanguage);
         }
-    }
-
-    public void addLanguage(final Language language) {
-        final StudyLanguage studyLanguage = StudyLanguage.of(this, language);
-        this.languages.add(studyLanguage);
-    }
-
-    public void removeStudy() {
-        if (currentUserCount >= 1) {
-            throw new BadRequestException(StudyExceptionCode.REMAINING_USER);
-        }
-        status = StudyStatus.REMOVE;
     }
 
     public Language getLanguage(final Long languageId) {
@@ -127,6 +129,36 @@ public class Study extends TimeBaseEntity {
         return languages.stream()
             .map(StudyLanguage::getLanguage)
             .toList();
+    }
+
+    protected void leaveUser() {
+        this.currentUserCount--;
+    }
+
+    protected void remove() {
+        if (this.currentUserCount > 1) {
+            throw new BadRequestException(StudyExceptionCode.REMAINING_MEMBER);
+        }
+        this.currentUserCount = 0;
+        this.status = REMOVE;
+    }
+
+    private void validateNoLeaderExists() {
+        if (this.studyUsers.stream().anyMatch(StudyUser::isLeader)) {
+            throw new BadRequestException(StudyExceptionCode.ALREADY_LEADER_EXISTS);
+        }
+    }
+
+    private void validateCanJoin() {
+        if (this.currentUserCount >= this.totalUserCount) {
+            throw new BadRequestException(StudyExceptionCode.STUDY_IS_FULL);
+        }
+    }
+
+    private void validateLeaderExists() {
+        if (this.studyUsers.isEmpty() || this.studyUsers.stream().noneMatch(StudyUser::isLeader)) {
+            throw new BadRequestException(StudyExceptionCode.STUDY_REQUIRES_LEADER);
+        }
     }
 
 }
