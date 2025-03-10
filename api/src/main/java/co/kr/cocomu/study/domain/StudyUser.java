@@ -5,6 +5,7 @@ import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.repository.TimeBaseEntity;
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.domain.vo.StudyUserStatus;
+import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.user.domain.User;
 import jakarta.persistence.Column;
@@ -21,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -99,8 +101,33 @@ public class StudyUser extends TimeBaseEntity {
 
     private void validateLeaderRole() {
         if (role != StudyRole.LEADER) {
-            throw new BadRequestException(StudyExceptionCode.ONLY_LEADER_CAN_REMOVE_STUDY);
+            throw new BadRequestException(StudyExceptionCode.USER_IS_NOT_LEADER);
         }
+    }
+
+    public void editPublicStudy(
+        final EditStudyDto dto,
+        final List<Workbook> workbooks,
+        final List<Language> languages
+    ) {
+        validateLeaderRole();
+        study.updateStudyInfo(dto.name(), dto.description(), dto.totalUserCount());
+        study.changeToPublic();
+        study.addWorkBooks(workbooks);
+        study.addLanguages(languages);
+    }
+
+    public void editPrivateStudy(
+        final EditStudyDto dto,
+        final List<Workbook> workbooks,
+        final List<Language> languages,
+        final String newPassword
+    ) {
+        validateLeaderRole();
+        study.updateStudyInfo(dto.name(), dto.description(), dto.totalUserCount());
+        study.changeToPrivate(newPassword);
+        study.addWorkBooks(workbooks);
+        study.addLanguages(languages);
     }
 
 }

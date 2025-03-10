@@ -28,7 +28,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Table(name = "cocomu_study")
@@ -98,7 +97,7 @@ public class Study extends TimeBaseEntity {
     }
 
     public void joinMember(final User user) {
-        validateCanJoin();
+        validateStudyUserCount(this.totalUserCount);
         validateLeaderExists();
 
         final StudyUser memberUser = StudyUser.createMember(this, user);
@@ -154,8 +153,8 @@ public class Study extends TimeBaseEntity {
         }
     }
 
-    private void validateCanJoin() {
-        if (this.currentUserCount >= this.totalUserCount) {
+    private void validateStudyUserCount(final int totalUserCount) {
+        if (this.currentUserCount >= totalUserCount) {
             throw new BadRequestException(StudyExceptionCode.STUDY_IS_FULL);
         }
     }
@@ -164,6 +163,23 @@ public class Study extends TimeBaseEntity {
         if (this.studyUsers.stream().noneMatch(StudyUser::isLeader)) {
             throw new BadRequestException(StudyExceptionCode.STUDY_REQUIRES_LEADER);
         }
+    }
+
+    public void updateStudyInfo(final String name, final String description, final int totalUserCount) {
+        validateStudyUserCount(totalUserCount);
+        this.name = name;
+        this.description = description;
+        this.totalUserCount = totalUserCount;
+    }
+
+    public void changeToPublic() {
+        status = PUBLIC;
+        password = null;
+    }
+
+    public void changeToPrivate(final String newPassword) {
+        status = PRIVATE;
+        password = newPassword;
     }
 
 }

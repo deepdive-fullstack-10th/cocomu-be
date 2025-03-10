@@ -7,10 +7,10 @@ import co.kr.cocomu.study.domain.StudyUser;
 import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
 import co.kr.cocomu.study.repository.jpa.StudyRepository;
-import co.kr.cocomu.study.repository.jpa.StudyUserRepository;
 import co.kr.cocomu.study.repository.jpa.WorkbookRepository;
 import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.service.UserService;
@@ -29,10 +29,10 @@ public class StudyCommandService {
 
     private final StudyDomainService studyDomainService;
     private final UserService userService;
+    private final StudyPasswordService studyPasswordService;
     private final StudyRepository studyRepository;
     private final WorkbookRepository workbookRepository;
     private final LanguageRepository languageRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public Long createPublicStudy(final Long userId, final CreatePublicStudyDto dto) {
         final User user = userService.getUserWithThrow(userId);
@@ -61,11 +61,11 @@ public class StudyCommandService {
         final List<Workbook> workbooks = workbookRepository.findAllById(dto.workbooks());
         final List<Language> languages = languageRepository.findAllById(dto.languages());
 
-        final String encodedPassword = passwordEncoder.encode(dto.password());
+        final String encodedPassword = studyPasswordService.encodeStudyPassword(dto.password());
         final Study study = Study.createPrivateStudy(dto, encodedPassword);
-        study.joinLeader(user);
         study.addLanguages(languages);
         study.addWorkBooks(workbooks);
+        study.joinLeader(user);
 
         return studyRepository.save(study).getId();
     }
@@ -74,7 +74,7 @@ public class StudyCommandService {
         studyDomainService.validateStudyParticipation(userId, studyId);
         final User user = userService.getUserWithThrow(userId);
         final Study study = studyDomainService.getStudyWithThrow(studyId);
-        validatePrivateStudyPassword(password, study.getPassword());
+        studyPasswordService.validatePrivateStudyPassword(password, study.getPassword());
         study.joinMember(user);
 
         return study.getId();
@@ -90,10 +90,23 @@ public class StudyCommandService {
         studyUser.removeStudy();
     }
 
-    private void validatePrivateStudyPassword(final String password, final String encodedPassword) {
-        if (!passwordEncoder.matches(password, encodedPassword)) {
-            throw new BadRequestException(StudyExceptionCode.STUDY_PASSWORD_WRONG);
-        }
+    public Long editPublicStudy(final Long studyId, final Long userId, final EditStudyDto dto) {
+        final StudyUser studyUser = studyDomainService.getStudyUserWithThrow(studyId, userId);
+        final List<Workbook> workbooks = workbookRepository.findAllById(dto.workbooks());
+        final List<Language> languages = languageRepository.findAllById(dto.languages());
+        studyUser.editPublicStudy(dto, workbooks, languages);
+
+        return studyUser.getStudyId();
+    }
+
+    public Long editPrivateStudy(final Long studyId, final Long userId, final EditStudyDto dto) {
+        final StudyUser studyUser = studyDomainService.getStudyUserWithThrow(studyId, userId);
+        final List<Workbook> workbooks = workbookRepository.findAllById(dto.workbooks());
+        final List<Language> languages = languageRepository.findAllById(dto.languages());
+        final String encodedPassword = studyPasswordService.encodeStudyPassword(dto.password());
+        studyUser.editPrivateStudy(dto, workbooks, languages, encodedPassword);
+
+        return studyUser.getStudyId();
     }
 
 }

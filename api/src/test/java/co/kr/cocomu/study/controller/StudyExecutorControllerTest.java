@@ -14,6 +14,7 @@ import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.page.StudyPageDto;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
@@ -252,6 +253,40 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
         assertThat(result.code()).isEqualTo(StudyApiCode.GET_ALL_MEMBERS_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.GET_ALL_MEMBERS_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(List.of());
+    }
+
+    @Test
+    void 공개_스터디로_변경하는_요청이_성공한다() {
+        // given
+        EditStudyDto dto = new EditStudyDto("", "", true, null, 0, List.of(), List.of());
+        when(studyCommandService.editPublicStudy(1L, 1L, dto)).thenReturn(1L);
+
+        // when
+        String path = PATH_PREFIX + "/1/edit";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
+
+        // then
+        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.EDIT_STUDY_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.EDIT_STUDY_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(1L);
+    }
+
+    @Test
+    void 비공개_스터디로_변경하는_요청이_성공한다() {
+        // given
+        EditStudyDto dto = new EditStudyDto("", "", false, "1234", 0, List.of(), List.of());
+        when(studyCommandService.editPrivateStudy(1L, 1L, dto)).thenReturn(1L);
+
+        // when
+        String path = PATH_PREFIX + "/1/edit";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
+
+        // then
+        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(StudyApiCode.EDIT_STUDY_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(StudyApiCode.EDIT_STUDY_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(1L);
     }
 
     /*

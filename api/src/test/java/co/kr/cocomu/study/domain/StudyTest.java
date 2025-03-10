@@ -254,4 +254,46 @@ class StudyTest {
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.INVALID_STUDY_LANGUAGE);
     }
 
+    @Test
+    void 스터디_정보_수정이_된다() {
+        // given
+        Study study = new Study();
+
+        // when
+        study.updateStudyInfo("스터디", "내용", 10);
+
+        // then
+        assertThat(study.getName()).isEqualTo("스터디");
+        assertThat(study.getDescription()).isEqualTo("내용");
+        assertThat(study.getTotalUserCount()).isEqualTo(10);
+    }
+
+    @Test
+    void 스터디가_공개_스터디로_변경된다() {
+        // given
+        CreatePrivateStudyDto dto = mock(CreatePrivateStudyDto.class);
+        Study study = Study.createPrivateStudy(dto, "pass");
+
+        // when
+        study.changeToPublic();
+
+        // then
+        assertThat(study.getPassword()).isNull();
+        assertThat(study.getStatus()).isEqualTo(StudyStatus.PUBLIC);
+    }
+
+    @Test
+    void 스터디가_비공개_스터디로_변경된다() {
+        // given
+        CreatePublicStudyDto dto = mock(CreatePublicStudyDto.class);
+        Study study = Study.createPublicStudy(dto);
+
+        // when
+        study.changeToPrivate("pass");
+
+        // then
+        assertThat(study.getPassword()).isEqualTo("pass");
+        assertThat(study.getStatus()).isEqualTo(StudyStatus.PRIVATE);
+    }
+
 }

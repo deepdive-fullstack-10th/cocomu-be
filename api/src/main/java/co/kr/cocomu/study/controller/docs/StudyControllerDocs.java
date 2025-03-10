@@ -5,6 +5,7 @@ import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
@@ -165,7 +166,7 @@ public interface StudyControllerDocs {
     @ApiResponse(
         responseCode = "400",
         description = """
-                스터디장만 스터디를 삭제 할 수 있습니다.
+                스터디 리더가 아닙니다.
                 스터디원이 남아있으면 스터디를 제거할 수 없습니다.
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
@@ -192,5 +193,27 @@ public interface StudyControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<List<StudyMemberDto>> getStudyMembers(Long studyId, Long userId, String lastNickname);
+
+    @Operation(summary = "스터디 수정", description = "스터디를 수정하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "스터디 사용자 목록 조회에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "400",
+        description = """
+                스터디 리더가 아닙니다.
+                스터디 현재 인원은 최대 인원을 초과할 수 없습니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = """
+                스터디에서 사용자를 찾을 수 없습니다.스터디 리더가 아닙니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    Api<Long> editStudy(Long studyId, Long userId, EditStudyDto dto);
 
 }

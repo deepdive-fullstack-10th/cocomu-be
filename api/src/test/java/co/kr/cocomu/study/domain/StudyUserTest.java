@@ -4,17 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.vo.StudyRole;
-import co.kr.cocomu.study.domain.vo.StudyStatus;
 import co.kr.cocomu.study.domain.vo.StudyUserStatus;
-import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.user.domain.User;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class StudyUserTest {
@@ -99,7 +98,7 @@ class StudyUserTest {
         // when & then
         assertThatThrownBy(studyUser::removeStudy)
             .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.ONLY_LEADER_CAN_REMOVE_STUDY);
+            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.USER_IS_NOT_LEADER);
     }
 
     @Test
@@ -143,6 +142,36 @@ class StudyUserTest {
 
         // then
         assertThat(leader).isFalse();
+    }
+
+    @Test
+    void 스터디_공개_수정이_가능하다() {
+        // given
+        Study mockStudy = mock(Study.class);
+        User mockUser = mock(User.class);
+        EditStudyDto dto = mock(EditStudyDto.class);
+        StudyUser studyUser = StudyUser.createLeader(mockStudy, mockUser);
+
+        // when
+        studyUser.editPublicStudy(dto, List.of(), List.of());
+
+        // then
+        verify(mockStudy).changeToPublic();
+    }
+
+    @Test
+    void 스터디_비공개_수정이_가능하다() {
+        // given
+        Study mockStudy = mock(Study.class);
+        User mockUser = mock(User.class);
+        EditStudyDto dto = mock(EditStudyDto.class);
+        StudyUser studyUser = StudyUser.createLeader(mockStudy, mockUser);
+
+        // when
+        studyUser.editPrivateStudy(dto, List.of(), List.of(), "pass");
+
+        // then
+        verify(mockStudy).changeToPrivate("pass");
     }
 
 }

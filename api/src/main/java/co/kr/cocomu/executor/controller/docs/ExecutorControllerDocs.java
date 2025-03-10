@@ -28,11 +28,7 @@ public interface ExecutorControllerDocs {
     )
     NoContent executeCode(ExecuteDto dto);
 
-    @Operation(summary = "코딩 스페이스 코드 실행 결과 요청", description = "코드 실행 결과를 요청하는 기능")
-    @ApiResponse(
-        responseCode = "200",
-        description = "코드 실행이 성공했습니다."
-    )
+    @Operation(hidden = true)
     NoContent handleExecutionResult(EventMessage<ExecutionMessage> dto);
 
 }

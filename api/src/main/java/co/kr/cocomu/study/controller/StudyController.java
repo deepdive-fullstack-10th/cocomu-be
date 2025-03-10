@@ -6,6 +6,7 @@ import co.kr.cocomu.study.controller.code.StudyApiCode;
 import co.kr.cocomu.study.controller.docs.StudyControllerDocs;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
@@ -152,6 +153,21 @@ public class StudyController implements StudyControllerDocs {
     ) {
         final List<StudyMemberDto> allMembers = studyQueryService.findAllMembers(userId, studyId, lastNickname);
         return Api.of(StudyApiCode.GET_ALL_MEMBERS_SUCCESS, allMembers);
+    }
+
+    @PostMapping("/{studyId}/edit")
+    public Api<Long> editStudy(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId,
+        @RequestBody final EditStudyDto dto
+    ) {
+        if (dto.publicStudy()) {
+            final Long editedStudyId = studyCommandService.editPublicStudy(studyId, userId, dto);
+            return Api.of(StudyApiCode.EDIT_STUDY_SUCCESS, editedStudyId);
+        }
+
+        final Long editedStudyId = studyCommandService.editPrivateStudy(studyId, userId, dto);
+        return Api.of(StudyApiCode.EDIT_STUDY_SUCCESS, editedStudyId);
     }
 
 }
