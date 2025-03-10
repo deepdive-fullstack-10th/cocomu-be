@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -43,4 +44,23 @@ public interface AuthControllerDocs {
     )
     Api<AuthResponse> loginWithOAuth2(OAuthRequest request, HttpServletResponse response);
 
+    @Operation(summary = "OAuth 개발용 로그인", description = "OAuth 로그인을 하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "로그인에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "400",
+        description = "제공되지 않는 OAuth Service 입니다.",
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    @ApiResponse(
+        responseCode = "502",
+        description = """
+            OAuth 로그인에 실패했습니다.
+            OAuth 로그인 중 알 수 없는 에러가 발생했습니다.
+        """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    public Api<AuthResponse> loginWithOAuth2Dev(OAuthRequest request, HttpServletResponse response);
 }

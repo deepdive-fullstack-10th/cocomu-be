@@ -80,18 +80,14 @@ public class StudyCommandService {
         return study.getId();
     }
 
-    public Long leaveStudy(final Long userId, final Long studyId) {
+    public void leaveStudy(final Long userId, final Long studyId) {
         final StudyUser studyUser = studyDomainService.getStudyUserWithThrow(studyId, userId);
         studyUser.leaveStudy();
-
-        return studyUser.getStudyId();
     }
 
-    public Long removeStudy(final Long userId, final Long studyId) {
+    public void removeStudy(final Long userId, final Long studyId) {
         final StudyUser studyUser = studyDomainService.getStudyUserWithThrow(studyId, userId);
         studyUser.removeStudy();
-
-        return studyUser.getStudyId();
     }
 
     private void validatePrivateStudyPassword(final String password, final String encodedPassword) {

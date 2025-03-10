@@ -1,10 +1,12 @@
 package co.kr.cocomu.study.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.Api;
+import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
@@ -209,33 +211,31 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
     @Test
     void 스터디_나가기_요청이_성공한다() {
         // given
-        when(studyCommandService.leaveStudy(1L, 1L)).thenReturn(1L);
+        doNothing().when(studyCommandService).leaveStudy(1L, 1L);
 
         // when
         String path = PATH_PREFIX + "/1/leave";
         ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
 
         // then
-        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(StudyApiCode.LEAVE_STUDY_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.LEAVE_STUDY_SUCCESS.getMessage());
-        assertThat(result.result()).isEqualTo(1L);
     }
 
     @Test
     void 스터디_삭제_요청이_성공한다() {
         // given
-        when(studyCommandService.removeStudy(1L, 1L)).thenReturn(1L);
+        doNothing().when(studyCommandService).removeStudy(1L, 1L);
 
         // when
         String path = PATH_PREFIX + "/1/remove";
         ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
 
         // then
-        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(StudyApiCode.REMOVE_STUDY_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(StudyApiCode.REMOVE_STUDY_SUCCESS.getMessage());
-        assertThat(result.result()).isEqualTo(1L);
     }
 
     @Test

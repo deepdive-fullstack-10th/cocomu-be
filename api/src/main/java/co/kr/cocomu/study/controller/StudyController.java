@@ -1,6 +1,7 @@
 package co.kr.cocomu.study.controller;
 
 import co.kr.cocomu.common.api.Api;
+import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
 import co.kr.cocomu.study.controller.docs.StudyControllerDocs;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
@@ -126,21 +127,21 @@ public class StudyController implements StudyControllerDocs {
     }
 
     @PostMapping("/{studyId}/leave")
-    public Api<Long> leaveStudy(
+    public NoContent leaveStudy(
         @PathVariable final Long studyId,
         @AuthenticationPrincipal final Long userId
     ) {
-        final Long leavedStudyId = studyCommandService.leaveStudy(userId, studyId);
-        return Api.of(StudyApiCode.LEAVE_STUDY_SUCCESS, leavedStudyId);
+        studyCommandService.leaveStudy(userId, studyId);
+        return NoContent.from(StudyApiCode.LEAVE_STUDY_SUCCESS);
     }
 
     @PostMapping("/{studyId}/remove")
-    public Api<Long> removeStudy(
+    public NoContent removeStudy(
         @PathVariable final Long studyId,
         @AuthenticationPrincipal final Long userId
     ) {
-        final Long leavedStudyId = studyCommandService.removeStudy(userId, studyId);
-        return Api.of(StudyApiCode.REMOVE_STUDY_SUCCESS, leavedStudyId);
+        studyCommandService.removeStudy(userId, studyId);
+        return NoContent.from(StudyApiCode.REMOVE_STUDY_SUCCESS);
     }
 
     @GetMapping("/{studyId}/members")
