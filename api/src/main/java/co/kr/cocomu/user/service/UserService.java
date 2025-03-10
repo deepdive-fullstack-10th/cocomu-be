@@ -1,8 +1,9 @@
 package co.kr.cocomu.user.service;
 
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
-import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.user.domain.User;
+import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.exception.UserExceptionCode;
@@ -42,6 +43,15 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse findUser(final Long userId) {
         return getUserWithThrow(userId).toDto();
+    }
+
+    public void updateUser(final Long userId, final Long tokenUserId, final ProfileUpdateDto dto) {
+        if (!userId.equals(tokenUserId)) {
+            throw new BadRequestException(UserExceptionCode.INVALIDATE_ACCESS);
+        }
+
+        final User user = getUserWithThrow(userId);
+        user.updateProfile(dto.nickname(), dto.profileImageUrl());
     }
 
 }

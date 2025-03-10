@@ -3,12 +3,15 @@ package co.kr.cocomu.user.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.user.controller.code.UserApiCode;
+import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.service.UserService;
@@ -83,6 +86,22 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
         assertThat(result.code()).isEqualTo(UserApiCode.USER_JOIN_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(UserApiCode.USER_JOIN_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(userResponse);
+    }
+
+    @Test
+    void 프로필_수정_요청이_성공한다() {
+        // given
+        ProfileUpdateDto dto = new ProfileUpdateDto("", "");
+        doNothing().when(userService).updateUser(1L, 1L, dto);
+
+        // when
+        String path = PATH_PREFIX + "/1";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
+
+        // then
+        Api<UserResponse> result = response.extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(UserApiCode.PROFILE_UPDATE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(UserApiCode.PROFILE_UPDATE_SUCCESS.getMessage());
     }
 
 }

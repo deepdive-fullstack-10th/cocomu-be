@@ -43,10 +43,14 @@ public class User extends TimeBaseEntity {
 
     public static User createUser(final String nickname) {
         validateUserNickname(nickname);
+        return new User(parseNickname(nickname));
+    }
+
+    private static String parseNickname(final String nickname) {
         if (nickname.length() > MAX_NICKNAME_LENGTH) {
-            return new User(nickname.substring(0, MAX_NICKNAME_LENGTH));
+            return nickname.substring(0, MAX_NICKNAME_LENGTH);
         }
-        return new User(nickname);
+        return nickname;
     }
 
     private static void validateUserNickname(final String nickname) {
@@ -57,6 +61,12 @@ public class User extends TimeBaseEntity {
 
     public UserResponse toDto() {
         return new UserResponse(id, nickname, profileImageUrl);
+    }
+
+    public void updateProfile(final String nickname, final String profileImageUrl) {
+        validateUserNickname(nickname);
+        this.nickname = parseNickname(nickname);
+        this.profileImageUrl = profileImageUrl;
     }
 
 }

@@ -4,10 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.user.domain.User;
+import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.exception.UserExceptionCode;
@@ -95,6 +99,29 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.findUser(userId))
             .isInstanceOf(NotFoundException.class)
             .hasFieldOrPropertyWithValue("exceptionType", UserExceptionCode.USER_NOT_FOUND);
+    }
+
+    @Test
+    void 사용자_프로필_수정이_된다() {
+        // given
+        ProfileUpdateDto mockDto = mock(ProfileUpdateDto.class);
+        User mockUser = mock(User.class);
+        when(userJpaRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+
+        // when
+        userService.updateUser(1L, 1L, mockDto);
+
+        // then
+        verify(mockUser).updateProfile(mockDto.nickname(), mockDto.profileImageUrl());
+    }
+
+    @Test
+    void 토큰_정보와_리소스_정보가_다를_경우_예외가_발생한다() {
+        // given
+        // when & then
+        assertThatThrownBy(() -> userService.updateUser(1L, 2L, mock(ProfileUpdateDto.class)))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", UserExceptionCode.INVALIDATE_ACCESS);
     }
 
 }
