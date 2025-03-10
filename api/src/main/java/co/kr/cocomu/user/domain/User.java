@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class User extends TimeBaseEntity {
 
-    private static final String DEFAULT_PROFILE_IMAGE = "https://cdn.cocomu.co.kr/images/profile.png";
+    private static final String DEFAULT_PROFILE_IMAGE = "https://cdn.cocomu.co.kr/images/default/profile.png";
     private static final int MAX_NICKNAME_LENGTH = 10;
 
     @Id

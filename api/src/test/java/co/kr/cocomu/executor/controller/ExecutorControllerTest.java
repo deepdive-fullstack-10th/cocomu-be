@@ -3,14 +3,13 @@ package co.kr.cocomu.executor.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import co.kr.cocomu.admin.config.AdminSecurityConfig;
 import co.kr.cocomu.admin.config.AdminUserConfig;
 import co.kr.cocomu.codingspace.service.CodingSpaceDomainService;
 import co.kr.cocomu.common.BaseExecutorControllerTest;
-import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
+import co.kr.cocomu.common.security.PasswordEncoderConfig;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.executor.controller.code.ExecutorApiCode;
 import co.kr.cocomu.executor.dto.message.EventMessage;
@@ -31,7 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 @WebMvcTest(ExecutorController.class)
-@Import(AdminUserConfig.class)
+@Import({AdminUserConfig.class, PasswordEncoderConfig.class, AdminSecurityConfig.class})
 class ExecutorControllerTest extends BaseExecutorControllerTest {
 
     private static final String PATH_PREFIX = "/api/v1/executor";

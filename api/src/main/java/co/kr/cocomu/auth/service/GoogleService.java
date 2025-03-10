@@ -32,6 +32,15 @@ public class GoogleService {
         return userAuth.getUser().getId();
     }
 
+    public Long signupWithLoginDev(final String code) {
+        final TokenResponse tokenResponse = googleClient.getDevAccessToken(code);
+        final GoogleUserResponse googleUser = googleApiClient.getUser(tokenResponse);
+
+        final UserAuth userAuth = findOrSignup(googleUser);
+
+        return userAuth.getUser().getId();
+    }
+
     private UserAuth findOrSignup(final GoogleUserResponse googleUser) {
         final String providerId = "GOOGLE_" + googleUser.sub();
         return userAuthJpaRepository.findById(providerId)

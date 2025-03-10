@@ -5,6 +5,7 @@ import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.repository.TimeBaseEntity;
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.domain.vo.StudyUserStatus;
+import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.user.domain.User;
 import jakarta.persistence.Column;
@@ -21,8 +22,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,6 +34,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@EqualsAndHashCode(callSuper = false, of = "id")
 public class StudyUser extends TimeBaseEntity {
 
     @Id
@@ -61,38 +65,69 @@ public class StudyUser extends TimeBaseEntity {
         this.status = StudyUserStatus.JOIN;
     }
 
-    public static StudyUser joinStudy(final Study study, final User user, final StudyRole studyRole) {
-        study.increaseCurrentUserCount();
-        return new StudyUser(study, user, studyRole);
+    public static StudyUser createLeader(final Study study, final User user) {
+        return new StudyUser(study, user, StudyRole.LEADER);
+    }
+
+    public static StudyUser createMember(final Study study, final User user) {
+        return new StudyUser(study, user, StudyRole.MEMBER);
     }
 
     public void leaveStudy() {
-        validateNormalRole();
+        validateMemberRole();
+        study.leaveUser();
         status = StudyUserStatus.LEAVE;
-        study.decreaseCurrentUserCount();
     }
 
     public void removeStudy() {
         validateLeaderRole();
-        study.decreaseCurrentUserCount();
-        study.removeStudy();
+        study.remove();
         status = StudyUserStatus.LEAVE;
     }
 
-    private void validateNormalRole() {
-        if (role != StudyRole.NORMAL) {
+    public Long getStudyId() {
+        return study.getId();
+    }
+
+    public boolean isLeader() {
+        return this.role == StudyRole.LEADER;
+    }
+
+    private void validateMemberRole() {
+        if (role != StudyRole.MEMBER) {
             throw new BadRequestException(StudyExceptionCode.LEADER_MUST_USE_REMOVE);
         }
     }
 
     private void validateLeaderRole() {
         if (role != StudyRole.LEADER) {
-            throw new BadRequestException(StudyExceptionCode.ONLY_LEADER_CAN_REMOVE_STUDY);
+            throw new BadRequestException(StudyExceptionCode.USER_IS_NOT_LEADER);
         }
     }
 
-    public Long getStudyId() {
-        return study.getId();
+    public void editPublicStudy(
+        final EditStudyDto dto,
+        final List<Workbook> workbooks,
+        final List<Language> languages
+    ) {
+        validateLeaderRole();
+        study.updateStudyInfo(dto.name(), dto.description(), dto.totalUserCount());
+        study.changeToPublic();
+        study.addWorkBooks(workbooks);
+        study.addLanguages(languages);
+    }
+
+    public void editPrivateStudy(
+        final EditStudyDto dto,
+        final List<Workbook> workbooks,
+        final List<Language> languages,
+        final String newPassword
+    ) {
+        validateLeaderRole();
+        study.updateStudyInfo(dto.name(), dto.description(), dto.totalUserCount());
+        study.changeToPrivate(newPassword);
+        study.addWorkBooks(workbooks);
+        study.addLanguages(languages);
     }
 
 }

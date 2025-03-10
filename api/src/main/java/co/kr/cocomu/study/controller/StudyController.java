@@ -1,15 +1,20 @@
 package co.kr.cocomu.study.controller;
 
 import co.kr.cocomu.common.api.Api;
+import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.study.controller.code.StudyApiCode;
 import co.kr.cocomu.study.controller.docs.StudyControllerDocs;
+import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
+import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.page.StudyPageDto;
+import co.kr.cocomu.study.dto.response.StudyMemberDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.dto.response.FilterOptionsDto;
 import co.kr.cocomu.study.service.StudyCommandService;
@@ -25,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -100,6 +106,68 @@ public class StudyController implements StudyControllerDocs {
     ) {
         final StudyDetailPageDto result = studyQueryService.getStudyDetailPage(studyId, userId);
         return Api.of(StudyApiCode.GET_STUDY_DETAIL_SUCCESS, result);
+    }
+
+    @PostMapping("/private")
+    public Api<Long> createPrivateStudy(
+        @RequestBody @Valid final CreatePrivateStudyDto dto,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final Long privateStudyId = studyCommandService.createPrivateStudy(dto, userId);
+        return Api.of(StudyApiCode.CREATE_STUDY_SUCCESS, privateStudyId);
+    }
+
+    @PostMapping("/private/{studyId}/join")
+    public Api<Long> createPrivateStudy(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId,
+        @Valid @RequestBody final JoinPrivateStudyDto dto
+    ) {
+        final Long publicStudyId = studyCommandService.joinPrivateStudy(userId, studyId, dto.password());
+        return Api.of(StudyApiCode.JOIN_STUDY_SUCCESS, publicStudyId);
+    }
+
+    @PostMapping("/{studyId}/leave")
+    public NoContent leaveStudy(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        studyCommandService.leaveStudy(userId, studyId);
+        return NoContent.from(StudyApiCode.LEAVE_STUDY_SUCCESS);
+    }
+
+    @PostMapping("/{studyId}/remove")
+    public NoContent removeStudy(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        studyCommandService.removeStudy(userId, studyId);
+        return NoContent.from(StudyApiCode.REMOVE_STUDY_SUCCESS);
+    }
+
+    @GetMapping("/{studyId}/members")
+    public Api<List<StudyMemberDto>> getStudyMembers(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId,
+        @RequestParam(required = false) final String lastNickname
+    ) {
+        final List<StudyMemberDto> allMembers = studyQueryService.findAllMembers(userId, studyId, lastNickname);
+        return Api.of(StudyApiCode.GET_ALL_MEMBERS_SUCCESS, allMembers);
+    }
+
+    @PostMapping("/{studyId}/edit")
+    public Api<Long> editStudy(
+        @PathVariable final Long studyId,
+        @AuthenticationPrincipal final Long userId,
+        @RequestBody final EditStudyDto dto
+    ) {
+        if (dto.publicStudy()) {
+            final Long editedStudyId = studyCommandService.editPublicStudy(studyId, userId, dto);
+            return Api.of(StudyApiCode.EDIT_STUDY_SUCCESS, editedStudyId);
+        }
+
+        final Long editedStudyId = studyCommandService.editPrivateStudy(studyId, userId, dto);
+        return Api.of(StudyApiCode.EDIT_STUDY_SUCCESS, editedStudyId);
     }
 
 }

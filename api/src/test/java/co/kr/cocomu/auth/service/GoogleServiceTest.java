@@ -65,6 +65,26 @@ class GoogleServiceTest {
     }
 
     @Test
+    void 개발환경으로_로그인이_된다() {
+        // given
+        String oauthCode = "mock-code";
+        TokenResponse tokenResponse = new TokenResponse("mock-token", "Bearer");
+        GoogleUserResponse googleUserResponse = new GoogleUserResponse("12345", "test-user");
+
+        when(googleClient.getDevAccessToken(oauthCode)).thenReturn(tokenResponse);
+        when(googleApiClient.getUser(tokenResponse)).thenReturn(googleUserResponse);
+        when(userAuthJpaRepository.findById("GOOGLE_12345")).thenReturn(Optional.empty());
+        when(userAuthJpaRepository.save(any(UserAuth.class))).thenReturn(mockAuth);
+
+        // when
+        Long userId = googleService.signupWithLoginDev(oauthCode);
+
+        // then
+        assertThat(userId).isEqualTo(mockUser.getId());
+        verify(userAuthJpaRepository).save(any(UserAuth.class));
+    }
+
+    @Test
     void 기존_사용자는_바로_로그인한다() {
         // given
         String oauthCode = "mock-code";

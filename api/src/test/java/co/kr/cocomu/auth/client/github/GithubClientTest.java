@@ -18,7 +18,7 @@ class GithubClientTest extends OAuthClientTemplate {
 
     @BeforeEach
     void setUp() {
-        githubClient = new GithubClient("github", "secret", fakeOAuthClientGenerator);
+        githubClient = new GithubClient("github", "secret", "devid", "devSecret", fakeOAuthClientGenerator);
     }
 
     @Test
@@ -28,6 +28,18 @@ class GithubClientTest extends OAuthClientTemplate {
 
         // when
         TokenResponse response = githubClient.getAccessToken("mock-code");
+
+        // then
+        assertThat(response.getToken()).isEqualTo("Bearer mock-token");
+    }
+
+    @Test
+    void 깃허브_개발환경_액세스토큰을_가져온다() {
+        // given
+        enqueue("{\"access_token\": \"mock-token\", \"token_type\": \"Bearer\"}");
+
+        // when
+        TokenResponse response = githubClient.getAccessTokenDev("mock-code");
 
         // then
         assertThat(response.getToken()).isEqualTo("Bearer mock-token");

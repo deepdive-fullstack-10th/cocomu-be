@@ -18,6 +18,7 @@ import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.dto.response.StudyMemberDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
@@ -160,6 +161,19 @@ class StudyQueryServiceTest {
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo(mockStudy.getName());
         assertThat(result.getLanguages()).isEqualTo(List.of());
+    }
+
+    @Test
+    void 스터디_목록_조회를_한다() {
+        // given
+        doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
+        when(studyUserQuery.findMembers(1L, "")).thenReturn(List.of());
+
+        // when
+        List<StudyMemberDto> result = studyQueryService.findAllMembers(1L, 1L, "");
+
+        // then
+        assertThat(result).hasSize(0);
     }
 
 }

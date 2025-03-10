@@ -1,10 +1,8 @@
 package co.kr.cocomu.study.service;
 
-import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
-import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
@@ -12,6 +10,7 @@ import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
+import co.kr.cocomu.study.dto.response.StudyMemberDto;
 import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
 import co.kr.cocomu.study.repository.jpa.LanguageRepository;
@@ -30,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudyQueryService {
 
     private final StudyDomainService studyDomainService;
-    private final CodingSpaceQueryService codingSpaceQueryService;
     private final StudyRepository studyQuery;
     private final StudyUserRepository studyUserQuery;
     private final WorkbookRepository workbookQuery;
@@ -88,4 +86,8 @@ public class StudyQueryService {
         }
     }
 
+    public List<StudyMemberDto> findAllMembers(final Long userId, final Long studyId, final String lastNickname) {
+        studyDomainService.validateStudyMembership(userId, studyId);
+        return studyUserQuery.findMembers(studyId, lastNickname);
+    }
 }
