@@ -49,6 +49,16 @@ public interface StudyControllerDocs {
         description = "스터디 참여에 성공했습니다."
     )
     @ApiResponse(
+        responseCode = "400",
+        description = """
+            스터디 현재 인원은 최대 인원을 초과할 수 없습니다.
+            비공개 스터디 참여를 이용해주세요.
+            스터디는 리더가 필요합니다.
+            이미 스터디에 참여되었습니다.
+        """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    @ApiResponse(
         responseCode = "404",
         description = """
             사용자를 찾을 수 없습니다.
@@ -128,11 +138,21 @@ public interface StudyControllerDocs {
         description = "스터디 참여에 성공했습니다."
     )
     @ApiResponse(
+        responseCode = "400",
+        description = """
+            스터디 현재 인원은 최대 인원을 초과할 수 없습니다.
+            공개 스터디 참여를 이용해주세요.
+            스터디는 리더가 필요합니다.
+            이미 스터디에 참여되었습니다.
+        """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    @ApiResponse(
         responseCode = "404",
         description = """
-                사용자를 찾을 수 없습니다.
-                존재하지 않는 스터디입니다.
-            """,
+            사용자를 찾을 수 없습니다.
+            존재하지 않는 스터디입니다.
+        """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<Long> createPrivateStudy(Long studyId, Long userId, JoinPrivateStudyDto dto);

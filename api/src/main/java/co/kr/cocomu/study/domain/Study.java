@@ -96,13 +96,34 @@ public class Study extends TimeBaseEntity {
         this.currentUserCount++;
     }
 
-    public void joinMember(final User user) {
+    public void joinPublicMember(final User user) {
+        if (status != PUBLIC) {
+            throw new BadRequestException(StudyExceptionCode.USE_PRIVATE_JOIN);
+        }
+        joinMember(user);
+    }
+
+    public void joinPrivateMember(final User user) {
+        if (status != PRIVATE) {
+            throw new BadRequestException(StudyExceptionCode.USE_PUBLIC_JOIN);
+        }
+        joinMember(user);
+    }
+
+    private void joinMember(final User user) {
         validateStudyUserCount(this.totalUserCount);
         validateLeaderExists();
+        validateAlreadyParticipation(user);
 
         final StudyUser memberUser = StudyUser.createMember(this, user);
         this.studyUsers.add(memberUser);
         this.currentUserCount++;
+    }
+
+    private void validateAlreadyParticipation(final User user) {
+        if (studyUsers.stream().anyMatch(studyUser -> studyUser.getUser().equals(user))) {
+            throw new BadRequestException(StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
+        }
     }
 
     public void addWorkBooks(final List<Workbook> workbooks) {

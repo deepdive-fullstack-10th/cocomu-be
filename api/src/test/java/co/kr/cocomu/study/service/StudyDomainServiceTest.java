@@ -57,33 +57,6 @@ class StudyDomainServiceTest {
     }
 
     @Test
-    void 참여중인_스터디라면_예외가_발생한다() {
-        // given
-        Long userId = 1L;
-        Long studyId = 1L;
-
-        when(studyUserRepository.isUserJoinedStudy(userId, studyId)).thenReturn(true);
-
-        // when & then
-        assertThatThrownBy(() -> studyDomainService.validateStudyParticipation(userId, studyId))
-            .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
-    }
-
-    @Test
-    void 참여중이지_않은_스터디라면_정상_통과_한다() {
-        // given
-        Long userId = 1L;
-        Long studyId = 1L;
-
-        when(studyUserRepository.isUserJoinedStudy(userId, studyId)).thenReturn(false);
-
-        // when & then
-        assertThatCode(() -> studyDomainService.validateStudyParticipation(userId, studyId))
-            .doesNotThrowAnyException();
-    }
-
-    @Test
     void 스터디에_참여중이지_않으면_예외가_발생한다() {
         // given
         Long userId = 1L;

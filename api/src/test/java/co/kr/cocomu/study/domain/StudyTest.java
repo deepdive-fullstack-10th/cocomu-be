@@ -70,15 +70,16 @@ class StudyTest {
     }
 
     @Test
-    void 스터디_회원으로_참여가_된다() {
+    void 공개_스터디_회원으로_참여가_된다() {
         // given
         CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 2);
         Study publicStudy = Study.createPublicStudy(dto);
-        User mockUser = mock(User.class);
-        publicStudy.joinLeader(mockUser);
+        User leader = mock(User.class);
+        User member = mock(User.class);
+        publicStudy.joinLeader(leader);
 
         // when
-        publicStudy.joinMember(mockUser);
+        publicStudy.joinPublicMember(member);
 
         // then
         assertThat(publicStudy.getCurrentUserCount()).isEqualTo(2);
@@ -89,14 +90,27 @@ class StudyTest {
         // given
         CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 2);
         Study publicStudy = Study.createPublicStudy(dto);
-        User mockUser = mock(User.class);
-        publicStudy.joinLeader(mockUser);
-        publicStudy.joinMember(mockUser);
+        publicStudy.joinLeader(mock(User.class));
+        publicStudy.joinPublicMember(mock(User.class));
 
         // when & then
-        assertThatThrownBy(() -> publicStudy.joinMember(mockUser))
+        assertThatThrownBy(() -> publicStudy.joinPublicMember(mock(User.class)))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.STUDY_IS_FULL);
+    }
+
+    @Test
+    void 이미_참여한_경우_예외가_발생한다() {
+        // given
+        CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 2);
+        Study publicStudy = Study.createPublicStudy(dto);
+        final User user = mock(User.class);
+        publicStudy.joinLeader(user);
+
+        // when & then
+        assertThatThrownBy(() -> publicStudy.joinPublicMember(user))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
     }
 
     @Test
@@ -107,9 +121,49 @@ class StudyTest {
         User mockUser = mock(User.class);
 
         // when & then
-        assertThatThrownBy(() -> publicStudy.joinMember(mockUser))
+        assertThatThrownBy(() -> publicStudy.joinPublicMember(mockUser))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.STUDY_REQUIRES_LEADER);
+    }
+
+    @Test
+    void 공개_스터디에_비공개_스터디_참여를_하면_예외가_발생한다() {
+        // given
+        CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 2);
+        Study publicStudy = Study.createPublicStudy(dto);
+        User mockUser = mock(User.class);
+
+        // when & then
+        assertThatThrownBy(() -> publicStudy.joinPrivateMember(mockUser))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.USE_PUBLIC_JOIN);
+    }
+
+    @Test
+    void 비공개_스터디에_참여가_된다() {
+        // given
+        CreatePrivateStudyDto dto = new CreatePrivateStudyDto("코딩 스터디", "", List.of(), List.of(), "스터디", 2);
+        Study privateStudy = Study.createPrivateStudy(dto, "password");
+        privateStudy.joinLeader(mock(User.class));
+
+        // when
+        privateStudy.joinPrivateMember(mock(User.class));
+
+        // then
+        assertThat(privateStudy.getCurrentUserCount()).isEqualTo(2);
+    }
+
+    @Test
+    void 비공개_스터디에_공개_스터디_참여를_하면_예외가_발생한다() {
+        // given
+        CreatePrivateStudyDto dto = new CreatePrivateStudyDto("코딩 스터디", "", List.of(), List.of(), "스터디", 2);
+        Study privateStudy = Study.createPrivateStudy(dto, "password");
+        User mockUser = mock(User.class);
+
+        // when & then
+        assertThatThrownBy(() -> privateStudy.joinPublicMember(mockUser))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.USE_PRIVATE_JOIN);
     }
 
     @Test
@@ -117,9 +171,8 @@ class StudyTest {
         // given
         CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 2);
         Study publicStudy = Study.createPublicStudy(dto);
-        User mockUser = mock(User.class);
-        publicStudy.joinLeader(mockUser);
-        publicStudy.joinMember(mockUser);
+        publicStudy.joinLeader(mock(User.class));
+        publicStudy.joinPublicMember(mock(User.class));
         int currentUserCount = publicStudy.getCurrentUserCount();
 
         // when
@@ -150,9 +203,8 @@ class StudyTest {
         // given
         CreatePublicStudyDto dto = new CreatePublicStudyDto("코딩 스터디", List.of(), List.of(), "스터디", 2);
         Study publicStudy = Study.createPublicStudy(dto);
-        User mockUser = mock(User.class);
-        publicStudy.joinLeader(mockUser);
-        publicStudy.joinMember(mockUser);
+        publicStudy.joinLeader(mock(User.class));
+        publicStudy.joinPublicMember(mock(User.class));
 
         // when & then
         assertThatThrownBy(() -> publicStudy.remove())
@@ -168,7 +220,7 @@ class StudyTest {
         User mockUser = mock(User.class);
 
         // when & then
-        assertThatThrownBy(() -> publicStudy.joinMember(mockUser))
+        assertThatThrownBy(() -> publicStudy.joinPublicMember(mockUser))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.STUDY_REQUIRES_LEADER);
     }
