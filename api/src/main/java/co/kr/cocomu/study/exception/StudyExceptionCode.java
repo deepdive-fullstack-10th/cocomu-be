@@ -20,7 +20,8 @@ public enum StudyExceptionCode implements ExceptionCode {
     STUDY_REQUIRES_LEADER(3010, "스터디는 리더가 필요합니다."),
     STUDY_PASSWORD_WRONG(3011, "스터디 비밀번호가 잘못됐습니다."),
     NOT_FOUND_STUDY_USER(3012, "스터디에서 사용자를 찾을 수 없습니다."),
-    ;
+    USE_PRIVATE_JOIN(3013, "비공개 스터디 참여를 이용해주세요."),
+    USE_PUBLIC_JOIN(3014, "공개 스터디 참여를 이용해주세요.");
 
     private final int code;
     private final String message;

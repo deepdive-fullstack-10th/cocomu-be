@@ -27,12 +27,6 @@ public class StudyDomainService {
             .orElseThrow(() -> new NotFoundException(StudyExceptionCode.NOT_FOUND_STUDY_USER));
     }
 
-    public void validateStudyParticipation(final Long userId, final Long studyId) {
-        if (studyUserRepository.isUserJoinedStudy(userId, studyId)) {
-            throw new BadRequestException(StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
-        }
-    }
-
     public void validateStudyMembership(final Long userId, final Long studyId) {
         if (!studyUserRepository.isUserJoinedStudy(userId, studyId)) {
             throw new BadRequestException(StudyExceptionCode.NO_PARTICIPATION_USER);

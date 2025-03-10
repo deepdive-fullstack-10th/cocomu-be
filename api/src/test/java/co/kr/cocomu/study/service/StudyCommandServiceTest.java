@@ -62,7 +62,6 @@ class StudyCommandServiceTest {
         // given
         Study mockStudy = mock(Study.class);
         User mockUser = mock(User.class);
-        doNothing().when(studyDomainService).validateStudyParticipation(1L, 1L);
         when(userService.getUserWithThrow(1L)).thenReturn(mockUser);
         when(studyDomainService.getStudyWithThrow(1L)).thenReturn(mockStudy);
         when(mockStudy.getId()).thenReturn(1L);
@@ -100,7 +99,6 @@ class StudyCommandServiceTest {
         // given
         Study mockStudy = mock(Study.class);
         User mockUser = mock(User.class);
-        doNothing().when(studyDomainService).validateStudyParticipation(1L, 1L);
         when(userService.getUserWithThrow(1L)).thenReturn(mockUser);
         when(studyDomainService.getStudyWithThrow(1L)).thenReturn(mockStudy);
         when(mockStudy.getId()).thenReturn(1L);
