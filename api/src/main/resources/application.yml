@@ -54,6 +54,8 @@ oauth:
   github:
     client-id: ${GITHUB_ID}
     client-secret: ${GITHUB_SECRET}
+    client-id-dev: ${GITHUB_ID_DEV}
+    client-secret-dev: ${GITHUB_SECRET_DEV}
   kakao:
     client-id: ${KAKAO_ID}
     client-secret: ${KAKAO_SECRET}
@@ -61,6 +63,7 @@ oauth:
     client-id: ${GOOGLE_ID}
     client-secret: ${GOOGLE_SECRET}
     redirect-uri: ${GOOGLE_REDIRECT_URI}
+    redirect-uri-dev: ${GOOGLE_REDIRECT_URI_DEV}
 
 ---
 

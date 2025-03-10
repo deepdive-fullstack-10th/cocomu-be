@@ -63,6 +63,26 @@ class GithubServiceTest {
     }
 
     @Test
+    void 개발환경으로_로그인이_된다() {
+        // given
+        String oauthCode = "mock-code";
+        TokenResponse tokenResponse = new TokenResponse("mock-token", "Bearer");
+        GithubUserResponse githubUser = new GithubUserResponse("12345", "test-user");
+
+        when(githubClient.getAccessTokenDev(oauthCode)).thenReturn(tokenResponse);
+        when(githubApiClient.getUser(tokenResponse)).thenReturn(githubUser);
+        when(userAuthJpaRepository.findById("GITHUB_12345")).thenReturn(Optional.empty());
+        when(userAuthJpaRepository.save(any(UserAuth.class))).thenReturn(mockAuth);
+
+        // when
+        Long userId = githubService.signupWithLoginDev(oauthCode);
+
+        // then
+        assertThat(userId).isEqualTo(mockUser.getId());
+        verify(userAuthJpaRepository).save(any(UserAuth.class));
+    }
+
+    @Test
     void 기존_사용자는_바로_로그인한다() {
         // given
         String oauthCode = "mock-code";

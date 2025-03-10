@@ -40,7 +40,7 @@ public class AuthController implements AuthControllerDocs {
         final HttpServletResponse response
     ) {
         log.info(request.toString());
-        final Long userId = oAuthLoginByProvider(request);
+        final Long userId = oAuthLoginByProvider(request, false);
         final String accessToken = jwtProvider.issueAccessToken(userId);
         final String refreshToken = jwtProvider.issueRefreshToken(userId);
 
@@ -49,14 +49,37 @@ public class AuthController implements AuthControllerDocs {
         return Api.of(AuthApiCode.LOGIN_SUCCESS, new AuthResponse(accessToken));
     }
 
-    private Long oAuthLoginByProvider(final OAuthRequest request) {
+    @Profile(value = "!prod")
+    @PostMapping("/oauth-login-dev")
+    public Api<AuthResponse> loginWithOAuth2Dev(
+        @Valid @RequestBody final OAuthRequest request,
+        final HttpServletResponse response
+    ) {
+        final Long userId = oAuthLoginByProvider(request, true);
+        final String accessToken = jwtProvider.issueAccessToken(userId);
+        final String refreshToken = jwtProvider.issueRefreshToken(userId);
+
+        cookieService.setRefreshTokenCookie(response, refreshToken);
+
+        return Api.of(AuthApiCode.LOGIN_SUCCESS, new AuthResponse(accessToken));
+    }
+
+    private Long oAuthLoginByProvider(final OAuthRequest request, final boolean dev) {
         if (request.provider() == OAuth2Provider.GITHUB) {
+            if (dev) {
+                return githubService.signupWithLoginDev(request.oauthCode());
+            }
             return githubService.signupWithLogin(request.oauthCode());
         }
-        if (request.provider() == OAuth2Provider.KAKAO) {
-            return kakaoService.signupWithLogin(request.oauthCode());
+
+        if (request.provider() == OAuth2Provider.GOOGLE) {
+            if (dev) {
+                return googleService.signupWithLoginDev(request.oauthCode());
+            }
+            return googleService.signupWithLogin(request.oauthCode());
         }
-        return googleService.signupWithLogin(request.oauthCode());
+
+        return kakaoService.signupWithLogin(request.oauthCode());
     }
 
     @Profile(value = "!prod")

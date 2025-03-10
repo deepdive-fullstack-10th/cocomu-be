@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -148,6 +149,48 @@ class AuthExecutorControllerTest {
         // then
         response.status(HttpStatus.BAD_REQUEST);
         response.body("code", equalTo(9001));
+    }
+
+    @Test
+    void 개발환경_구글_로그인이_성공한다() {
+        // given
+        OAuthRequest request = new OAuthRequest(OAuth2Provider.GOOGLE, "code");
+        when(googleService.signupWithLoginDev("code")).thenReturn(1L);
+        when(jwtProvider.issueAccessToken(1L)).thenReturn("mock-access-token");
+        when(jwtProvider.issueRefreshToken(1L)).thenReturn("mock-refresh-token");
+        doNothing().when(cookieService).setRefreshTokenCookie(any(), eq("mock-refresh-token"));
+
+        // when
+        String path = PATH_PREFIX + "/oauth-login-dev";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, request);
+
+        // then
+        Api<AuthResponse> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getMessage());
+        assertThat(result.result().accessToken()).isEqualTo("mock-access-token");
+        verify(cookieService).setRefreshTokenCookie(any(), eq("mock-refresh-token"));
+    }
+
+    @Test
+    void 개발환경_깃허브_로그인이_성공한다() {
+        // given
+        OAuthRequest request = new OAuthRequest(OAuth2Provider.GITHUB, "code");
+        when(githubService.signupWithLoginDev("code")).thenReturn(1L);
+        when(jwtProvider.issueAccessToken(1L)).thenReturn("mock-access-token");
+        when(jwtProvider.issueRefreshToken(1L)).thenReturn("mock-refresh-token");
+        doNothing().when(cookieService).setRefreshTokenCookie(any(), eq("mock-refresh-token"));
+
+        // when
+        String path = PATH_PREFIX + "/oauth-login-dev";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, request);
+
+        // then
+        Api<AuthResponse> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getMessage());
+        assertThat(result.result().accessToken()).isEqualTo("mock-access-token");
+        verify(cookieService).setRefreshTokenCookie(any(), eq("mock-refresh-token"));
     }
 
 }

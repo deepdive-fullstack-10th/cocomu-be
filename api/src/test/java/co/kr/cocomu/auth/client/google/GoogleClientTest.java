@@ -15,7 +15,7 @@ class GoogleClientTest extends OAuthClientTemplate {
 
     @BeforeEach
     void setUp() {
-        googleClient = new GoogleClient("google", "secret", "uri", fakeOAuthClientGenerator);
+        googleClient = new GoogleClient("google", "secret", "uri", "devuri", fakeOAuthClientGenerator);
     }
 
     @Test
@@ -25,6 +25,18 @@ class GoogleClientTest extends OAuthClientTemplate {
 
         // when
         TokenResponse response = googleClient.getAccessToken("mock-code");
+
+        // then
+        assertThat(response.getToken()).isEqualTo("Bearer mock-token");
+    }
+
+    @Test
+    void 구글_개발환경_액세스토큰을_가져온다() {
+        // given
+        enqueue("{\"access_token\": \"mock-token\", \"token_type\": \"Bearer\"}");
+
+        // when
+        TokenResponse response = googleClient.getDevAccessToken("mock-code");
 
         // then
         assertThat(response.getToken()).isEqualTo("Bearer mock-token");

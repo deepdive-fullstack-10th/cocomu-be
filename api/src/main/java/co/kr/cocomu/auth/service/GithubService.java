@@ -32,6 +32,15 @@ public class GithubService {
         return userAuth.getUser().getId();
     }
 
+    public Long signupWithLoginDev(final String oauthCode) {
+        final TokenResponse tokenResponse = githubClient.getAccessTokenDev(oauthCode);
+        final GithubUserResponse githubUser = githubApiClient.getUser(tokenResponse);
+
+        final UserAuth userAuth = findOrSignup(githubUser);
+
+        return userAuth.getUser().getId();
+    }
+
     private UserAuth findOrSignup(final GithubUserResponse githubUser) {
         final String providerId = "GITHUB_" + githubUser.id();
 
