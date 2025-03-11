@@ -76,6 +76,19 @@ class UserServiceTest {
     }
 
     @Test
+    void 프로필_조회를_한다() {
+        // given
+        User mockUser = mock(User.class);
+        when(userJpaRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+
+        // when
+        userService.getMyProfile(1L);
+
+        // then
+        verify(mockUser).toDto();
+    }
+
+    @Test
     void 사용자_정보를_조회한다() {
         // given
         User mockUser = mock(User.class);

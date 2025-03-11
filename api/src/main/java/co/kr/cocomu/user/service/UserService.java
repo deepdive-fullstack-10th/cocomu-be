@@ -63,4 +63,9 @@ public class UserService {
         user.updateProfile(dto.nickname(), dto.profileImageUrl());
     }
 
+    public UserResponse getMyProfile(final Long userId) {
+        final User user = getUserWithThrow(userId);
+        return user.toDto();
+    }
+
 }
