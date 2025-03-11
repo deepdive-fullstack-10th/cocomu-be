@@ -1,5 +1,7 @@
 package co.kr.cocomu.user.controller;
 
+import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
+import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
@@ -35,6 +37,7 @@ public class UserController implements UserControllerDocs {
     private final UserService userService;
     private final ProfileImageUploader profileImageUploader;
     private final StudyQueryService studyQueryService;
+    private final CodingSpaceQueryService codingSpaceQueryService;
 
     @GetMapping("/{userId}")
     public Api<UserInfoDto> getUserInformation(
@@ -83,6 +86,16 @@ public class UserController implements UserControllerDocs {
     ) {
         final List<StudyCardDto> result = studyQueryService.getStudyCardsByUser(userId, viewerId, lastIndex);
         return Api.of(UserApiCode.GET_STUDIES_SUCCESS, result);
+    }
+
+    @GetMapping("/{userId}/coding-spaces")
+    public Api<List<CodingSpaceDto>> getCodingSpaces(
+        @PathVariable final Long userId,
+        @AuthenticationPrincipal final Long viewerId,
+        @RequestParam(required = false) final Long lastIndex
+    ) {
+        final List<CodingSpaceDto> result = codingSpaceQueryService.getSpacesByUser(userId, viewerId, lastIndex);
+        return Api.of(UserApiCode.GET_SPACES_SUCCESS, result);
     }
 
 }

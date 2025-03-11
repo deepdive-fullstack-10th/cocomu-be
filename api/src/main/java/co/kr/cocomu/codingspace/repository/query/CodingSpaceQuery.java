@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface CodingSpaceQuery {
 
     List<CodingSpaceDto> findSpacesWithFilter(Long userId, Long studyId, FilterDto dto);
+
+    List<CodingSpaceDto> findUserSpaces(Long userId, Long viewerId, Long lastIndex);
     Optional<WaitingPage> findWaitingPage(Long codingSpaceId, Long userId);
     Optional<StartingPage> findStartingPage(Long codingSpaceId, Long userId);
     Optional<FeedbackPage> findFeedbackPage(Long codingSpaceId, Long userId);

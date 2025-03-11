@@ -1,5 +1,6 @@
 package co.kr.cocomu.user.controller.docs;
 
+import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
@@ -102,5 +103,12 @@ public interface UserControllerDocs {
         description = "참여한 스터디 목록 조회에 성공했습니다."
     )
     Api<List<StudyCardDto>> getStudyCards(Long userId, Long viewerId, Long lastIndex);
+
+    @Operation(summary = "참여한 코딩 스페이스 조회", description = "코코무 회원의 참여한 스페이스 목록을 조회한다")
+    @ApiResponse(
+        responseCode = "200",
+        description = "참여한 코딩 스페이스 목록 조회에 성공했습니다."
+    )
+    Api<List<CodingSpaceDto>> getCodingSpaces(Long userId, Long viewerId, Long lastIndex);
 
 }

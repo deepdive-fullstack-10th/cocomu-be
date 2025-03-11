@@ -18,6 +18,7 @@ import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.service.StudyDomainService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -91,6 +92,19 @@ public class CodingSpaceQueryService {
                 return finishPage;
             })
             .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NO_STUDY_MEMBERSHIP));
+    }
+
+    public List<CodingSpaceDto> getSpacesByUser(final Long userId, final Long viewerId, final Long lastIndex) {
+        final List<CodingSpaceDto> codingSpaces = codingSpaceQuery.findUserSpaces(userId, viewerId, lastIndex);
+        final List<Long> codingSpaceIds = codingSpaces.stream().map(CodingSpaceDto::getId).toList();
+        final Map<Long, List<UserDto>> usersBySpace = codingSpaceTabQuery.findUsersBySpace(codingSpaceIds);
+
+        for (CodingSpaceDto codingSpace : codingSpaces) {
+            final List<UserDto> users = usersBySpace.getOrDefault(codingSpace.getId(), List.of());
+            codingSpace.setCurrentUsers(users);
+        }
+
+        return codingSpaces;
     }
 
 }

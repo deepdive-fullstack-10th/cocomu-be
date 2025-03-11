@@ -9,6 +9,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import co.kr.cocomu.codingspace.dto.response.CodingSpaceDto;
+import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
@@ -43,6 +45,7 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
     @MockBean private UserService userService;
     @MockBean private ProfileImageUploader profileImageUploader;
     @MockBean private StudyQueryService studyQueryService;
+    @MockBean private CodingSpaceQueryService codingSpaceQueryService;
 
     private UserResponse userResponse;
 
@@ -147,6 +150,22 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
 
         // then
         Api<List<StudyCardDto>> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(UserApiCode.GET_STUDIES_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(UserApiCode.GET_STUDIES_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockResult);
+    }
+    @Test
+    void 참여한_스페이스_목록_조회가_된다() {
+        // given
+        List<CodingSpaceDto> mockResult = List.of();
+        when(codingSpaceQueryService.getSpacesByUser(1L, 1L, 1L)).thenReturn(mockResult);
+
+        // when
+        String path = PATH_PREFIX + "/1/coding-spaces";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<List<CodingSpaceDto>> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(UserApiCode.GET_STUDIES_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(UserApiCode.GET_STUDIES_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockResult);
