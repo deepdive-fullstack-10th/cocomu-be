@@ -6,15 +6,14 @@ import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
 import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
+import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
+import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
-import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
-import co.kr.cocomu.codingspace.dto.page.WaitingPage;
-import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
@@ -62,12 +61,12 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
     }
 
     @PostMapping("/{codingSpaceId}")
-    public Api<CodingSpaceTabIdDto> joinCodingSpace(
+    public Api<CodingSpaceIdDto> joinCodingSpace(
         @PathVariable final Long codingSpaceId,
         @AuthenticationPrincipal final Long userId
     ) {
         final Long tabId = codingSpaceCommandService.joinCodingSpace(codingSpaceId, userId);
-        return Api.of(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS, new CodingSpaceTabIdDto(tabId));
+        return Api.of(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS, new CodingSpaceIdDto(tabId));
     }
 
     @GetMapping("/studies/{studyId}")
