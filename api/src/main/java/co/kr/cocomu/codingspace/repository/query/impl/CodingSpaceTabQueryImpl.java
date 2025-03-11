@@ -16,6 +16,7 @@ import co.kr.cocomu.study.dto.response.WorkbookDto;
 import co.kr.cocomu.user.domain.QUser;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Map;
@@ -47,13 +48,16 @@ public class CodingSpaceTabQueryImpl implements CodingSpaceTabQuery {
             );
     }
 
-    public List<UserDto> findUsers(final Long codingSpaceId) {
+    public List<UserDto> findUsers(final Long codingSpaceId, final Long userId) {
         return queryFactory
             .select(Projections.fields(UserDto.class,
                 codingSpaceTab.user.id,
                 codingSpaceTab.user.nickname,
                 codingSpaceTab.user.profileImageUrl,
-                codingSpaceTab.role
+                codingSpaceTab.role,
+                Expressions.cases()
+                    .when(codingSpaceTab.user.id.eq(userId)).then(true)
+                    .otherwise(false).as("myTab")
             ))
             .from(codingSpaceTab)
             .where(

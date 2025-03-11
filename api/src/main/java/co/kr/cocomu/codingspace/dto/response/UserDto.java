@@ -21,5 +21,7 @@ public class UserDto {
     private String profileImageUrl;
     @Schema(description = "코딩 스페이스 권한", example = "HOST")
     private CodingSpaceRole role;
+    @Schema(description = "자신의 탭 여부")
+    private boolean myTab;
 
 }
