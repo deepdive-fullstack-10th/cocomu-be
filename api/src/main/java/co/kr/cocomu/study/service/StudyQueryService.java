@@ -36,7 +36,7 @@ public class StudyQueryService {
 
     public AllStudyCardDto getAllStudyCard(final GetAllStudyFilterDto dto, final Long userId) {
         final Long totalStudyCount = studyQuery.countStudyCardsWithFilter(dto, userId);
-        final List<StudyCardDto> studyPages = studyQuery.findTop20StudyCardsWithFilter(dto, userId);
+        final List<StudyCardDto> studyPages = studyQuery.findTop12StudyCardsWithFilter(dto, userId);
         final List<Long> studyIds = studyPages.stream().map(StudyCardDto::getId).toList();
         setStudyInformation(studyIds, studyPages);
 

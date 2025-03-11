@@ -7,11 +7,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
-import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
@@ -64,7 +62,7 @@ class StudyQueryServiceTest {
         mockStudyCard.setId(1L);
 
         when(studyQuery.countStudyCardsWithFilter(dto, 1L)).thenReturn(totalCount);
-        when(studyQuery.findTop20StudyCardsWithFilter(dto, 1L)).thenReturn(List.of(mockStudyCard));
+        when(studyQuery.findTop12StudyCardsWithFilter(dto, 1L)).thenReturn(List.of(mockStudyCard));
         when(languageQuery.findLanguageByStudies(anyList())).thenReturn(languageByStudies);
         when(workbookQuery.findWorkbookByStudies(anyList())).thenReturn(new HashMap<>());
         when(studyUserQuery.findLeaderByStudies(anyList())).thenReturn(leaderByStudies);

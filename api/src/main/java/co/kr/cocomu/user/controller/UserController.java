@@ -2,11 +2,11 @@ package co.kr.cocomu.user.controller;
 
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
+import co.kr.cocomu.user.controller.code.UserApiCode;
 import co.kr.cocomu.user.controller.docs.UserControllerDocs;
 import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
-import co.kr.cocomu.user.dto.response.UserResponse;
-import co.kr.cocomu.user.controller.code.UserApiCode;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
+import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -53,5 +53,4 @@ public class UserController implements UserControllerDocs {
         userService.updateUser(userId, tokenUserId, dto);
         return NoContent.from(UserApiCode.PROFILE_UPDATE_SUCCESS);
     }
-
 }

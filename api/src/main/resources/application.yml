@@ -20,6 +20,20 @@ spring:
   security:
     cors:
       allowed-origins: ${ALLOWED_ORIGINS}
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      region:
+        static: ${AWS_STATIC_REGION}
+      s3:
+        endpoint: ${AWS_S3_ENDPOINT}
+        bucket: ${AWS_S3_BUCKET}
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 35MB
 
 management:
   endpoints:

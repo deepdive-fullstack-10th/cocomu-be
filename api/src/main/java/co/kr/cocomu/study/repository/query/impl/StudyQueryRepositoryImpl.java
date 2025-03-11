@@ -22,7 +22,7 @@ import org.springframework.stereotype.Repository;
 public class StudyQueryRepositoryImpl implements StudyQueryRepository {
 
     private static final int PAGE_MIN_OFFSET = 0;
-    private static final int STUDY_PAGE_SIZE = 20;
+    private static final int STUDY_PAGE_SIZE = 12;
     private final JPAQueryFactory queryFactory;
 
     public Long countStudyCardsWithFilter(final GetAllStudyFilterDto filter, final Long userId) {
@@ -32,7 +32,7 @@ public class StudyQueryRepositoryImpl implements StudyQueryRepository {
             .fetchOne();
     }
 
-    public List<StudyCardDto> findTop20StudyCardsWithFilter(final GetAllStudyFilterDto filter, final Long userId) {
+    public List<StudyCardDto> findTop12StudyCardsWithFilter(final GetAllStudyFilterDto filter, final Long userId) {
         return buildStudyPageForm(userId)
             .where(StudyFilterCondition.buildStudyFilterCondition(filter, userId))
             .orderBy(study.createdAt.desc())

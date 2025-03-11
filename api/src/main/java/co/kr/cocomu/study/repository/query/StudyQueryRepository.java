@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface StudyQueryRepository {
 
-    List<StudyCardDto> findTop20StudyCardsWithFilter(GetAllStudyFilterDto filter, Long userId);
+    List<StudyCardDto> findTop12StudyCardsWithFilter(GetAllStudyFilterDto filter, Long userId);
     Long countStudyCardsWithFilter(GetAllStudyFilterDto filter, Long userId);
     Optional<StudyCardDto> findStudyPagesByStudyId(Long studyId, Long userId);
 
