@@ -166,8 +166,8 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
 
         // then
         Api<List<CodingSpaceDto>> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(UserApiCode.GET_STUDIES_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(UserApiCode.GET_STUDIES_SUCCESS.getMessage());
+        assertThat(result.code()).isEqualTo(UserApiCode.GET_SPACES_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(UserApiCode.GET_SPACES_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockResult);
     }
 

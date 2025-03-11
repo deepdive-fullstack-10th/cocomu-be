@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "000. COCOMU-ADMIN", description = "코코무 관리자 관련 API")
 public interface AdminControllerDocs {
@@ -53,5 +55,12 @@ public interface AdminControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     NoContent deleteLanguage(Long languageId);
+
+    @Operation(summary = "공용 이미지 업로드", description = "공용으로 사용할 이미지를 업로드하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "공용 이미지 업로드가 성공했습니다."
+    )
+    Api<String> uploadCommonImage(@RequestBody final MultipartFile image);
 
 }
