@@ -90,7 +90,7 @@ class CodingSpaceQueryServiceTest {
         // given
         WaitingPage mockPage = mock(WaitingPage.class);
         when(codingSpaceQuery.findWaitingPage(1L, 1L)).thenReturn(Optional.of(mockPage));
-        when(codingSpaceTabQuery.findUsers(1L)).thenReturn(List.of());
+        when(codingSpaceTabQuery.findUsers(1L, 1L)).thenReturn(List.of());
         when(testCaseQuery.findTestCases(1L)).thenReturn(List.of());
 
         // when
@@ -116,7 +116,7 @@ class CodingSpaceQueryServiceTest {
         // given
         StartingPage mockPage = mock(StartingPage.class);
         when(codingSpaceQuery.findStartingPage(1L, 1L)).thenReturn(Optional.of(mockPage));
-        when(codingSpaceTabQuery.findUsers(1L)).thenReturn(List.of());
+        when(codingSpaceTabQuery.findUsers(1L, 1L)).thenReturn(List.of());
         when(testCaseQuery.findTestCases(1L)).thenReturn(List.of());
 
         // when

@@ -58,7 +58,7 @@ public class CodingSpaceQueryService {
         return codingSpaceQuery.findWaitingPage(codingSpaceId, userId)
             .map(waitingPage -> {
                 waitingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
-                waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
+                waitingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId, userId));
                 return waitingPage;
             })
             .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE));
@@ -68,7 +68,7 @@ public class CodingSpaceQueryService {
         return codingSpaceQuery.findStartingPage(codingSpaceId, userId)
             .map(startingPage -> {
                 startingPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
-                startingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId));
+                startingPage.setActiveUsers(codingSpaceTabQuery.findUsers(codingSpaceId, userId));
                 return startingPage;
             })
             .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE));
