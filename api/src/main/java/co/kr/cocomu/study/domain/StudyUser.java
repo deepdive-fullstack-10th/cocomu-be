@@ -130,4 +130,13 @@ public class StudyUser extends TimeBaseEntity {
         study.addLanguages(languages);
     }
 
+    public StudyUser reJoin() {
+        if (this.status == StudyUserStatus.JOIN) {
+            throw new BadRequestException(StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
+        }
+        status = StudyUserStatus.JOIN;
+        study.increaseCurrentUserCount();
+        return this;
+    }
+
 }
