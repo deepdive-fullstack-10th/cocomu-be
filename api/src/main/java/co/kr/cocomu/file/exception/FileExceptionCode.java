@@ -14,7 +14,8 @@ public enum FileExceptionCode implements ExceptionCode {
     INVALID_IMAGE_FILE(6004, "이미지 파일이 아닙니다."),
     S3_TAG_REMOVAL_FAILURE(6005, "파일 태그 제거에 실패했습니다."),
     INVALID_IMAGE_URL(6006, "잘못된 Image Url입니다."),
-    S3_TAGGING_FAILURE(6007, "파일 태그 설정에 실패했습니다.");
+    S3_TAGGING_FAILURE(6007, "파일 태그 설정에 실패했습니다."),
+    INVALID_FILE_DATA(6008, "잘못된 파일 정보입니다.");
     
     private final int code;
     private final String message;

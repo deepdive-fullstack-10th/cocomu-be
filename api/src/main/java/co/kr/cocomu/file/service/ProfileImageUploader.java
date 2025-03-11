@@ -30,7 +30,7 @@ public class ProfileImageUploader extends ImageUploader {
     public String uploadProfileImage(final MultipartFile file, final Long userId) {
         multipartValidator.validateImageFile(file);
 
-        final String fileName = multipartParser.parseSaveFileName(file);
+        final String fileName = multipartParser.parseSaveImageName(file);
         final String key = String.format("images/profiles/%d/%s", userId, fileName);
 
         return uploadImage(file, key);
