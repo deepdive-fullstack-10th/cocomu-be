@@ -7,6 +7,7 @@ import static co.kr.cocomu.study.domain.vo.StudyStatus.REMOVE;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.repository.TimeBaseEntity;
 import co.kr.cocomu.study.domain.vo.StudyStatus;
+import co.kr.cocomu.study.domain.vo.StudyUserStatus;
 import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.exception.StudyExceptionCode;
@@ -93,6 +94,10 @@ public class Study extends TimeBaseEntity {
 
         final StudyUser leaderUser = StudyUser.createLeader(this, user);
         this.studyUsers.add(leaderUser);
+        increaseCurrentUserCount();
+    }
+
+    public void increaseCurrentUserCount() {
         this.currentUserCount++;
     }
 
@@ -113,17 +118,20 @@ public class Study extends TimeBaseEntity {
     private void joinMember(final User user) {
         validateStudyUserCount(this.totalUserCount);
         validateLeaderExists();
-        validateAlreadyParticipation(user);
 
-        final StudyUser memberUser = StudyUser.createMember(this, user);
-        this.studyUsers.add(memberUser);
-        this.currentUserCount++;
+        studyUsers.stream()
+            .filter(studyUser -> studyUser.getUser().equals(user))
+            .findFirst()
+            .map(StudyUser::reJoin)
+            .orElseGet(() -> joinNewMember(user));
     }
 
-    private void validateAlreadyParticipation(final User user) {
-        if (studyUsers.stream().anyMatch(studyUser -> studyUser.getUser().equals(user))) {
-            throw new BadRequestException(StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
-        }
+    private StudyUser joinNewMember(final User user) {
+        final StudyUser memberUser = StudyUser.createMember(this, user);
+        this.studyUsers.add(memberUser);
+        increaseCurrentUserCount();
+
+        return memberUser;
     }
 
     public void addWorkBooks(final List<Workbook> workbooks) {

@@ -174,4 +174,33 @@ class StudyUserTest {
         verify(mockStudy).changeToPrivate("pass");
     }
 
+    @Test
+    void 스터디에_참여후_나간_경우_재참여가_된다() {
+        // given
+        Study mockStudy = mock(Study.class);
+        User mockUser = mock(User.class);
+        StudyUser studyUser = StudyUser.createMember(mockStudy, mockUser);
+        studyUser.leaveStudy();
+
+        // when
+        StudyUser reJoinedUser = studyUser.reJoin();
+
+        // then
+        assertThat(reJoinedUser.getStatus()).isEqualTo(StudyUserStatus.JOIN);
+        verify(mockStudy).increaseCurrentUserCount();
+    }
+
+    @Test
+    void 스터디에_참여되어있는데_재참여시_예외가_발생한다() {
+        // given
+        Study mockStudy = mock(Study.class);
+        User mockUser = mock(User.class);
+        StudyUser studyUser = StudyUser.createMember(mockStudy, mockUser);
+
+        // when & then
+        assertThatThrownBy(() -> studyUser.reJoin())
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", StudyExceptionCode.ALREADY_PARTICIPATION_STUDY);
+    }
+
 }

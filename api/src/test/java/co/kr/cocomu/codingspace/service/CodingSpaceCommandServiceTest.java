@@ -13,6 +13,7 @@ import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.stomp.StompSSEProducer;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.study.domain.Study;
@@ -52,7 +53,11 @@ class CodingSpaceCommandServiceTest {
     @Test
     void 코딩_스페이스를_생성한다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 0, 1L, "", "", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.studyId()).thenReturn(1L);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
         코딩_스페이스_생성_스텁();
 
         // when

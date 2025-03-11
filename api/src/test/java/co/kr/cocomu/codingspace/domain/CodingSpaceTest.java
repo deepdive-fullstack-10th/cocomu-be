@@ -38,26 +38,27 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스가_정상적으로_생성된다() {
         // given
-        CreateTestCaseDto testCaseDto = new CreateTestCaseDto("input", "output");
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 4, 30, 1L, "", "코딩스페이스", "", List.of(testCaseDto));
-        when(mockStudy.getLanguage(1L)).thenReturn(mockLanguage);
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
 
         // when
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
 
         // then
-        assertThat(codingSpace.getName()).isEqualTo("코딩스페이스");
         assertThat(codingSpace.getStatus()).isEqualTo(CodingSpaceStatus.WAITING);
         assertThat(codingSpace.getStudy()).isEqualTo(mockStudy);
-        assertThat(codingSpace.getLanguage()).isEqualTo(mockLanguage);
         assertThat(codingSpace.getTestCases()).hasSize(1);
     }
 
     @Test
     void 코딩_스페이스가_생성시_방장이_추가된다() {
         // given
-        CreateTestCaseDto testCaseDto = new CreateTestCaseDto("input", "output");
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 4, 30, 1L, "", "코딩스페이스", "", List.of(testCaseDto));
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
         when(mockStudy.getLanguage(1L)).thenReturn(mockLanguage);
 
         // when
@@ -71,7 +72,10 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스_최대_인원_초과시_예외가_발생한다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 5, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(5);
+        when(dto.testcases()).thenReturn(List.of(testCase));
 
         // when & then
         assertThatThrownBy(() -> CodingSpace.createCodingSpace(dto, null, null))
@@ -82,7 +86,10 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스_최소_인원_미만일_시_예외가_발생한다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 1, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(1);
+        when(dto.testcases()).thenReturn(List.of(testCase));
 
         // when & then
         assertThatThrownBy(() -> CodingSpace.createCodingSpace(dto, null, null))
@@ -91,10 +98,25 @@ class CodingSpaceTest {
     }
 
     @Test
+    void 코딩_스페이스_테스트_케이스가_없으면_예외가_발생한다() {
+        // given
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of());
+
+        // when & then
+        assertThatThrownBy(() -> CodingSpace.createCodingSpace(dto, null, null))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.EMPTY_TEST_CASE);
+    }
+
+    @Test
     void 코딩_테스트에_참여가_된다() {
         // given
-        CreateTestCaseDto testCaseDto = new CreateTestCaseDto("input", "output");
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of(testCaseDto));
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
         when(mockStudy.getLanguage(1L)).thenReturn(mockLanguage);
 
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
@@ -111,8 +133,10 @@ class CodingSpaceTest {
     @Test
     void 코딩_테스트에_이미_참여한_경우_예외가_발생한다() {
         // given
-        CreateTestCaseDto testCaseDto = new CreateTestCaseDto("input", "output");
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of(testCaseDto));
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
         when(mockStudy.getLanguage(1L)).thenReturn(mockLanguage);
 
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
@@ -127,8 +151,13 @@ class CodingSpaceTest {
     @Test
     void 코딩_테스트가_대기중이_아닐_경우_참여하면_예외가_발생한다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
+
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
+
         codingSpace.joinUser(otherUser);
         codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
         codingSpace.start();
@@ -142,8 +171,10 @@ class CodingSpaceTest {
     @Test
     void 코딩_테스트가_참여_시_최대_인원을_초과하는_경우_예외가_발생한다() {
         // given
-        CreateTestCaseDto testCaseDto = new CreateTestCaseDto("input", "output");
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of(testCaseDto));
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
         when(mockStudy.getLanguage(1L)).thenReturn(mockLanguage);
 
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
@@ -159,7 +190,11 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스_시작이_된다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
+
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
         codingSpace.joinUser(mock(User.class));
         codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
@@ -175,7 +210,11 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스를_재시작하면_예외가_발생한다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
+
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
         codingSpace.joinUser(mock(User.class));
         codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
@@ -189,7 +228,11 @@ class CodingSpaceTest {
 
     @Test
     void 입장한_인원이_2명_미만이라면_코딩스페이스_시작이_안된다() {
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
+
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
 
         // when & then
@@ -201,7 +244,11 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스_피드백_시작이_된다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
+
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
         codingSpace.joinUser(mock(User.class));
         codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
@@ -218,7 +265,11 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스가_시작_상태가_아니라면_피드백을_진행할_수_없다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
+
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
 
         // when & then
@@ -230,7 +281,11 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스_종료가_된다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
+
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
         codingSpace.joinUser(mock(User.class));
         codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);
@@ -247,7 +302,11 @@ class CodingSpaceTest {
     @Test
     void 코딩_스페이스가_피드백_상태가_아니라면_종료_할_수_없다() {
         // given
-        CreateCodingSpaceDto dto = new CreateCodingSpaceDto(1L, 2, 30, 1L, "", "코딩스페이스", "", List.of());
+        CreateCodingSpaceDto dto = mock(CreateCodingSpaceDto.class);
+        CreateTestCaseDto testCase = mock(CreateTestCaseDto.class);
+        when(dto.totalUserCount()).thenReturn(2);
+        when(dto.testcases()).thenReturn(List.of(testCase));
+
         CodingSpace codingSpace = CodingSpace.createCodingSpace(dto, mockStudy, mockUser);
         codingSpace.joinUser(mock(User.class));
         codingSpace.getTabs().forEach(CodingSpaceTab::enterTab);

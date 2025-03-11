@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.domain;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.Language;
@@ -97,19 +98,20 @@ public class CodingSpace {
         this.currentUserCount = 0;
         this.totalUserCount = dto.totalUserCount();
         this.status = CodingSpaceStatus.WAITING;
-
-        dto.testcases().stream()
-            .map(TestCase::createDefaultCase)
-            .forEach(this::addTestCase);
     }
 
     public static CodingSpace createCodingSpace(final CreateCodingSpaceDto dto, final Study study, final User host) {
         validateCreateCodingSpace(dto);
+
         final CodingSpace codingSpace = new CodingSpace(dto, study);
         codingSpace.increaseCurrentUserCount();
 
         final CodingSpaceTab tab = CodingSpaceTab.createHost(codingSpace, host);
         codingSpace.tabs.add(tab);
+
+        dto.testcases().stream()
+            .map(TestCase::createDefaultCase)
+            .forEach(codingSpace::addTestCase);
 
         return codingSpace;
     }
@@ -117,6 +119,13 @@ public class CodingSpace {
     private static void validateCreateCodingSpace(final CreateCodingSpaceDto dto) {
         validateMaxUserCount(dto.totalUserCount());
         validateMinUserCount(dto.totalUserCount());
+        validateTestCaseCount(dto.testcases().isEmpty());
+    }
+
+    private static void validateTestCaseCount(final boolean hasNotTestCases) {
+        if (hasNotTestCases) {
+            throw new BadRequestException(CodingSpaceExceptionCode.EMPTY_TEST_CASE);
+        }
     }
 
     private static void validateMaxUserCount(final int totalUserCount) {
