@@ -1,6 +1,7 @@
 package co.kr.cocomu.file.factory;
 
 import co.kr.cocomu.file.config.S3Properties;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.model.DeleteObjectTaggingRequest;
@@ -49,7 +50,7 @@ public class S3RequestFactory {
         final Tag tag = createTag(key, value);
 
         return Tagging.builder()
-            .tagSet(tag)
+            .tagSet(List.of(tag))
             .build();
     }
 

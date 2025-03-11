@@ -8,9 +8,11 @@ import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.service.UserService;
+import co.kr.cocomu.user.uploader.ProfileImageUploader;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController implements UserControllerDocs {
 
     private final UserService userService;
+    private final ProfileImageUploader profileImageUploader;
 
     @GetMapping("/me")
     public Api<UserResponse> getUser(@AuthenticationPrincipal final Long userId) {
@@ -44,13 +48,22 @@ public class UserController implements UserControllerDocs {
         return Api.of(UserApiCode.USER_JOIN_SUCCESS, result);
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/me")
     public NoContent updateUser(
-        @PathVariable final Long userId,
-        @AuthenticationPrincipal final Long tokenUserId,
+        @AuthenticationPrincipal final Long userId,
         @Valid @RequestBody final ProfileUpdateDto dto
     ) {
-        userService.updateUser(userId, tokenUserId, dto);
+        userService.updateUser(userId, dto);
         return NoContent.from(UserApiCode.PROFILE_UPDATE_SUCCESS);
     }
+
+    @PostMapping(value = "/profile-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public Api<String> uploadProfileImage(
+        @RequestBody final MultipartFile image,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final String uploadedUrl = profileImageUploader.uploadProfileImage(image, userId);
+        return Api.of(UserApiCode.PROFILE_UPDATE_SUCCESS, uploadedUrl);
+    }
+
 }

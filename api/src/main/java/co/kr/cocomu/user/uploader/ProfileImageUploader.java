@@ -1,16 +1,19 @@
-package co.kr.cocomu.file.service;
+package co.kr.cocomu.user.uploader;
 
-import co.kr.cocomu.file.ImageUploader;
 import co.kr.cocomu.file.config.S3Properties;
 import co.kr.cocomu.file.factory.S3RequestFactory;
 import co.kr.cocomu.file.parser.MultipartParser;
+import co.kr.cocomu.file.uploader.ImageUploader;
 import co.kr.cocomu.file.validator.MultipartValidator;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 
-@Service
+@Component
 public class ProfileImageUploader extends ImageUploader {
+
+    private static final String IMAGE_KEY_FORMAT = "images/profiles/%d/%s";
 
     private final MultipartValidator multipartValidator;
     private final MultipartParser multipartParser;
@@ -31,7 +34,7 @@ public class ProfileImageUploader extends ImageUploader {
         multipartValidator.validateImageFile(file);
 
         final String fileName = multipartParser.parseSaveImageName(file);
-        final String key = String.format("images/profiles/%d/%s", userId, fileName);
+        final String key = String.format(IMAGE_KEY_FORMAT, userId, fileName);
 
         return uploadImage(file, key);
     }

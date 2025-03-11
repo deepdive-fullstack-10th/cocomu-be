@@ -1,6 +1,6 @@
 package co.kr.cocomu.common.fake;
 
-import co.kr.cocomu.file.ImageUploader;
+import co.kr.cocomu.file.uploader.ImageUploader;
 import co.kr.cocomu.file.config.S3Properties;
 import co.kr.cocomu.file.factory.S3RequestFactory;
 import software.amazon.awssdk.services.s3.S3Client;

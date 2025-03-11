@@ -1,4 +1,4 @@
-package co.kr.cocomu.file;
+package co.kr.cocomu.file.uploader;
 
 import co.kr.cocomu.common.exception.domain.BadGatewayException;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
@@ -17,7 +17,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectTaggingRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectTaggingRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @RequiredArgsConstructor
 @Slf4j

@@ -1,4 +1,4 @@
-package co.kr.cocomu.file.service;
+package co.kr.cocomu.user.uploader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;

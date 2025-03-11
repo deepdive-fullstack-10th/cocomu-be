@@ -1,4 +1,4 @@
-package co.kr.cocomu.file;
+package co.kr.cocomu.file.uploader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

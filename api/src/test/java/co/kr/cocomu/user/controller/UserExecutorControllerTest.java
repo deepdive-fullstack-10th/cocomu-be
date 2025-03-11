@@ -2,12 +2,16 @@ package co.kr.cocomu.user.controller;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.Api;
+import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.user.controller.code.UserApiCode;
@@ -15,14 +19,19 @@ import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.service.UserService;
+import co.kr.cocomu.user.uploader.ProfileImageUploader;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
+import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(UserController.class)
 class UserExecutorControllerTest extends BaseExecutorControllerTest {
@@ -30,6 +39,7 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
     private static final String PATH_PREFIX = "/api/v1/users";
 
     @MockBean private UserService userService;
+    @MockBean private ProfileImageUploader profileImageUploader;
 
     private UserResponse userResponse;
 
@@ -92,16 +102,33 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
     void 프로필_수정_요청이_성공한다() {
         // given
         ProfileUpdateDto dto = new ProfileUpdateDto("", "");
-        doNothing().when(userService).updateUser(1L, 1L, dto);
+        doNothing().when(userService).updateUser(1L, dto);
 
         // when
-        String path = PATH_PREFIX + "/1";
+        String path = PATH_PREFIX + "/me";
         ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
 
         // then
-        Api<UserResponse> result = response.extract().as(new TypeRef<>() {});
+        NoContent result = response.extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(UserApiCode.PROFILE_UPDATE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(UserApiCode.PROFILE_UPDATE_SUCCESS.getMessage());
+    }
+
+    @Test
+    void 프로필_이미지_업로드_요청이_성공한다() throws IOException {
+        // given
+        MockMultipartFile image = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test".getBytes());
+        when(profileImageUploader.uploadProfileImage(any(MultipartFile.class), anyLong())).thenReturn("imageUrl");
+
+        // when
+        String path = PATH_PREFIX + "/profile-image";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeMultipartRequest(path, image);
+
+        // then
+        Api<String> result = response.extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(UserApiCode.PROFILE_UPDATE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(UserApiCode.PROFILE_UPDATE_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo("imageUrl");
     }
 
 }

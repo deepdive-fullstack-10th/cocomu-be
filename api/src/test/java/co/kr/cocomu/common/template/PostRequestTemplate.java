@@ -2,8 +2,10 @@ package co.kr.cocomu.common.template;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
+import java.io.IOException;
 import java.util.Map;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 public class PostRequestTemplate {
 
@@ -21,6 +23,17 @@ public class PostRequestTemplate {
             .header("Authorization", "Bearer token")
             .contentType(MediaType.APPLICATION_JSON)
             .body(requestBody)
+            .when().post(path)
+            .then().log().all();
+    }
+
+    public static ValidatableMockMvcResponse executeMultipartRequest(String path, MockMultipartFile file)
+        throws IOException {
+        return RestAssuredMockMvc
+            .given().log().all()
+            .header("Authorization", "Bearer token")
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .multiPart(file.getName(), file.getOriginalFilename(), file.getBytes(), file.getContentType())
             .when().post(path)
             .then().log().all();
     }

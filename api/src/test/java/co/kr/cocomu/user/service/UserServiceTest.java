@@ -16,6 +16,7 @@ import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.exception.UserExceptionCode;
 import co.kr.cocomu.user.repository.UserJpaRepository;
+import co.kr.cocomu.user.uploader.ProfileImageUploader;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,16 +25,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @Mock
-    private UserJpaRepository userJpaRepository;
+    @Mock private UserJpaRepository userJpaRepository;
+    @Mock private ProfileImageUploader profileImageUploader;
 
-    @InjectMocks
-    private UserService userService;
+    @InjectMocks private UserService userService;
 
     private User user;
     private UserResponse userResponse;
@@ -102,26 +103,36 @@ class UserServiceTest {
     }
 
     @Test
-    void 사용자_프로필_수정이_된다() {
+    void 사용자_프로필_수정시_기본_프로필이_아니면_태그_설정을_한다() {
         // given
         ProfileUpdateDto mockDto = mock(ProfileUpdateDto.class);
         User mockUser = mock(User.class);
         when(userJpaRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(mockUser.isNotDefaultImage()).thenReturn(true);
 
         // when
-        userService.updateUser(1L, 1L, mockDto);
+        userService.updateUser(1L, mockDto);
 
         // then
+        verify(profileImageUploader).markAsUnused(mockUser.getProfileImageUrl());
+        verify(profileImageUploader).confirmImage(mockDto.profileImageUrl());
         verify(mockUser).updateProfile(mockDto.nickname(), mockDto.profileImageUrl());
     }
 
     @Test
-    void 토큰_정보와_리소스_정보가_다를_경우_예외가_발생한다() {
+    void 사용자_프로필_수정시_기본_프로필이라면_태그_설정을_하지_않는다() {
         // given
-        // when & then
-        assertThatThrownBy(() -> userService.updateUser(1L, 2L, mock(ProfileUpdateDto.class)))
-            .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", UserExceptionCode.INVALIDATE_ACCESS);
+        ProfileUpdateDto mockDto = mock(ProfileUpdateDto.class);
+        User mockUser = mock(User.class);
+        when(userJpaRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(mockUser.isNotDefaultImage()).thenReturn(false);
+
+        // when
+        userService.updateUser(1L, mockDto);
+
+        // then
+        verify(profileImageUploader).confirmImage(mockDto.profileImageUrl());
+        verify(mockUser).updateProfile(mockDto.nickname(), mockDto.profileImageUrl());
     }
 
 }
