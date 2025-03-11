@@ -42,6 +42,14 @@ public class StudyFilterCondition {
             .notExists();
     }
 
+    public static BooleanExpression getLastIndexCondition(final Long lastIndex) {
+        if (lastIndex == null) {
+            return null;
+        }
+
+        return study.id.lt(lastIndex);
+    }
+
     // 1. studyLanguage 정보에서 조건에 만족하는 studyId들을 가져오기
     private static BooleanExpression getLanguageCondition(final List<Long> languageIds) {
         if (languageIds == null || languageIds.isEmpty()) {

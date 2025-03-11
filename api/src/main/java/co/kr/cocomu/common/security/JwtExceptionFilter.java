@@ -1,6 +1,8 @@
 package co.kr.cocomu.common.security;
 
 import co.kr.cocomu.common.exception.domain.UnAuthorizedException;
+import co.kr.cocomu.common.exception.dto.ErrorResponse;
+import co.kr.cocomu.common.exception.dto.ExceptionCode;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -18,7 +20,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
-    private static final String ERROR_MESSAGE = "사용자 인증 처리에 실패했습니다.";
     private final ObjectMapper objectMapper;
 
     @Override
@@ -35,7 +36,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("UTF-8");
 
-            final ExceptionResponse exceptionResponse = new ExceptionResponse(9007, ERROR_MESSAGE);
+            final ExceptionCode exception = e.getExceptionType();
+            final ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getCode(), e.getMessage());
             objectMapper.writeValue(response.getWriter(), exceptionResponse);
         }
     }

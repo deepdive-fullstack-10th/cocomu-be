@@ -21,9 +21,7 @@ import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
 import co.kr.cocomu.codingspace.repository.query.TestCaseQuery;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
-import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
-import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.service.StudyDomainService;
 import java.util.List;
 import java.util.Map;
@@ -189,6 +187,23 @@ class CodingSpaceQueryServiceTest {
         assertThatThrownBy(() -> codingSpaceQueryService.extractFinishPage(1L, 1L))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NO_STUDY_MEMBERSHIP);
+    }
+
+    @Test
+    void 참여한_코딩스페이스_목록을_가져온다() {
+        // given
+        CodingSpaceDto mockDto = new CodingSpaceDto();
+        mockDto.setId(1L);
+        List<CodingSpaceDto> mockSpaces = List.of(mockDto);
+        when(codingSpaceQuery.findUserSpaces(anyLong(), anyLong(), anyLong())).thenReturn(mockSpaces);
+        when(codingSpaceTabQuery.findUsersBySpace(List.of(1L))).thenReturn(Map.of(1L, List.of()));
+
+        // when
+        List<CodingSpaceDto> codingSpaces = codingSpaceQueryService.getSpacesByUser(1L, 1L, 1L);
+
+        // then
+        assertThat(codingSpaces.getFirst()).isEqualTo(mockDto);
+        assertThat(codingSpaces.getFirst().getCurrentUsers()).isEqualTo(List.of());
     }
 
 }

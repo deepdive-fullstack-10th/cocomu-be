@@ -3,14 +3,13 @@ package co.kr.cocomu.codingspace.controller.docs;
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
 import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
+import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
-import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
-import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
@@ -71,7 +70,7 @@ public interface CodingSpaceControllerDocs {
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
-    Api<CodingSpaceTabIdDto> joinCodingSpace(Long codingSpaceId, Long userId);
+    Api<CodingSpaceIdDto> joinCodingSpace(Long codingSpaceId, Long userId);
 
     @Operation(summary = "코딩 스페이스 생성 페이지 조회", description = "코딩 스페이스 생성 페이지를 조회하는 기능")
     @ApiResponse(

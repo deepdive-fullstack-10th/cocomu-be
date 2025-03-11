@@ -42,4 +42,44 @@ class UserTest {
             .hasFieldOrPropertyWithValue("exceptionType", UserExceptionCode.INVALID_NICKNAME);
     }
 
+    @Test
+    void 사용자_프로필_정보가_수정된다() {
+        // given
+        String nickname = "닉".repeat(8);
+        User user = User.createUser(nickname);
+
+        // when
+        user.updateProfile("닉네임", "profileImageUrl");
+
+        // then
+        assertThat(user.getNickname()).isEqualTo("닉네임");
+        assertThat(user.getProfileImageUrl()).isEqualTo("profileImageUrl");
+    }
+
+    @Test
+    void 기본_프로필이라면_False() {
+        // given
+        User user = User.createUser("닉네임");
+
+        // when
+        boolean result = user.isNotDefaultImage();
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+
+    @Test
+    void 기본_프로필이_아니라면_True() {
+        // given
+        User user = User.createUser("닉네임");
+        user.updateProfile("닉네임", "profileImageUrl");
+
+        // when
+        boolean result = user.isNotDefaultImage();
+
+        // then
+        assertThat(result).isTrue();
+    }
+
 }

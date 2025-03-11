@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.repository.query.impl;
 import static co.kr.cocomu.codingspace.domain.QCodingSpace.codingSpace;
 import static co.kr.cocomu.codingspace.domain.QCodingSpaceTab.codingSpaceTab;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.getCodingSpaceCondition;
+import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.getSelectCondition;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.isHost;
 import static co.kr.cocomu.codingspace.repository.query.condition.CodingSpaceCondition.isUserJoined;
 import static co.kr.cocomu.study.domain.QLanguage.language;
@@ -22,6 +23,7 @@ import co.kr.cocomu.study.domain.QStudy;
 import co.kr.cocomu.study.domain.QStudyUser;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -40,12 +42,32 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
         final Long studyId,
         final FilterDto filter
     ) {
+        return buildCodingSpaceQuery(userId)
+            .from(codingSpace)
+            .where(getCodingSpaceCondition(filter, userId, studyId))
+            .orderBy(codingSpace.id.desc())
+            .limit(20)
+            .fetch();
+    }
+
+    @Override
+    public List<CodingSpaceDto> findUserSpaces(final Long userId, final Long viewerId, final Long lastIndex) {
+        return buildCodingSpaceQuery(viewerId)
+            .from(codingSpaceTab)
+            .join(codingSpaceTab.codingSpace, codingSpace)
+            .where(getSelectCondition(lastIndex), codingSpaceTab.user.id.eq(userId))
+            .orderBy(codingSpace.id.desc())
+            .limit(20)
+            .fetch();
+    }
+
+    private JPAQuery<CodingSpaceDto> buildCodingSpaceQuery(final Long viewerId) {
         return queryFactory
             .select(
                 Projections.fields(
                     CodingSpaceDto.class,
                     codingSpace.id.as("id"),
-                    isUserJoined(userId).as("joinedMe"),
+                    isUserJoined(viewerId).as("joinedMe"),
                     codingSpace.name.as("name"),
                     Projections.fields(
                         LanguageDto.class,
@@ -58,12 +80,7 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                     codingSpace.createdAt.as("createdAt"),
                     codingSpace.status.as("status")
                 )
-            )
-            .from(codingSpace)
-            .where(getCodingSpaceCondition(filter, userId, studyId))
-            .orderBy(codingSpace.createdAt.desc(), codingSpace.id.desc())
-            .limit(20)
-            .fetch();
+            );
     }
 
     public Optional<WaitingPage> findWaitingPage(final Long codingSpaceId, final Long userId) {

@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Schema(description = "비공개 스터디 생성 요청")
 public record CreatePrivateStudyDto(
-    @NotNull @Length(min = 2, max = 20)
+    @NotNull @Length(min = 2)
     @Schema(description = "스터디명", example = "매일 열심히하는 스터디")
     String name,
     @NotNull @Length(min = 4, max = 6)

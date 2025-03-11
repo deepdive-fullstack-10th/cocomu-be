@@ -5,13 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
-import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
@@ -64,7 +63,7 @@ class StudyQueryServiceTest {
         mockStudyCard.setId(1L);
 
         when(studyQuery.countStudyCardsWithFilter(dto, 1L)).thenReturn(totalCount);
-        when(studyQuery.findTop20StudyCardsWithFilter(dto, 1L)).thenReturn(List.of(mockStudyCard));
+        when(studyQuery.findTop12StudyCardsWithFilter(dto, 1L)).thenReturn(List.of(mockStudyCard));
         when(languageQuery.findLanguageByStudies(anyList())).thenReturn(languageByStudies);
         when(workbookQuery.findWorkbookByStudies(anyList())).thenReturn(new HashMap<>());
         when(studyUserQuery.findLeaderByStudies(anyList())).thenReturn(leaderByStudies);
@@ -174,6 +173,25 @@ class StudyQueryServiceTest {
 
         // then
         assertThat(result).hasSize(0);
+    }
+
+    @Test
+    void 참여한_스터디를_조회한다() {
+        // given
+        when(studyQuery.findTop20UserStudyCards(1L, 1L, null)).thenReturn(List.of());
+        when(languageQuery.findLanguageByStudies(anyList())).thenReturn(new HashMap<>());
+        when(workbookQuery.findWorkbookByStudies(anyList())).thenReturn(new HashMap<>());
+        when(studyUserQuery.findLeaderByStudies(anyList())).thenReturn(new HashMap<>());
+
+        // when
+        List<StudyCardDto> result = studyQueryService.getStudyCardsByUser(1L, 1L, null);
+
+        // then
+        assertThat(result).isEqualTo(List.of());
+        verify(studyQuery).findTop20UserStudyCards(1L, 1L, null);
+        verify(languageQuery).findLanguageByStudies(anyList());
+        verify(workbookQuery).findWorkbookByStudies(anyList());
+        verify(studyUserQuery).findLeaderByStudies(anyList());
     }
 
 }

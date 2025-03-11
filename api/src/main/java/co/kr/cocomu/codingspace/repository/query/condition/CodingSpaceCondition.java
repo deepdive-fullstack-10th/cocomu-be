@@ -59,7 +59,7 @@ public class CodingSpaceCondition {
         return codingSpace.status.eq(status);
     }
 
-    private static BooleanExpression getSelectCondition(final Long lastId) {
+    public static BooleanExpression getSelectCondition(final Long lastId) {
         if (lastId == null) {
             return null;
         }

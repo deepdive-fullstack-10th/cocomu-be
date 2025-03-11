@@ -11,14 +11,13 @@ import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
 import co.kr.cocomu.codingspace.dto.page.FinishPage;
 import co.kr.cocomu.codingspace.dto.page.StartingPage;
-import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
+import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
-import co.kr.cocomu.codingspace.dto.response.CodingSpaceTabIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
@@ -72,10 +71,10 @@ class CodingSpaceExecutorControllerTest extends BaseExecutorControllerTest {
         ValidatableMockMvcResponse response = PostRequestTemplate.execute(path);
 
         // then
-        Api<CodingSpaceTabIdDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        Api<CodingSpaceIdDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.JOIN_CODING_SPACE_SUCCESS.getMessage());
-        assertThat(result.result().codingSpaceTabId()).isEqualTo(1L);
+        assertThat(result.result().codingSpaceId()).isEqualTo(1L);
     }
 
     @Test
