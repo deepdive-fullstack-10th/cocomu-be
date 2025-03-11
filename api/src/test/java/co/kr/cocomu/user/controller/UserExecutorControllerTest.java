@@ -15,6 +15,7 @@ import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.user.controller.code.UserApiCode;
+import co.kr.cocomu.user.dto.response.UserInfoDto;
 import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.dto.response.UserResponse;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -51,17 +51,18 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
     @Test
     void 사용자_조회가_성공한다() {
         // given
-        String path = PATH_PREFIX + "/me";
-        given(userService.findUser(1L)).willReturn(userResponse);
+        UserInfoDto mockDto = new UserInfoDto(1L, "", "", true);
+        given(userService.getUserInformation(1L, 1L)).willReturn(mockDto);
 
         // when
+        String path = PATH_PREFIX + "/1";
         ValidatableMockMvcResponse response = GetRequestTemplate.execute(path).status(HttpStatus.OK);
 
         // then
-        Api<UserResponse> result = response.extract().as(new TypeRef<>() {});
-        assertThat(result.code()).isEqualTo(UserApiCode.USER_FOUND_SUCCESS.getCode());
-        assertThat(result.message()).isEqualTo(UserApiCode.USER_FOUND_SUCCESS.getMessage());
-        assertThat(result.result()).isEqualTo(userResponse);
+        Api<UserInfoDto> result = response.extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(UserApiCode.GET_USER_INFO_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(UserApiCode.GET_USER_INFO_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockDto);
     }
 
     @Test
@@ -121,7 +122,7 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
         when(profileImageUploader.uploadProfileImage(any(MultipartFile.class), anyLong())).thenReturn("imageUrl");
 
         // when
-        String path = PATH_PREFIX + "/profile-image";
+        String path = PATH_PREFIX + "/me/profile-image";
         ValidatableMockMvcResponse response = PostRequestTemplate.executeMultipartRequest(path, image);
 
         // then

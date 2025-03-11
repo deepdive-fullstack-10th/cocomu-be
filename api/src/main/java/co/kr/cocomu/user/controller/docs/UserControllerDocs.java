@@ -2,6 +2,7 @@ package co.kr.cocomu.user.controller.docs;
 
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
+import co.kr.cocomu.user.dto.response.UserInfoDto;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,7 +25,7 @@ public interface UserControllerDocs {
         description = "사용자를 찾을 수 없습니다.",
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
-    Api<UserResponse> getUser(Long userId);
+    Api<UserInfoDto> getUserInformation(Long authUserId, Long userId);
 
     @Operation(summary = "모든 사용자 정보 조회", description = "모든 사용자 정보를 조회하는 기능")
     @ApiResponse(

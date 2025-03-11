@@ -4,6 +4,7 @@ import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.user.controller.code.UserApiCode;
 import co.kr.cocomu.user.controller.docs.UserControllerDocs;
+import co.kr.cocomu.user.dto.response.UserInfoDto;
 import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
 import co.kr.cocomu.user.dto.response.UserResponse;
@@ -12,6 +13,7 @@ import co.kr.cocomu.user.uploader.ProfileImageUploader;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,19 +32,22 @@ public class UserController implements UserControllerDocs {
     private final UserService userService;
     private final ProfileImageUploader profileImageUploader;
 
-    @GetMapping("/me")
-    public Api<UserResponse> getUser(@AuthenticationPrincipal final Long userId) {
-        final UserResponse user = userService.findUser(userId);
-        return Api.of(UserApiCode.USER_FOUND_SUCCESS, user);
+    @GetMapping("/{userId}")
+    public Api<UserInfoDto> getUserInformation(
+        @AuthenticationPrincipal final Long authUserId,
+        @PathVariable final Long userId
+    ) {
+        final UserInfoDto result = userService.getUserInformation(userId, authUserId);
+        return Api.of(UserApiCode.GET_USER_INFO_SUCCESS, result);
     }
 
-    @GetMapping("/all") @Deprecated
+    @GetMapping("/all") @Deprecated @Profile("!prod")
     public Api<List<UserResponse>> getUsers() {
         final List<UserResponse> users = userService.findAll();
         return Api.of(UserApiCode.ALL_USER_FOUND_SUCCESS, users);
     }
 
-    @PostMapping("/join") @Deprecated
+    @PostMapping("/join") @Deprecated @Profile("!prod")
     public Api<UserResponse> createUser(@Valid @RequestBody final UserJoinRequest dto) {
         final UserResponse result = userService.saveUser(dto);
         return Api.of(UserApiCode.USER_JOIN_SUCCESS, result);
@@ -57,7 +62,7 @@ public class UserController implements UserControllerDocs {
         return NoContent.from(UserApiCode.PROFILE_UPDATE_SUCCESS);
     }
 
-    @PostMapping(value = "/profile-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(value = "/me/profile-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public Api<String> uploadProfileImage(
         @RequestBody final MultipartFile image,
         @AuthenticationPrincipal final Long userId

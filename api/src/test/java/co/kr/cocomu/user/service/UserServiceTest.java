@@ -8,11 +8,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
+import co.kr.cocomu.user.dto.response.UserInfoDto;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.exception.UserExceptionCode;
 import co.kr.cocomu.user.repository.UserJpaRepository;
@@ -25,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,27 +76,27 @@ class UserServiceTest {
     }
 
     @Test
-    void 사용자를_조회한다() {
+    void 사용자_정보를_조회한다() {
         // given
-        Long userId = 1L;
-        given(userJpaRepository.findById(userId)).willReturn(Optional.of(user));
+        User mockUser = mock(User.class);
+        when(userJpaRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(mockUser.getId()).thenReturn(1L);
 
         // when
-        UserResponse result = userService.findUser(userId);
+        UserInfoDto result = userService.getUserInformation(1L, 1L);
 
         // then
-        assertThat(result).isEqualTo(userResponse);
-        verify(userJpaRepository).findById(1L);
+        assertThat(result.me()).isTrue();
     }
 
     @Test
     void 사용자_정보가_없을_때_조회하면_예외가_발생한다() {
         // given
         Long userId = 1L;
-        given(userJpaRepository.findById(userId)).willReturn(Optional.empty());
+        when(userJpaRepository.findById(userId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> userService.findUser(userId))
+        assertThatThrownBy(() -> userService.getUserInformation(userId, 1L))
             .isInstanceOf(NotFoundException.class)
             .hasFieldOrPropertyWithValue("exceptionType", UserExceptionCode.USER_NOT_FOUND);
     }
