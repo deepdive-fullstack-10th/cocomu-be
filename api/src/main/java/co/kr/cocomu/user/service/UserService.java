@@ -2,9 +2,9 @@ package co.kr.cocomu.user.service;
 
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.user.domain.User;
-import co.kr.cocomu.user.dto.response.UserInfoDto;
 import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.request.UserJoinRequest;
+import co.kr.cocomu.user.dto.response.UserInfoDto;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import co.kr.cocomu.user.exception.UserExceptionCode;
 import co.kr.cocomu.user.repository.UserJpaRepository;

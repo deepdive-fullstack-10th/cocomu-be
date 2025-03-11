@@ -74,6 +74,19 @@ public class StudyQueryService {
         return StudyDetailPageDto.from(study);
     }
 
+    public List<StudyMemberDto> findAllMembers(final Long userId, final Long studyId, final String lastNickname) {
+        studyDomainService.validateStudyMembership(userId, studyId);
+        return studyUserQuery.findMembers(studyId, lastNickname);
+    }
+
+    public List<StudyCardDto> getStudyCardsByUser(final Long userId, final Long viewerId, final Long lastIndex) {
+        final List<StudyCardDto> studyCards = studyQuery.findTop20UserStudyCards(userId, viewerId, lastIndex);
+        final List<Long> studyIds = studyCards.stream().map(StudyCardDto::getId).toList();
+        setStudyInformation(studyIds, studyCards);
+
+        return studyCards;
+    }
+
     private void setStudyInformation(final List<Long> studyIds, final List<StudyCardDto> studyPages) {
         final Map<Long, List<LanguageDto>> languageByStudies = languageQuery.findLanguageByStudies(studyIds);
         final Map<Long, List<WorkbookDto>> workbookByStudies = workbookQuery.findWorkbookByStudies(studyIds);
@@ -86,8 +99,4 @@ public class StudyQueryService {
         }
     }
 
-    public List<StudyMemberDto> findAllMembers(final Long userId, final Long studyId, final String lastNickname) {
-        studyDomainService.validateStudyMembership(userId, studyId);
-        return studyUserQuery.findMembers(studyId, lastNickname);
-    }
 }

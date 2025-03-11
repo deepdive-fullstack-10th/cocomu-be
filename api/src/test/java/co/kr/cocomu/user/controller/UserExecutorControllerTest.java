@@ -14,6 +14,8 @@ import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
+import co.kr.cocomu.study.dto.response.StudyCardDto;
+import co.kr.cocomu.study.service.StudyQueryService;
 import co.kr.cocomu.user.controller.code.UserApiCode;
 import co.kr.cocomu.user.dto.response.UserInfoDto;
 import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
@@ -40,6 +42,7 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
 
     @MockBean private UserService userService;
     @MockBean private ProfileImageUploader profileImageUploader;
+    @MockBean private StudyQueryService studyQueryService;
 
     private UserResponse userResponse;
 
@@ -130,6 +133,23 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
         assertThat(result.code()).isEqualTo(UserApiCode.PROFILE_UPDATE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(UserApiCode.PROFILE_UPDATE_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo("imageUrl");
+    }
+
+    @Test
+    void 참여한_스터디_목록_조회가_된다() {
+        // given
+        List<StudyCardDto> mockResult = List.of();
+        when(studyQueryService.getStudyCardsByUser(1L, 1L, 1L)).thenReturn(mockResult);
+
+        // when
+        String path = PATH_PREFIX + "/1/studies";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<List<StudyCardDto>> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(UserApiCode.GET_STUDIES_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(UserApiCode.GET_STUDIES_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockResult);
     }
 
 }

@@ -3,6 +3,7 @@ package co.kr.cocomu.user.controller.docs;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
+import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.user.dto.request.ProfileUpdateDto;
 import co.kr.cocomu.user.dto.response.UserInfoDto;
 import co.kr.cocomu.user.dto.response.UserResponse;
@@ -15,7 +16,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "001. COCOMU-USER", description = "코코무 사용자 관련 API")
@@ -66,7 +69,7 @@ public interface UserControllerDocs {
     @Operation(summary = "프로필 이미지 업로드", description = "프로필 이미지를 업로드하는 기능")
     @ApiResponse(
         responseCode = "200",
-        description = "프로필 이미지 업로드에 성공했습니다."
+        description = "프로필 이미지 업로드가 성공했습니다."
     )
     @ApiResponse(
         responseCode = "400",
@@ -92,5 +95,12 @@ public interface UserControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<String> uploadProfileImage(MultipartFile image, Long userId);
+
+    @Operation(summary = "참여한 스터디 조회", description = "코코무 회원의 참여한 스터디 목록을 조회한다")
+    @ApiResponse(
+        responseCode = "200",
+        description = "참여한 스터디 목록 조회에 성공했습니다."
+    )
+    Api<List<StudyCardDto>> getStudyCards(Long userId, Long viewerId, Long lastIndex);
 
 }
