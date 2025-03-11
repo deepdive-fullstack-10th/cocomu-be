@@ -62,7 +62,7 @@ public class CodingSpaceTab extends TimeBaseEntity {
     private TabStatus status;
 
     private CodingSpaceTab(CodingSpace codingSpace, User user, CodingSpaceRole role) {
-        this.documentKey = UUID.randomUUID().toString().replaceAll("-", "");
+        this.documentKey = UUID.randomUUID().toString();
         this.codingSpace = codingSpace;
         this.user = user;
         this.status = TabStatus.JOIN;
