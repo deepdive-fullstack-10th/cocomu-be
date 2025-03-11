@@ -14,16 +14,23 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import java.util.List;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "001. COCOMU-USER", description = "코코무 사용자 관련 API")
 public interface UserControllerDocs {
+
+    @Operation(summary = "프로필 조회", description = "프로필을 조회하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "사용자 정보 조회에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = "사용자를 찾을 수 없습니다.",
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    Api<UserResponse> getProfile(Long userId);
 
     @Operation(summary = "사용자 정보 조회", description = "사용자 정보를 조회하는 기능")
     @ApiResponse(

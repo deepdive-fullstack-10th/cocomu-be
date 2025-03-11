@@ -55,6 +55,23 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
     }
 
     @Test
+    void 프로필_조회가_성공한다() {
+        // given
+        UserResponse mockDto = new UserResponse(1L, "", "");
+        when(userService.getMyProfile(1L)).thenReturn(mockDto);
+
+        // when
+        String path = PATH_PREFIX + "/me";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<UserResponse> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(UserApiCode.GET_USER_INFO_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(UserApiCode.GET_USER_INFO_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(mockDto);
+    }
+
+    @Test
     void 사용자_조회가_성공한다() {
         // given
         UserInfoDto mockDto = new UserInfoDto(1L, "", "", true);

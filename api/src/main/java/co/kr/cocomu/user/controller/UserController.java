@@ -39,6 +39,12 @@ public class UserController implements UserControllerDocs {
     private final StudyQueryService studyQueryService;
     private final CodingSpaceQueryService codingSpaceQueryService;
 
+    @GetMapping("/me")
+    public Api<UserResponse> getProfile(@AuthenticationPrincipal Long userId) {
+        final UserResponse result = userService.getMyProfile(userId);
+        return Api.of(UserApiCode.GET_USER_INFO_SUCCESS, result);
+    }
+
     @GetMapping("/{userId}")
     public Api<UserInfoDto> getUserInformation(
         @AuthenticationPrincipal final Long authUserId,
