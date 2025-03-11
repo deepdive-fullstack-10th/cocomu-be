@@ -3,6 +3,7 @@ package co.kr.cocomu.codingspace.domain;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.Language;
@@ -117,6 +118,13 @@ public class CodingSpace {
     private static void validateCreateCodingSpace(final CreateCodingSpaceDto dto) {
         validateMaxUserCount(dto.totalUserCount());
         validateMinUserCount(dto.totalUserCount());
+        validateTestCaseCount(dto.testcases());
+    }
+
+    private static void validateTestCaseCount(final List<CreateTestCaseDto> testcases) {
+        if (testcases.isEmpty()) {
+            throw new BadRequestException(CodingSpaceExceptionCode.EMPTY_TEST_CASE);
+        }
     }
 
     private static void validateMaxUserCount(final int totalUserCount) {

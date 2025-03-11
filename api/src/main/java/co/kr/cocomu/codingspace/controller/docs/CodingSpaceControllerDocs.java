@@ -35,6 +35,7 @@ public interface CodingSpaceControllerDocs {
                 코딩 스페이스의 최소 인원은 2명입니다.
                 해당 스터디에서 사용하지 않는 언어입니다.
                 해당 스터디의 스터디원이 아닙니다.
+                테스트 케이스는 비어 있을 수 없습니다.
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
