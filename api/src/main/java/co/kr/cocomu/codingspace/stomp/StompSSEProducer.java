@@ -2,6 +2,7 @@ package co.kr.cocomu.codingspace.stomp;
 
 import co.kr.cocomu.codingspace.dto.message.EventMessage;
 import co.kr.cocomu.codingspace.dto.message.EventType;
+import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.user.domain.User;
 import co.kr.cocomu.user.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,20 @@ public class StompSSEProducer {
         final String destination = String.format(CODING_SPACE_PATH_FORMAT, codingSpaceId);
         messagingTemplate.convertAndSend(destination, message);
         log.info("===스터디 종료 알림 발행===> {}", message);
+    }
+
+    public void publishAddTestCase(final TestCaseDto testCaseDto, final Long codingSpaceId) {
+        final EventMessage<TestCaseDto> message = new EventMessage<>(EventType.ADD_TEST_CASE, testCaseDto);
+        final String destination = String.format(CODING_SPACE_PATH_FORMAT, codingSpaceId);
+        messagingTemplate.convertAndSend(destination, message);
+        log.info("===테스트 케이스 추가 알림 발행===> {}", message);
+    }
+
+    public void publishDeleteTestCase(final Long codingSpaceId, final Long testCaseId) {
+        final EventMessage<Long> message = new EventMessage<>(EventType.DELETE_TEST_CASE, testCaseId);
+        final String destination = String.format(CODING_SPACE_PATH_FORMAT, codingSpaceId);
+        messagingTemplate.convertAndSend(destination, message);
+        log.info("===테스트 케이스 삭제 알림 발행===> {}", message);
     }
 
 }

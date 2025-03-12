@@ -3,7 +3,7 @@ package co.kr.cocomu.codingspace.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
-@Schema(description = "문제 기본 테스트 케이스 요청")
+@Schema(description = "문제 테스트 케이스 요청")
 public record CreateTestCaseDto(
     @NotNull @Schema(description = "입력 값", example = "3\n0\n1\n3")
     String input,

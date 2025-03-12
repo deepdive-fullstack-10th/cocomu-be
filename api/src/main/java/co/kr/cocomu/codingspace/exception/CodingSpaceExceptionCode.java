@@ -25,8 +25,9 @@ public enum CodingSpaceExceptionCode implements ExceptionCode {
     NO_STUDY_MEMBERSHIP(4015, "스터디에 참여한 회원이 아닙니다."),
     CAN_SAVE_ONLY_ACTIVE(4016, "최종 코드 저장은 입장 중 일 때만 가능합니다."),
     NOT_ACTIVE_TAB(4017, "활성화 되지 않은 탭 입니다."),
-    EMPTY_TEST_CASE(4018, "테스트 케이스는 비어 있을 수 없습니다.")
-    ;
+    EMPTY_TEST_CASE(4018, "테스트 케이스는 비어 있을 수 없습니다."),
+    NON_EXISTENT_CASE(4019, "코딩 스페이스에 존재하지 않는 테스트케이스입니다."),
+    CAN_NOT_REMOVE_DEFAULT_CASE(4020, "기본 테스트 케이스는 삭제할 수 없습니다.");
 
     private final int code;
     private final String message;

@@ -2,8 +2,10 @@ package co.kr.cocomu.codingspace.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.controller.code.CodingSpaceApiCode;
@@ -20,11 +22,13 @@ import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
+import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
+import co.kr.cocomu.common.template.DeleteRequestTemplate;
 import co.kr.cocomu.common.template.GetRequestTemplate;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import io.restassured.common.mapper.TypeRef;
@@ -254,6 +258,40 @@ class CodingSpaceExecutorControllerTest extends BaseExecutorControllerTest {
         assertThat(result.code()).isEqualTo(CodingSpaceApiCode.GET_FINISH_PAGE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(CodingSpaceApiCode.GET_FINISH_PAGE_SUCCESS.getMessage());
         assertThat(result.result()).isEqualTo(mockPage);
+    }
+
+    @Test
+    void 코딩_스페이스_테스트_케이스_추가_요청이_성공한다() {
+        // given
+        CreateTestCaseDto dto = new CreateTestCaseDto("", "");
+        TestCaseDto mockResult = new TestCaseDto();
+        when(codingSpaceCommandService.addTestCase(1L, 1L, dto)).thenReturn(mockResult);
+
+        // when
+        String path = PATH_PREFIX + "/1/test-case";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
+
+        // then
+        Api<TestCaseDto> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.ADD_TEST_CASE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.ADD_TEST_CASE_SUCCESS.getMessage());
+        assertThat(result.result()).usingRecursiveComparison().isEqualTo(mockResult);
+    }
+
+    @Test
+    void 코딩_스페이스_테스트_케이스_삭제_요청이_성공한다() {
+        // given
+        when(codingSpaceCommandService.deleteTestCase(1L, 1L, 1L)).thenReturn(1L);
+
+        // when
+        String path = PATH_PREFIX + "/1/test-cases/1";
+        ValidatableMockMvcResponse response = DeleteRequestTemplate.execute(path);
+
+        // then
+        Api<Long> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.DELETE_TEST_CASE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.DELETE_TEST_CASE_SUCCESS.getMessage());
+        assertThat(result.result()).isEqualTo(1L);
     }
 
 }

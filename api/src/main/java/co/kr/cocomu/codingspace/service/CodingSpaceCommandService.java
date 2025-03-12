@@ -2,9 +2,13 @@ package co.kr.cocomu.codingspace.service;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
+import co.kr.cocomu.codingspace.domain.TestCase;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
+import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
+import co.kr.cocomu.codingspace.repository.TestCaseRepository;
 import co.kr.cocomu.codingspace.stomp.StompSSEProducer;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.service.StudyDomainService;
@@ -23,6 +27,7 @@ public class CodingSpaceCommandService {
     private final StudyDomainService studyDomainService;
     private final UserService userService;
     private final CodingSpaceRepository codingSpaceRepository;
+    private final TestCaseRepository testCaseRepository;
     private final StompSSEProducer stompSSEProducer;
 
     public Long createCodingSpace(final CreateCodingSpaceDto dto, final Long userId) {
@@ -87,6 +92,32 @@ public class CodingSpaceCommandService {
     public void saveFinalCode(final Long codingSpaceId, final Long userId, final String code) {
         final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
         tab.saveCode(code);
+    }
+
+    public TestCaseDto addTestCase(final Long codingSpaceId, final Long userId, final CreateTestCaseDto dto) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        codingSpaceDomainService.validateActiveTab(tab.getId());
+
+        final TestCase customTestCase = TestCase.createCustomCase(dto);
+        customTestCase.setCodingSpace(tab.getCodingSpace());
+
+        final TestCase savedCase = testCaseRepository.save(customTestCase);
+        final TestCaseDto testCaseDto = TestCaseDto.from(savedCase);
+        stompSSEProducer.publishAddTestCase(testCaseDto, codingSpaceId);
+
+        return testCaseDto;
+    }
+
+    public Long deleteTestCase(final Long codingSpaceId, final Long userId, final Long testCaseId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        codingSpaceDomainService.validateActiveTab(tab.getId());
+
+        final CodingSpace codingSpace = tab.getCodingSpace();
+        codingSpace.deleteTestCase(testCaseId);
+
+        stompSSEProducer.publishDeleteTestCase(codingSpaceId, testCaseId);
+
+        return testCaseId;
     }
 
 }
