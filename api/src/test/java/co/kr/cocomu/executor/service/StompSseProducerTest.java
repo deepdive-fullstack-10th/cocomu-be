@@ -49,4 +49,18 @@ class StompSseProducerTest {
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
     }
 
+    @Test
+    void 테스트케이스_추가_알림이_발생한다() {
+        // given
+        ExecutionMessage executionMessage = new ExecutionMessage(1L, "", 0, 0);
+        EventMessage<ExecutionMessage> message = new EventMessage<>(EventType.SUCCESS, executionMessage);
+        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+
+        // when
+        stompSseProducer.publishResult(message);
+
+        // then
+        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+    }
+
 }

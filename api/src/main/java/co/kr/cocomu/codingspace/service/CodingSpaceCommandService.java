@@ -102,7 +102,10 @@ public class CodingSpaceCommandService {
         customTestCase.setCodingSpace(tab.getCodingSpace());
 
         final TestCase savedCase = testCaseRepository.save(customTestCase);
-        return TestCaseDto.from(savedCase);
+        final TestCaseDto testCaseDto = TestCaseDto.from(savedCase);
+        stompSSEProducer.publishAddTestCase(testCaseDto, codingSpaceId);
+
+        return testCaseDto;
     }
 
 }

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import co.kr.cocomu.codingspace.dto.message.EventMessage;
+import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.user.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,6 +80,18 @@ class StompSSEProducerTest {
 
         // when
         stompSSEProducer.publishFinish(1L);
+
+        // then
+        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+    }
+
+    @Test
+    void 코딩_스터디_테스트케이스_추가_알림이_발행된다() {
+        // given
+        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+
+        // when
+        stompSSEProducer.publishAddTestCase(mock(TestCaseDto.class), 1L);
 
         // then
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));

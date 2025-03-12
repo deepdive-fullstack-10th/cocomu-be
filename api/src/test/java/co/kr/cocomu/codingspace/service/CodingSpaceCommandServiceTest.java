@@ -2,6 +2,7 @@ package co.kr.cocomu.codingspace.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -189,7 +190,7 @@ class CodingSpaceCommandServiceTest {
         codingSpaceCommandService.addTestCase(1L, 1L, mock(CreateTestCaseDto.class));
 
         // then
-        verify(testCaseRepository).save(any(TestCase.class));
+        verify(stompSSEProducer).publishAddTestCase(any(TestCaseDto.class), anyLong());
     }
 
     /*
