@@ -115,6 +115,8 @@ public class CodingSpaceCommandService {
         final CodingSpace codingSpace = tab.getCodingSpace();
         codingSpace.deleteTestCase(testCaseId);
 
+        stompSSEProducer.publishDeleteTestCase(codingSpaceId, testCaseId);
+
         return testCaseId;
     }
 

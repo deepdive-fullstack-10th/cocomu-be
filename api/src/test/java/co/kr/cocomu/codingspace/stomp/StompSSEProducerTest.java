@@ -97,4 +97,17 @@ class StompSSEProducerTest {
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
     }
 
+    @Test
+    void 테스트케이스_삭제_알림이_발생한다() {
+        // given
+        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+
+        // when
+        stompSSEProducer.publishDeleteTestCase(1L, 1L);
+
+        // then
+        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+    }
+
+
 }

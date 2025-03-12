@@ -57,10 +57,17 @@ public class StompSSEProducer {
     }
 
     public void publishAddTestCase(final TestCaseDto testCaseDto, final Long codingSpaceId) {
-        final EventMessage<TestCaseDto> message = new EventMessage<>(EventType.STUDY_FINISH, testCaseDto);
+        final EventMessage<TestCaseDto> message = new EventMessage<>(EventType.ADD_TEST_CASE, testCaseDto);
         final String destination = String.format(CODING_SPACE_PATH_FORMAT, codingSpaceId);
         messagingTemplate.convertAndSend(destination, message);
         log.info("===테스트 케이스 추가 알림 발행===> {}", message);
+    }
+
+    public void publishDeleteTestCase(final Long codingSpaceId, final Long testCaseId) {
+        final EventMessage<Long> message = new EventMessage<>(EventType.DELETE_TEST_CASE, testCaseId);
+        final String destination = String.format(CODING_SPACE_PATH_FORMAT, codingSpaceId);
+        messagingTemplate.convertAndSend(destination, message);
+        log.info("===테스트 케이스 삭제 알림 발행===> {}", message);
     }
 
 }

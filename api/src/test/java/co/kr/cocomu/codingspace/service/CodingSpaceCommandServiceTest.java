@@ -204,6 +204,7 @@ class CodingSpaceCommandServiceTest {
 
         // then
         verify(mockCodingSpace).deleteTestCase(1L);
+        verify(stompSSEProducer).publishDeleteTestCase(1L, 1L);
     }
 
     /*
