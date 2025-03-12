@@ -22,7 +22,7 @@ public class CookieService {
         this.refreshTokenExpiredAt = refreshTokenExpiredAt;
     }
 
-    public void setRefreshTokenCookie(final HttpServletResponse response, String refreshToken) {
+    public void setRefreshTokenCookie(final HttpServletResponse response, final String refreshToken) {
         final Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setSecure(isHttpsEnvironment());

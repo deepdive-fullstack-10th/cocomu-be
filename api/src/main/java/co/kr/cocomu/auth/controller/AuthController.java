@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -87,10 +88,26 @@ public class AuthController implements AuthControllerDocs {
     public Api<AuthResponse> login(final HttpServletResponse response) {
         final String accessToken = jwtProvider.issueAccessToken(1L);
         final String refreshToken = jwtProvider.issueRefreshToken(1L);
+        log.info("refresh token: {}", refreshToken);
 
         cookieService.setRefreshTokenCookie(response, refreshToken);
 
         return Api.of(AuthApiCode.LOGIN_SUCCESS, new AuthResponse(accessToken));
+    }
+
+    @GetMapping("/re-issue")
+    public Api<AuthResponse> reissue(
+        @CookieValue("refreshToken") final String cookieRefreshToken,
+        final HttpServletResponse response
+    ) {
+        jwtProvider.validationTokenWithThrow(cookieRefreshToken);
+        final Long userId = jwtProvider.getUserId(cookieRefreshToken);
+
+        final String accessToken = jwtProvider.issueAccessToken(userId);
+        final String refreshToken = jwtProvider.issueRefreshToken(userId);
+        cookieService.setRefreshTokenCookie(response, refreshToken);
+
+        return Api.of(AuthApiCode.REISSUE_SUCCESS, new AuthResponse(accessToken));
     }
 
 }
