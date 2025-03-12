@@ -1,9 +1,8 @@
 package co.kr.cocomu.codingspace.domain;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
-import co.kr.cocomu.codingspace.domain.vo.TabStatus;
+import co.kr.cocomu.codingspace.domain.vo.TestCaseType;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
-import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.Language;
@@ -217,6 +216,19 @@ public class CodingSpace {
         if (getCurrentUserCount() >= getTotalUserCount()) {
             throw new BadRequestException(CodingSpaceExceptionCode.OVER_USER_COUNT);
         }
+    }
+
+    public void deleteTestCase(final Long testCaseId) {
+        final TestCase targetTestCase = testCases.stream()
+            .filter(testCase -> testCase.getId().equals(testCaseId))
+            .findFirst()
+            .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NON_EXISTENT_CASE));
+
+        if (targetTestCase.getType() == TestCaseType.DEFAULT) {
+            throw new BadRequestException(CodingSpaceExceptionCode.CAN_NOT_REMOVE_DEFAULT_CASE);
+        }
+
+        testCases.remove(targetTestCase);
     }
 
 }

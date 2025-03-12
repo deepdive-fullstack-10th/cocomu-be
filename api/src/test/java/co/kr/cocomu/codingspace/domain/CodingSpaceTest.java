@@ -3,10 +3,12 @@ package co.kr.cocomu.codingspace.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
+import co.kr.cocomu.codingspace.domain.vo.TestCaseType;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
@@ -316,6 +318,48 @@ class CodingSpaceTest {
         assertThatThrownBy(codingSpace::finishSpace)
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_NOT_FINISH);
+    }
+
+    @Test
+    void 테스트케이스_제거가_된다() {
+        // given
+        CodingSpace codingSpace = new CodingSpace();
+        TestCase mockCase = mock(TestCase.class);
+        when(mockCase.getId()).thenReturn(1L);
+        when(mockCase.getType()).thenReturn(TestCaseType.CUSTOM);
+        codingSpace.addTestCase(mockCase);
+
+        // when
+        codingSpace.deleteTestCase(1L);
+
+        // then
+        assertThat(codingSpace.getTestCases()).isEmpty();
+    }
+
+    @Test
+    void 기본_테스트_케이스_제거시_예외가_발생한다() {
+        // given
+        CodingSpace codingSpace = new CodingSpace();
+        TestCase mockCase = mock(TestCase.class);
+        when(mockCase.getId()).thenReturn(1L);
+        when(mockCase.getType()).thenReturn(TestCaseType.DEFAULT);
+        codingSpace.addTestCase(mockCase);
+
+        // when & then
+        assertThatThrownBy(() -> codingSpace.deleteTestCase(1L))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.CAN_NOT_REMOVE_DEFAULT_CASE);
+    }
+
+    @Test
+    void 제거하려는_테스트_케이스가_없는_경우_예외가_발생한다() {
+        // given
+        CodingSpace codingSpace = new CodingSpace();
+
+        // when & then
+        assertThatThrownBy(() -> codingSpace.deleteTestCase(1L))
+            .isInstanceOf(BadRequestException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NON_EXISTENT_CASE);
     }
 
 }

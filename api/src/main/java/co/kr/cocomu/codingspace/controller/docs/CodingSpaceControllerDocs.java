@@ -244,4 +244,20 @@ public interface CodingSpaceControllerDocs {
     )
     Api<TestCaseDto> addTestCase(Long codingSpaceId, Long userId, CreateTestCaseDto dto);
 
+    @Operation(summary = "코딩 스페이스 테스트 케이스 삭제", description = "테스트 케이스를 삭제하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "테스트 케이스 삭제에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "400",
+        description = """
+                코딩 스페이스에 참여중이지 않습니다.
+                활성화 되지 않은 탭 입니다.
+                코딩 스페이스에 존재하지 않는 테스트케이스입니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    Api<Long> deleteTestCase(Long codingSpaceId, Long testCaseId, Long userId);
+
 }

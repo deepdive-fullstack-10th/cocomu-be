@@ -3,7 +3,6 @@ package co.kr.cocomu.codingspace.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -14,7 +13,6 @@ import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.domain.TestCase;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
-import co.kr.cocomu.codingspace.domain.vo.TestCaseType;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
@@ -191,6 +189,21 @@ class CodingSpaceCommandServiceTest {
 
         // then
         verify(stompSSEProducer).publishAddTestCase(any(TestCaseDto.class), anyLong());
+    }
+
+    @Test
+    void 테스트케이스_제거를_한다() {
+        // given
+        CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        CodingSpace mockCodingSpace = mock(CodingSpace.class);
+        when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
+        when(mockTab.getCodingSpace()).thenReturn(mockCodingSpace);
+
+        // when
+        codingSpaceCommandService.deleteTestCase(1L, 1L, 1L);
+
+        // then
+        verify(mockCodingSpace).deleteTestCase(1L);
     }
 
     /*

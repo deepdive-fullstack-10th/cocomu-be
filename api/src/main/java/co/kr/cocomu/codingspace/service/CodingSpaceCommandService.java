@@ -108,4 +108,14 @@ public class CodingSpaceCommandService {
         return testCaseDto;
     }
 
+    public Long deleteTestCase(final Long codingSpaceId, final Long userId, final Long testCaseId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        codingSpaceDomainService.validateActiveTab(tab.getId());
+
+        final CodingSpace codingSpace = tab.getCodingSpace();
+        codingSpace.deleteTestCase(testCaseId);
+
+        return testCaseId;
+    }
+
 }

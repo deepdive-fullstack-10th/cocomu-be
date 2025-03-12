@@ -25,6 +25,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -171,6 +172,16 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
     ) {
         final TestCaseDto result = codingSpaceCommandService.addTestCase(codingSpaceId, userId, dto);
         return Api.of(CodingSpaceApiCode.ADD_TEST_CASE_SUCCESS, result);
+    }
+
+    @DeleteMapping("/{codingSpaceId}/test-cases/{testCaseId}")
+    public Api<Long> deleteTestCase(
+        @PathVariable final Long codingSpaceId,
+        @PathVariable final Long testCaseId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        final Long result = codingSpaceCommandService.deleteTestCase(codingSpaceId, userId, testCaseId);
+        return Api.of(CodingSpaceApiCode.DELETE_TEST_CASE_SUCCESS, result);
     }
 
 }
