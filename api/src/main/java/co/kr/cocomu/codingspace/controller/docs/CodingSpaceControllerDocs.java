@@ -6,11 +6,13 @@ import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
+import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.common.api.Api;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
@@ -19,6 +21,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "004. COCOMU-CODING-SPACE", description = "코코무 코딩 스페이스 관련 API")
 public interface CodingSpaceControllerDocs {
@@ -223,5 +228,20 @@ public interface CodingSpaceControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     Api<FinishPage> getFinishPage(Long codingSpaceId, Long userId);
+
+    @Operation(summary = "코딩 스페이스 테스트 케이스 추가", description = "테스트 케이스를 추가하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "코딩 스페이스 테스트 케이스 추가에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "400",
+        description = """
+                코딩 스페이스에 참여중이지 않습니다.
+                활성화 되지 않은 탭 입니다.
+            """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    Api<TestCaseDto> addTestCase(Long codingSpaceId, Long userId, CreateTestCaseDto dto);
 
 }

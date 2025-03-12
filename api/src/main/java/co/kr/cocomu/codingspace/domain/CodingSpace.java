@@ -140,7 +140,7 @@ public class CodingSpace {
         }
     }
 
-    public void addTestCase(TestCase testCase) {
+    public void addTestCase(final TestCase testCase) {
         this.testCases.add(testCase);
         testCase.setCodingSpace(this);
     }

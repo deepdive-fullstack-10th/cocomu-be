@@ -9,12 +9,14 @@ import co.kr.cocomu.codingspace.dto.page.StartingPage;
 import co.kr.cocomu.codingspace.dto.page.StudyInformationPage;
 import co.kr.cocomu.codingspace.dto.page.WaitingPage;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
+import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.request.FilterDto;
 import co.kr.cocomu.codingspace.dto.request.SaveCodeDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpaceIdDto;
 import co.kr.cocomu.codingspace.dto.response.CodingSpacesDto;
 import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.response.SpaceStatusDto;
+import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import co.kr.cocomu.codingspace.service.CodingSpaceCommandService;
 import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.api.Api;
@@ -159,6 +161,16 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
     ) {
         final FinishPage result = codingSpaceQueryService.extractFinishPage(codingSpaceId, userId);
         return Api.of(CodingSpaceApiCode.GET_FINISH_PAGE_SUCCESS, result);
+    }
+
+    @PostMapping("/{codingSpaceId}/test-case")
+    public Api<TestCaseDto> addTestCase(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId,
+        @RequestBody final CreateTestCaseDto dto
+    ) {
+        final TestCaseDto result = codingSpaceCommandService.addTestCase(codingSpaceId, userId, dto);
+        return Api.of(CodingSpaceApiCode.ADD_TEST_CASE_SUCCESS, result);
     }
 
 }

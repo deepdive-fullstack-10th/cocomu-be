@@ -22,4 +22,13 @@ public class TestCaseDto {
     @Schema(description = "테스트 케이스 종류", example = "1")
     private TestCaseType type;
 
+    public static TestCaseDto from(final TestCase customTestCase) {
+        return new TestCaseDto(
+            customTestCase.getId(),
+            customTestCase.getInput(),
+            customTestCase.getOutput(),
+            customTestCase.getType()
+        );
+    }
+
 }
