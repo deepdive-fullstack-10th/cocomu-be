@@ -11,6 +11,7 @@ public class GetRequestTemplate {
         return RestAssuredMockMvc
             .given().log().all()
             .header("Authorization", "Bearer token")
+            .cookie("refreshToken", "test-refresh-token")
             .contentType(MediaType.APPLICATION_JSON)
             .when().get(path)
             .then().log().all();

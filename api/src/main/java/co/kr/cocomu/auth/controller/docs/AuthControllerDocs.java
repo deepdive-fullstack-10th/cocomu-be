@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -50,11 +51,6 @@ public interface AuthControllerDocs {
         description = "로그인에 성공했습니다."
     )
     @ApiResponse(
-        responseCode = "400",
-        description = "제공되지 않는 OAuth Service 입니다.",
-        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
-    )
-    @ApiResponse(
         responseCode = "502",
         description = """
             OAuth 로그인에 실패했습니다.
@@ -63,4 +59,23 @@ public interface AuthControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     public Api<AuthResponse> loginWithOAuth2Dev(OAuthRequest request, HttpServletResponse response);
+
+    @Operation(summary = "토큰 재발급", description = "토큰을 재발급하는 기능")
+    @ApiResponse(
+        responseCode = "200",
+        description = "토큰 재발급에 성공했습니다."
+    )
+    @ApiResponse(
+        responseCode = "401",
+        description = """
+            토큰의 유효 시간이 만료되었습니다.
+            유효하지 않은 토큰 서명입니다.
+            지원되지 않는 토큰 유형입니다.
+            잘못된 형식의 토큰입니다.
+            알 수 없는 토큰 에러입니다.
+        """,
+        content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+    )
+    Api<AuthResponse> reissue(String cookieRefreshToken, HttpServletResponse response);
+
 }

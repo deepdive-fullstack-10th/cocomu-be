@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -85,9 +86,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleNoResourceFoundException(final NoResourceFoundException e) {
+        log.error("{} : {}", e.getClass(), e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(new ExceptionResponse(9006, "존재하지 않는 API입니다."));
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleMissingCookieException(final MissingRequestCookieException e) {
+        log.error("{} : {}", e.getClass(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(new ExceptionResponse(9007, "필수 쿠키 정보가 존재하지 않습니다."));
+    }
+
 
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleBadRequestException(final BadRequestException e) {

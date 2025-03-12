@@ -26,6 +26,7 @@ import co.kr.cocomu.common.template.PostRequestTemplate;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -191,6 +192,23 @@ class AuthExecutorControllerTest {
         assertThat(result.message()).isEqualTo(AuthApiCode.LOGIN_SUCCESS.getMessage());
         assertThat(result.result().accessToken()).isEqualTo("mock-access-token");
         verify(cookieService).setRefreshTokenCookie(any(), eq("mock-refresh-token"));
+    }
+
+    @Test
+    void 토큰_재발급_요청이_성공한다() {
+        when(jwtProvider.getUserId("test-refresh-token")).thenReturn(1L);
+        when(jwtProvider.issueAccessToken(1L)).thenReturn("mock-access-token");
+        when(jwtProvider.issueRefreshToken(1L)).thenReturn("mock-refresh-token");
+
+        // when
+        String path = PATH_PREFIX + "/re-issue";
+        ValidatableMockMvcResponse response = GetRequestTemplate.execute(path);
+
+        // then
+        Api<AuthResponse> result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(AuthApiCode.REISSUE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(AuthApiCode.REISSUE_SUCCESS.getMessage());
+        assertThat(result.result().accessToken()).isEqualTo("mock-access-token");
     }
 
 }
