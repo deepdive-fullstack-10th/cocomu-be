@@ -17,6 +17,7 @@ import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
+import co.kr.cocomu.study.dto.request.StudyUserFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.FilterOptionsDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
@@ -242,7 +243,8 @@ class StudyExecutorControllerTest extends BaseExecutorControllerTest {
     @Test
     void 스터디원_조회_요청이_성공한다() {
         // given
-        when(studyQueryService.findAllMembers(1L, 1L, "")).thenReturn(List.of());
+        StudyUserFilterDto dto = new StudyUserFilterDto("", 1L);
+        when(studyQueryService.findAllMembers(1L, 1L, dto)).thenReturn(List.of());
 
         // when
         String path = PATH_PREFIX + "/1/members";

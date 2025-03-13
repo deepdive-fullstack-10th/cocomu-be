@@ -8,6 +8,7 @@ import co.kr.cocomu.study.dto.request.CreatePrivateStudyDto;
 import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import co.kr.cocomu.study.dto.request.StudyUserFilterDto;
 import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -149,9 +149,9 @@ public class StudyController implements StudyControllerDocs {
     public Api<List<StudyMemberDto>> getStudyMembers(
         @PathVariable final Long studyId,
         @AuthenticationPrincipal final Long userId,
-        @RequestParam(required = false) final String lastNickname
+        @ModelAttribute final StudyUserFilterDto dto
     ) {
-        final List<StudyMemberDto> allMembers = studyQueryService.findAllMembers(userId, studyId, lastNickname);
+        final List<StudyMemberDto> allMembers = studyQueryService.findAllMembers(userId, studyId, dto);
         return Api.of(StudyApiCode.GET_ALL_MEMBERS_SUCCESS, allMembers);
     }
 

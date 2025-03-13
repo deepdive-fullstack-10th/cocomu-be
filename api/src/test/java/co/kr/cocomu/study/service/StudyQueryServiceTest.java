@@ -2,7 +2,9 @@ package co.kr.cocomu.study.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -13,6 +15,7 @@ import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import co.kr.cocomu.study.dto.request.StudyUserFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
@@ -166,10 +169,10 @@ class StudyQueryServiceTest {
     void 스터디_목록_조회를_한다() {
         // given
         doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
-        when(studyUserQuery.findMembers(1L, "")).thenReturn(List.of());
+        when(studyUserQuery.findMembers(anyLong(), any(StudyUserFilterDto.class))).thenReturn(List.of());
 
         // when
-        List<StudyMemberDto> result = studyQueryService.findAllMembers(1L, 1L, "");
+        List<StudyMemberDto> result = studyQueryService.findAllMembers(1L, 1L, mock(StudyUserFilterDto.class));
 
         // then
         assertThat(result).hasSize(0);

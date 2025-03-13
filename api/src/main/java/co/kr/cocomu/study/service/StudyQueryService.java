@@ -5,6 +5,7 @@ import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.domain.Workbook;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
+import co.kr.cocomu.study.dto.request.StudyUserFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.LanguageDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
@@ -74,9 +75,9 @@ public class StudyQueryService {
         return StudyDetailPageDto.from(study);
     }
 
-    public List<StudyMemberDto> findAllMembers(final Long userId, final Long studyId, final String lastNickname) {
+    public List<StudyMemberDto> findAllMembers(final Long userId, final Long studyId, final StudyUserFilterDto dto) {
         studyDomainService.validateStudyMembership(userId, studyId);
-        return studyUserQuery.findMembers(studyId, lastNickname);
+        return studyUserQuery.findMembers(studyId, dto);
     }
 
     public List<StudyCardDto> getStudyCardsByUser(final Long userId, final Long viewerId, final Long lastIndex) {
