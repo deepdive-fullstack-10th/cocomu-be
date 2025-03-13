@@ -42,12 +42,11 @@ public class Study extends TimeBaseEntity {
     @Column(name = "study_id")
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 100, nullable = false)
     private String name;
     private String password;
 
-    @Column(columnDefinition = "text")
-    @ColumnDefault("''")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
     @Enumerated(value = EnumType.STRING)
