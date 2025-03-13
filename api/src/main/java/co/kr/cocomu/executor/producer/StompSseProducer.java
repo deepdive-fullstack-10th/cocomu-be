@@ -1,4 +1,4 @@
-package co.kr.cocomu.executor.service;
+package co.kr.cocomu.executor.producer;
 
 import co.kr.cocomu.executor.dto.message.EventMessage;
 import co.kr.cocomu.executor.dto.message.EventType;

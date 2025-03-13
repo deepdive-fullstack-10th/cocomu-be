@@ -2,11 +2,11 @@ package co.kr.cocomu.executor.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 
 import co.kr.cocomu.admin.config.AdminSecurityConfig;
 import co.kr.cocomu.admin.config.AdminUserConfig;
-import co.kr.cocomu.codingspace.service.CodingSpaceDomainService;
 import co.kr.cocomu.common.BaseExecutorControllerTest;
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.security.PasswordEncoderConfig;
@@ -16,8 +16,8 @@ import co.kr.cocomu.executor.dto.message.EventMessage;
 import co.kr.cocomu.executor.dto.message.EventType;
 import co.kr.cocomu.executor.dto.message.ExecutionMessage;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
-import co.kr.cocomu.executor.service.CodeExecutionProducer;
-import co.kr.cocomu.executor.service.StompSseProducer;
+import co.kr.cocomu.executor.producer.StompSseProducer;
+import co.kr.cocomu.executor.service.ExecutorService;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
@@ -35,16 +35,14 @@ class ExecutorControllerTest extends BaseExecutorControllerTest {
 
     private static final String PATH_PREFIX = "/api/v1/executor";
 
-    @MockBean private CodeExecutionProducer codeExecutionProducer;
-    @MockBean private CodingSpaceDomainService codingSpaceDomainService;
+    @MockBean private ExecutorService executorService;
     @MockBean private StompSseProducer stompSseProducer;
 
     @Test
     void 코드_실행_요청이_성공한다() {
         // given
-        doNothing().when(codingSpaceDomainService).validateActiveTab(1L);
-        doNothing().when(codeExecutionProducer).publishCode(any(ExecuteDto.class));
-        doNothing().when(stompSseProducer).publishRunning(1L);
+        doNothing().when(executorService).execute(any(ExecuteDto.class));
+        doNothing().when(stompSseProducer).publishRunning(anyLong());
         ExecuteDto dto = new ExecuteDto(1L, "", "", "");
 
         // when

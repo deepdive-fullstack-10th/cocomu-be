@@ -7,8 +7,9 @@ import co.kr.cocomu.executor.controller.docs.ExecutorControllerDocs;
 import co.kr.cocomu.executor.dto.message.EventMessage;
 import co.kr.cocomu.executor.dto.message.ExecutionMessage;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
-import co.kr.cocomu.executor.service.CodeExecutionProducer;
-import co.kr.cocomu.executor.service.StompSseProducer;
+import co.kr.cocomu.executor.producer.CodeExecutionProducer;
+import co.kr.cocomu.executor.producer.StompSseProducer;
+import co.kr.cocomu.executor.service.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,16 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ExecutorController implements ExecutorControllerDocs {
 
-    private final CodeExecutionProducer codeExecutionProducer;
-    private final CodingSpaceDomainService codingSpaceDomainService;
+    private final ExecutorService executorService;
     private final StompSseProducer stompSseProducer;
 
     @PostMapping("/execution")
     public NoContent executeCode(@RequestBody final ExecuteDto dto) {
-        codingSpaceDomainService.validateActiveTab(dto.codingSpaceTabId());
-        codeExecutionProducer.publishCode(dto);
+        executorService.execute(dto);
         stompSseProducer.publishRunning(dto.codingSpaceTabId());
-
         return NoContent.from(ExecutorApiCode.EXECUTE_CODE_SUCCESS);
     }
 
