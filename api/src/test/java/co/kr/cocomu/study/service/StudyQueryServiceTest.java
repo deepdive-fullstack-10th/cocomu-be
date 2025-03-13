@@ -44,8 +44,8 @@ class StudyQueryServiceTest {
     @Mock private StudyUserRepository studyUserQuery;
     @Mock private WorkbookRepository workbookQuery;
     @Mock private LanguageRepository languageQuery;
-    @Mock private CodingSpaceQueryService codingSpaceQueryService;
     @Mock private StudyDomainService studyDomainService;
+    @Mock private CodingSpaceQueryService codingSpaceQueryService;
 
     @InjectMocks private StudyQueryService studyQueryService;
 
@@ -168,14 +168,16 @@ class StudyQueryServiceTest {
     @Test
     void 스터디_목록_조회를_한다() {
         // given
-        doNothing().when(studyDomainService).validateStudyMembership(1L, 1L);
-        when(studyUserQuery.findMembers(anyLong(), any(StudyUserFilterDto.class))).thenReturn(List.of());
+        StudyMemberDto mockDto = new StudyMemberDto();
+        mockDto.setUserId(1L);
+        when(studyUserQuery.findMembers(anyLong(), any(StudyUserFilterDto.class))).thenReturn(List.of(mockDto));
+        when(codingSpaceQueryService.countJoinedSpacesByMembers(1L, List.of(1L))).thenReturn(Map.of(1L, 1L));
 
         // when
         List<StudyMemberDto> result = studyQueryService.findAllMembers(1L, 1L, mock(StudyUserFilterDto.class));
 
         // then
-        assertThat(result).hasSize(0);
+        assertThat(result.getFirst().getJoinedSpaceCount()).isEqualTo(1L);
     }
 
     @Test

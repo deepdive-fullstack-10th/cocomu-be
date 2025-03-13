@@ -1,5 +1,6 @@
 package co.kr.cocomu.study.service;
 
+import co.kr.cocomu.codingspace.service.CodingSpaceQueryService;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Language;
 import co.kr.cocomu.study.domain.Study;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudyQueryService {
 
     private final StudyDomainService studyDomainService;
+    private final CodingSpaceQueryService codingSpaceQueryService;
     private final StudyRepository studyQuery;
     private final StudyUserRepository studyUserQuery;
     private final WorkbookRepository workbookQuery;
@@ -77,7 +79,16 @@ public class StudyQueryService {
 
     public List<StudyMemberDto> findAllMembers(final Long userId, final Long studyId, final StudyUserFilterDto dto) {
         studyDomainService.validateStudyMembership(userId, studyId);
-        return studyUserQuery.findMembers(studyId, dto);
+        final List<StudyMemberDto> members = studyUserQuery.findMembers(studyId, dto);
+
+        final List<Long> memberIds = members.stream().map(StudyMemberDto::getUserId).toList();
+        final Map<Long, Long> spaceCounts = codingSpaceQueryService.countJoinedSpacesByMembers(studyId, memberIds);
+
+        for (final StudyMemberDto member : members) {
+            member.setJoinedSpaceCount(spaceCounts.getOrDefault(member.getUserId(), 0L));
+        }
+
+        return members;
     }
 
     public List<StudyCardDto> getStudyCardsByUser(final Long userId, final Long viewerId, final Long lastIndex) {

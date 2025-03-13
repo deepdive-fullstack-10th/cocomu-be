@@ -14,11 +14,8 @@ import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
 import co.kr.cocomu.codingspace.repository.query.TestCaseQuery;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
-import co.kr.cocomu.common.exception.domain.NotFoundException;
 import co.kr.cocomu.study.domain.Study;
-import co.kr.cocomu.study.domain.StudyLanguage;
 import co.kr.cocomu.study.service.StudyDomainService;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -105,6 +102,10 @@ public class CodingSpaceQueryService {
         }
 
         return codingSpaces;
+    }
+
+    public Map<Long, Long> countJoinedSpacesByMembers(final Long studyId, final List<Long> userIds) {
+        return codingSpaceTabQuery.countSpacesByStudyAndUsers(studyId, userIds);
     }
 
 }

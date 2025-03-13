@@ -16,4 +16,6 @@ public interface CodingSpaceTabQuery {
 
     List<FinishTabDto> findAllFinishedTabs(Long codingSpaceId);
 
+    Map<Long, Long> countSpacesByStudyAndUsers(Long studyId, List<Long> userIds);
+
 }
