@@ -64,7 +64,7 @@ public class CodingSpaceTabQueryImpl implements CodingSpaceTabQuery {
     }
 
     @Override
-    public List<AllTabDto> findAllTabs(final Long codingSpaceId) {
+    public List<AllTabDto> findAllTabs(final Long codingSpaceId, final Long userId) {
         return queryFactory
             .select(Projections.fields(
                 AllTabDto.class,
@@ -73,7 +73,10 @@ public class CodingSpaceTabQueryImpl implements CodingSpaceTabQuery {
                 codingSpaceTab.user.id.as("userId"),
                 codingSpaceTab.user.nickname.as("nickname"),
                 codingSpaceTab.user.profileImageUrl.as("profileImageUrl"),
-                codingSpaceTab.role.as("role")
+                codingSpaceTab.role.as("role"),
+                Expressions.cases()
+                    .when(codingSpaceTab.user.id.eq(userId)).then(true)
+                    .otherwise(false).as("myTab")
             ))
             .from(codingSpaceTab)
             .join(codingSpaceTab.user, user)

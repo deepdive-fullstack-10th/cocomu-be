@@ -22,6 +22,8 @@ public class AllTabDto {
     private String nickname;
     @Schema(description = "코딩 스페이스 멤버 프로필 이미지", example = "https://cdn.cocomu.co.kr/images/...")
     private String profileImageUrl;
+    @Schema(description = "자기 탭인지")
+    private boolean myTab;
     @Schema(description = "코딩 스페이스 권한", example = "HOST")
     private CodingSpaceRole role;
 

@@ -143,7 +143,7 @@ class CodingSpaceQueryServiceTest {
         // given
         FeedbackPage mockPage = mock(FeedbackPage.class);
         when(codingSpaceQuery.findFeedbackPage(1L, 1L)).thenReturn(Optional.of(mockPage));
-        when(codingSpaceTabQuery.findAllTabs(1L)).thenReturn(List.of());
+        when(codingSpaceTabQuery.findAllTabs(1L, 1L)).thenReturn(List.of());
         when(testCaseQuery.findTestCases(1L)).thenReturn(List.of());
 
         // when

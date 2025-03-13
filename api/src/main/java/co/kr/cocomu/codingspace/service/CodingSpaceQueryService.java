@@ -75,7 +75,7 @@ public class CodingSpaceQueryService {
         return codingSpaceQuery.findFeedbackPage(codingSpaceId, userId)
             .map(feedbackPage -> {
                 feedbackPage.setTestCases(testCaseQuery.findTestCases(codingSpaceId));
-                feedbackPage.setActiveTabs(codingSpaceTabQuery.findAllTabs(codingSpaceId));
+                feedbackPage.setActiveTabs(codingSpaceTabQuery.findAllTabs(codingSpaceId, userId));
                 return feedbackPage;
             })
             .orElseThrow(() -> new BadRequestException(CodingSpaceExceptionCode.NOT_ENTER_SPACE));
