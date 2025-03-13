@@ -52,16 +52,20 @@ public class UserService {
         return new UserInfoDto(user.getId(), user.getNickname(), user.getProfileImageUrl(), isMe);
     }
 
-    public void updateUser(final Long userId, final ProfileUpdateDto dto) {
-        // todo: 여기도 수정
+
+    public void updateUser(final Long userId, final String nickname, final String profileImageUrl) {
         final User user = getUserWithThrow(userId);
 
-        if (user.isNotDefaultImage()) {
-            profileImageUploader.markAsUnused(user.getProfileImageUrl());
-        }
-        profileImageUploader.confirmImage(dto.profileImageUrl());
+        final String prevImageUrl = user.getProfileImageUrl();
+        user.updateProfile(nickname, profileImageUrl);
 
-        user.updateProfile(dto.nickname(), dto.profileImageUrl());
+        if (user.isNotDefaultImageUrl(prevImageUrl)) {
+            profileImageUploader.markAsUnused(prevImageUrl);
+        }
+
+        if (user.isNotDefaultImageUrl(profileImageUrl)) {
+            profileImageUploader.confirmImage(profileImageUrl);
+        }
     }
 
     public UserResponse getMyProfile(final Long userId) {
