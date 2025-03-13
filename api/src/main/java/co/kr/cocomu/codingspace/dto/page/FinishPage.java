@@ -1,6 +1,7 @@
 package co.kr.cocomu.codingspace.dto.page;
 
 import co.kr.cocomu.codingspace.dto.response.FinishTabDto;
+import co.kr.cocomu.codingspace.dto.response.LanguageDto;
 import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
@@ -32,6 +33,8 @@ public class FinishPage {
     @Schema(description = "코딩 스페이스 종료 시간")
     private LocalDateTime finishTime;
 
+    @Schema(description = "코딩 스페이스 언어 정보")
+    private LanguageDto language;
     @Schema(description = "코딩 스페이스 활성화 된 탭 정보")
     private List<FinishTabDto> allFinishedTabs;
     @Schema(description = "코딩 스페이스 테스트 케이스 정보")

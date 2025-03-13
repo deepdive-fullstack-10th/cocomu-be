@@ -38,7 +38,7 @@ public class StudyQueryRepositoryImpl implements StudyQueryRepository {
         return buildStudyPageForm(userId)
             .from(study)
             .where(StudyFilterCondition.buildStudyFilterCondition(filter, userId))
-            .orderBy(study.createdAt.desc())
+            .orderBy(study.id.desc())
             .offset(pageOffset(filter.page()))
             .limit(STUDY_PAGE_SIZE)
             .fetch();
