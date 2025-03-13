@@ -1,19 +1,15 @@
 package co.kr.cocomu.codingspace.repository.query.impl;
 
+import static co.kr.cocomu.codingspace.domain.QCodingSpace.codingSpace;
 import static co.kr.cocomu.codingspace.domain.QCodingSpaceTab.codingSpaceTab;
-import static co.kr.cocomu.study.domain.QStudyWorkbook.studyWorkbook;
-import static co.kr.cocomu.study.domain.QWorkbook.workbook;
+import static co.kr.cocomu.study.domain.QStudy.study;
 import static co.kr.cocomu.user.domain.QUser.user;
 
-import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
-import co.kr.cocomu.codingspace.domain.QCodingSpaceTab;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.dto.response.AllTabDto;
 import co.kr.cocomu.codingspace.dto.response.FinishTabDto;
 import co.kr.cocomu.codingspace.dto.response.UserDto;
 import co.kr.cocomu.codingspace.repository.query.CodingSpaceTabQuery;
-import co.kr.cocomu.study.dto.response.WorkbookDto;
-import co.kr.cocomu.user.domain.QUser;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
@@ -68,7 +64,7 @@ public class CodingSpaceTabQueryImpl implements CodingSpaceTabQuery {
     }
 
     @Override
-    public List<AllTabDto> findAllTabs(final Long codingSpaceId) {
+    public List<AllTabDto> findAllTabs(final Long codingSpaceId, final Long userId) {
         return queryFactory
             .select(Projections.fields(
                 AllTabDto.class,
@@ -77,7 +73,10 @@ public class CodingSpaceTabQueryImpl implements CodingSpaceTabQuery {
                 codingSpaceTab.user.id.as("userId"),
                 codingSpaceTab.user.nickname.as("nickname"),
                 codingSpaceTab.user.profileImageUrl.as("profileImageUrl"),
-                codingSpaceTab.role.as("role")
+                codingSpaceTab.role.as("role"),
+                Expressions.cases()
+                    .when(codingSpaceTab.user.id.eq(userId)).then(true)
+                    .otherwise(false).as("myTab")
             ))
             .from(codingSpaceTab)
             .join(codingSpaceTab.user, user)
@@ -107,6 +106,24 @@ public class CodingSpaceTabQueryImpl implements CodingSpaceTabQuery {
                 codingSpaceTab.status.eq(TabStatus.FINISH)
             )
             .fetch();
+    }
+
+    @Override
+    public Map<Long, Long> countSpacesByStudyAndUsers(final Long studyId, final List<Long> userIds) {
+        return queryFactory
+            .select(
+                codingSpaceTab.user.id,
+                codingSpace.id.count()
+            )
+            .from(codingSpaceTab)
+            .where(
+                codingSpaceTab.user.id.in(userIds),
+                codingSpace.study.id.eq(studyId)
+            )
+            .join(codingSpaceTab.codingSpace, codingSpace)
+            .groupBy(codingSpaceTab.user.id)
+            .transform(GroupBy.groupBy(codingSpaceTab.user.id)
+                .as(codingSpace.id.count()));
     }
 
 }

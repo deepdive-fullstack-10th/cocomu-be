@@ -53,6 +53,7 @@ public class UserService {
     }
 
     public void updateUser(final Long userId, final ProfileUpdateDto dto) {
+        // todo: 여기도 수정
         final User user = getUserWithThrow(userId);
 
         if (user.isNotDefaultImage()) {

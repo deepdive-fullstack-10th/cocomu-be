@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.dto.page.FeedbackPage;
@@ -142,7 +143,7 @@ class CodingSpaceQueryServiceTest {
         // given
         FeedbackPage mockPage = mock(FeedbackPage.class);
         when(codingSpaceQuery.findFeedbackPage(1L, 1L)).thenReturn(Optional.of(mockPage));
-        when(codingSpaceTabQuery.findAllTabs(1L)).thenReturn(List.of());
+        when(codingSpaceTabQuery.findAllTabs(1L, 1L)).thenReturn(List.of());
         when(testCaseQuery.findTestCases(1L)).thenReturn(List.of());
 
         // when
@@ -204,6 +205,18 @@ class CodingSpaceQueryServiceTest {
         // then
         assertThat(codingSpaces.getFirst()).isEqualTo(mockDto);
         assertThat(codingSpaces.getFirst().getCurrentUsers()).isEqualTo(List.of());
+    }
+
+    @Test
+    void 사용자별_참여_스페이스_수를_가져_올_때_query로부터_가져온다() {
+        // given
+        when(codingSpaceTabQuery.countSpacesByStudyAndUsers(1L, List.of())).thenReturn(Map.of());
+
+        // when
+        codingSpaceQueryService.countJoinedSpacesByMembers(1L, List.of());
+
+        // then
+        verify(codingSpaceTabQuery).countSpacesByStudyAndUsers(1L, List.of());
     }
 
 }

@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 @Schema(description = "코딩 스페이스 종료 페이지 응답")
 public class FinishPage {
 
+    @Schema(description = "코딩 스페이스의 스터디 식별자", example = "1")
+    private Long studyId;
     @Schema(description = "코딩 스페이스 식별자", example = "1")
     private Long id;
     @Schema(description = "코딩 스페이스 명", example = "[boj, silver3] ...")

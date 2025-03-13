@@ -187,6 +187,7 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
         return Optional.ofNullable(queryFactory
             .select(Projections.fields(
                 FinishPage.class,
+                codingSpace.study.id.as("studyId"),
                 codingSpace.id.as("id"),
                 codingSpace.name.as("name"),
                 codingSpace.description.as("description"),

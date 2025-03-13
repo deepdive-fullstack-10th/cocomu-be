@@ -8,6 +8,7 @@ import co.kr.cocomu.study.dto.request.CreatePublicStudyDto;
 import co.kr.cocomu.study.dto.request.EditStudyDto;
 import co.kr.cocomu.study.dto.request.GetAllStudyFilterDto;
 import co.kr.cocomu.study.dto.request.JoinPrivateStudyDto;
+import co.kr.cocomu.study.dto.request.StudyUserFilterDto;
 import co.kr.cocomu.study.dto.response.AllStudyCardDto;
 import co.kr.cocomu.study.dto.response.StudyCardDto;
 import co.kr.cocomu.study.dto.page.StudyDetailPageDto;
@@ -212,7 +213,7 @@ public interface StudyControllerDocs {
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
-    Api<List<StudyMemberDto>> getStudyMembers(Long studyId, Long userId, String lastNickname);
+    Api<List<StudyMemberDto>> getStudyMembers(Long studyId, Long userId, StudyUserFilterDto dto);
 
     @Operation(summary = "스터디 수정", description = "스터디를 수정하는 기능")
     @ApiResponse(

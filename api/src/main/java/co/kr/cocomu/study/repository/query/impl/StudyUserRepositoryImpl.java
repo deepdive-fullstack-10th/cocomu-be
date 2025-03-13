@@ -5,11 +5,12 @@ import static co.kr.cocomu.user.domain.QUser.user;
 
 import co.kr.cocomu.study.domain.vo.StudyRole;
 import co.kr.cocomu.study.domain.vo.StudyUserStatus;
+import co.kr.cocomu.study.dto.request.StudyUserFilterDto;
 import co.kr.cocomu.study.dto.response.LeaderDto;
 import co.kr.cocomu.study.dto.response.StudyMemberDto;
 import co.kr.cocomu.study.repository.query.StudyUserQueryRepository;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -61,10 +62,11 @@ public class StudyUserRepositoryImpl implements StudyUserQueryRepository {
     }
 
     @Override
-    public List<StudyMemberDto> findMembers(final Long studyId, final String lastNickname) {
+    public List<StudyMemberDto> findMembers(final Long studyId, final StudyUserFilterDto filter) {
         return queryFactory.select(Projections.fields(
                 StudyMemberDto.class,
-                user.id.as("id"),
+                studyUser.id.as("studyUserId"),
+                user.id.as("userId"),
                 user.nickname.as("nickname"),
                 user.profileImageUrl.as("profileImageUrl"),
                 studyUser.role.as("role"),
@@ -75,21 +77,41 @@ public class StudyUserRepositoryImpl implements StudyUserQueryRepository {
             .where(
                 studyUser.study.id.eq(studyId),
                 studyUser.status.eq(StudyUserStatus.JOIN),
-                lastNicknameCondition(lastNickname)
+                getSelectCondition(filter.lastNickname(), filter.lastIndex())
             )
-            .orderBy(
-                studyUser.role.when(StudyRole.LEADER).then(0).otherwise(1).asc(),
-                user.nickname.asc()
-            )
+            .orderBy(getOrderSpecifiers(filter.lastNickname()))
             .limit(20)
             .fetch();
     }
 
-    private BooleanExpression lastNicknameCondition(final String lastNickname) {
+    private OrderSpecifier<?>[] getOrderSpecifiers(final String lastNickname) {
         if (lastNickname == null || lastNickname.isEmpty()) {
+            return new OrderSpecifier[] {
+                studyUser.role.when(StudyRole.LEADER).then(0).otherwise(1).asc(),
+                user.nickname.asc(),
+                studyUser.id.asc()
+            };
+        }
+
+        return new OrderSpecifier[]{ user.nickname.asc(), studyUser.id.asc() };
+    }
+
+    private BooleanExpression getSelectCondition(final String lastNickname, final Long lastIndex) {
+        if ((lastNickname == null || lastNickname.isEmpty()) && lastIndex == null) {
             return null;
         }
-        return user.nickname.gt(lastNickname);
+
+        if (lastIndex == null) {
+            return user.nickname.gt(lastNickname).and(studyUser.role.eq(StudyRole.MEMBER));
+        }
+
+        if (lastNickname == null) {
+            return studyUser.id.gt(lastIndex).and(studyUser.role.eq(StudyRole.MEMBER));
+        }
+
+        return (user.nickname.gt(lastNickname)
+            .or(user.nickname.eq(lastNickname).and(studyUser.id.gt(lastIndex))))
+            .and(studyUser.role.eq(StudyRole.MEMBER));
     }
 
 }
