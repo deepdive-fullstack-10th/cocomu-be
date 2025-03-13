@@ -138,7 +138,7 @@ public interface CodingSpaceControllerDocs {
         description = """
                 이미 시작된 코딩 스페이스입니다.
                 코딩 스페이스에 참여중이지 않습니다.
-                코딩 스페이스 시작은 방장만 할 수 있습니다.
+                유효하지 않은 권한이 없습니다.
                 코딩 스페이스에 입장하지 않았습니다.
                 스터디 시작 최소 인원은 2명입니다.
             """,
@@ -169,7 +169,7 @@ public interface CodingSpaceControllerDocs {
         responseCode = "400",
         description = """
                 코딩 스페이스에 참여중이지 않습니다.
-                코딩 스페이스 시작은 방장만 할 수 있습니다.
+                유효하지 않은 권한이 없습니다.
                 코딩 스페이스에 입장하지 않았습니다.
                 스터디 시작 상태일 때만 피드백 모드를 진행할 수 있습니다.
             """,
@@ -201,7 +201,7 @@ public interface CodingSpaceControllerDocs {
         description = """
                 코딩 스페이스에 참여중이지 않습니다.
                 코딩 스페이스에 입장하지 않았습니다.
-                코딩 스페이스 시작은 방장만 할 수 있습니다.
+                유효하지 않은 권한이 없습니다.
                 스터디 피드백 상태일 때만 종료할 수 있습니다.
             """,
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))

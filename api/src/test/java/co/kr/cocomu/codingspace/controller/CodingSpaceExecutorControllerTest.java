@@ -294,4 +294,19 @@ class CodingSpaceExecutorControllerTest extends BaseExecutorControllerTest {
         assertThat(result.result()).isEqualTo(1L);
     }
 
+    @Test
+    void 코딩_스페이스_삭제_요청이_성공한다() {
+        // given
+        doNothing().when(codingSpaceCommandService).deleteSpace(1L, 1L);
+
+        // when
+        String path = PATH_PREFIX + "/1";
+        ValidatableMockMvcResponse response = DeleteRequestTemplate.execute(path);
+
+        // then
+        NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(CodingSpaceApiCode.DELETE_SPACE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(CodingSpaceApiCode.DELETE_SPACE_SUCCESS.getMessage());
+    }
+
 }

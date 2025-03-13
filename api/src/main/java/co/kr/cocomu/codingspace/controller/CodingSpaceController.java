@@ -184,4 +184,13 @@ public class CodingSpaceController implements CodingSpaceControllerDocs {
         return Api.of(CodingSpaceApiCode.DELETE_TEST_CASE_SUCCESS, result);
     }
 
+    @DeleteMapping("/{codingSpaceId}")
+    public NoContent deleteCodingSpace(
+        @PathVariable final Long codingSpaceId,
+        @AuthenticationPrincipal final Long userId
+    ) {
+        codingSpaceCommandService.deleteSpace(codingSpaceId, userId);
+        return NoContent.from(CodingSpaceApiCode.DELETE_SPACE_SUCCESS);
+    }
+
 }

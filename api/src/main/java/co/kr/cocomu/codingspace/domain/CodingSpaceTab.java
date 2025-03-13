@@ -43,11 +43,11 @@ public class CodingSpaceTab extends TimeBaseEntity {
     private String documentKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coding_space_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "coding_space_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private CodingSpace codingSpace;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private User user;
 
     @Column(columnDefinition = "text")
@@ -130,9 +130,9 @@ public class CodingSpaceTab extends TimeBaseEntity {
         }
     }
 
-    private void validateHostRole() {
+    public void validateHostRole() {
         if (role == CodingSpaceRole.MEMBER) {
-            throw new BadRequestException(CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+            throw new BadRequestException(CodingSpaceExceptionCode.INVALID_ROLE);
         }
     }
 

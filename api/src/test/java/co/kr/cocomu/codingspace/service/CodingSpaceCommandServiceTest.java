@@ -207,6 +207,20 @@ class CodingSpaceCommandServiceTest {
         verify(stompSSEProducer).publishDeleteTestCase(1L, 1L);
     }
 
+    @Test
+    void 코딩_스페이스_제거를_한다() {
+        // given
+        CodingSpaceTab mockTab = mock(CodingSpaceTab.class);
+        when(codingSpaceDomainService.getCodingSpaceTabWithThrow(1L, 1L)).thenReturn(mockTab);
+
+        // when
+        codingSpaceCommandService.deleteSpace(1L, 1L);
+
+        // then
+        verify(mockTab).validateHostRole();
+        verify(codingSpaceRepository).deleteById(1L);
+    }
+
     /*
     * ========================== SET STUB ==========================
     * */
