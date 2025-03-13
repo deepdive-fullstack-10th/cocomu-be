@@ -45,6 +45,8 @@ public class Study extends TimeBaseEntity {
     @Column(length = 20, nullable = false)
     private String name;
     private String password;
+
+    @Column(columnDefinition = "text")
     @ColumnDefault("''")
     private String description;
 
