@@ -192,7 +192,13 @@ public class CodingSpaceQueryImpl implements CodingSpaceQuery {
                 codingSpace.workbookUrl.as("workbookUrl"),
                 codingSpace.codingMinutes.as("codingMinutes"),
                 codingSpace.startTime.as("startTime"),
-                codingSpace.finishTime.as("finishTime")
+                codingSpace.finishTime.as("finishTime"),
+                Projections.fields(
+                    LanguageDto.class,
+                    codingSpace.language.id.as("languageId"),
+                    codingSpace.language.name.as("languageName"),
+                    codingSpace.language.imageUrl.as("languageImageUrl")
+                ).as("language")
             ))
             .from(codingSpace)
             .where(
