@@ -166,7 +166,7 @@ class CodingSpaceTabTest {
         // when & then
         assertThatThrownBy(() -> tab.start())
             .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.INVALID_ROLE);
     }
     @Test
     void 방장은_코딩_스터디_피드백을_시작할_수_있다() {
@@ -201,7 +201,7 @@ class CodingSpaceTabTest {
         // when & then
         assertThatThrownBy(() -> tab.startFeedback())
             .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.INVALID_ROLE);
     }
 
     @Test
@@ -237,7 +237,7 @@ class CodingSpaceTabTest {
         // when & then
         assertThatThrownBy(() -> tab.finishSpace())
             .isInstanceOf(BadRequestException.class)
-            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.MEMBER_CAN_NOT_START);
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.INVALID_ROLE);
     }
 
     @Test

@@ -2,7 +2,6 @@ package co.kr.cocomu.codingspace.repository.query.impl;
 
 import static co.kr.cocomu.codingspace.domain.QCodingSpace.codingSpace;
 import static co.kr.cocomu.codingspace.domain.QCodingSpaceTab.codingSpaceTab;
-import static co.kr.cocomu.study.domain.QStudy.study;
 import static co.kr.cocomu.user.domain.QUser.user;
 
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;

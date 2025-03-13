@@ -4,6 +4,7 @@ package co.kr.cocomu.user.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -126,7 +127,7 @@ class UserExecutorControllerTest extends BaseExecutorControllerTest {
     void 프로필_수정_요청이_성공한다() {
         // given
         ProfileUpdateDto dto = new ProfileUpdateDto("", "");
-        doNothing().when(userService).updateUser(1L, dto);
+        doNothing().when(userService).updateUser(anyLong(), anyString(), anyString());
 
         // when
         String path = PATH_PREFIX + "/me";

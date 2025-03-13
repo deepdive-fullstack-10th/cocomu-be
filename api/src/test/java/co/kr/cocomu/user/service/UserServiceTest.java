@@ -115,36 +115,36 @@ class UserServiceTest {
     }
 
     @Test
-    void 사용자_프로필_수정시_기본_프로필이_아니면_태그_설정을_한다() {
+    void 사용자_프로필_수정이_된다() {
         // given
-        ProfileUpdateDto mockDto = mock(ProfileUpdateDto.class);
         User mockUser = mock(User.class);
         when(userJpaRepository.findById(1L)).thenReturn(Optional.of(mockUser));
-        when(mockUser.isNotDefaultImage()).thenReturn(true);
+        when(mockUser.getProfileImageUrl()).thenReturn("prevUrl");
+        when(mockUser.isNotDefaultImageUrl("url")).thenReturn(false);
+        when(mockUser.isNotDefaultImageUrl("prevUrl")).thenReturn(false);
 
         // when
-        userService.updateUser(1L, mockDto);
+        userService.updateUser(1L, "nickname", "url");
 
         // then
-        verify(profileImageUploader).markAsUnused(mockUser.getProfileImageUrl());
-        verify(profileImageUploader).confirmImage(mockDto.profileImageUrl());
-        verify(mockUser).updateProfile(mockDto.nickname(), mockDto.profileImageUrl());
+        verify(mockUser).updateProfile("nickname", "url");
     }
 
     @Test
-    void 사용자_프로필_수정시_기본_프로필이라면_태그_설정을_하지_않는다() {
+    void 사용자_프로필_수정시_기본_이미지가_아니면_추가_작업을_한다() {
         // given
-        ProfileUpdateDto mockDto = mock(ProfileUpdateDto.class);
         User mockUser = mock(User.class);
         when(userJpaRepository.findById(1L)).thenReturn(Optional.of(mockUser));
-        when(mockUser.isNotDefaultImage()).thenReturn(false);
+        when(mockUser.getProfileImageUrl()).thenReturn("prevUrl");
+        when(mockUser.isNotDefaultImageUrl("url")).thenReturn(true);
+        when(mockUser.isNotDefaultImageUrl("prevUrl")).thenReturn(true);
 
         // when
-        userService.updateUser(1L, mockDto);
+        userService.updateUser(1L, "nickname", "url");
 
         // then
-        verify(profileImageUploader).confirmImage(mockDto.profileImageUrl());
-        verify(mockUser).updateProfile(mockDto.nickname(), mockDto.profileImageUrl());
+        verify(profileImageUploader).markAsUnused("prevUrl");
+        verify(profileImageUploader).confirmImage("url");
     }
 
 }

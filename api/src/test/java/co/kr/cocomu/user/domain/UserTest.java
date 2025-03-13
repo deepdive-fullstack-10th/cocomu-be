@@ -57,29 +57,29 @@ class UserTest {
     }
 
     @Test
+    void 기본_프로필이_아니라면_True() {
+        // given
+        User user = User.createUser("닉네임");
+
+        // when
+        boolean result = user.isNotDefaultImageUrl("string");
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+
+    @Test
     void 기본_프로필이라면_False() {
         // given
         User user = User.createUser("닉네임");
 
         // when
-        boolean result = user.isNotDefaultImage();
+        String defaultUrl = "https://cdn.cocomu.co.kr/images/default/profile.png";
+        boolean result = user.isNotDefaultImageUrl(defaultUrl);
 
         // then
         assertThat(result).isFalse();
-    }
-
-
-    @Test
-    void 기본_프로필이_아니라면_True() {
-        // given
-        User user = User.createUser("닉네임");
-        user.updateProfile("닉네임", "profileImageUrl");
-
-        // when
-        boolean result = user.isNotDefaultImage();
-
-        // then
-        assertThat(result).isTrue();
     }
 
 }

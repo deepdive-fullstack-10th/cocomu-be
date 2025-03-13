@@ -1,5 +1,4 @@
 package co.kr.cocomu.study.repository.query.impl;
-
 import static co.kr.cocomu.study.domain.QStudy.study;
 import static co.kr.cocomu.study.domain.QStudyUser.studyUser;
 import static co.kr.cocomu.study.repository.query.condition.StudyFilterCondition.getLastIndexCondition;

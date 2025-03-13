@@ -3,13 +3,16 @@ package co.kr.cocomu.codingspace.service;
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
 import co.kr.cocomu.codingspace.domain.TestCase;
+import co.kr.cocomu.codingspace.domain.vo.CodingSpaceRole;
 import co.kr.cocomu.codingspace.domain.vo.CodingSpaceStatus;
 import co.kr.cocomu.codingspace.dto.request.CreateCodingSpaceDto;
 import co.kr.cocomu.codingspace.dto.request.CreateTestCaseDto;
 import co.kr.cocomu.codingspace.dto.response.TestCaseDto;
+import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.TestCaseRepository;
 import co.kr.cocomu.codingspace.stomp.StompSSEProducer;
+import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.study.domain.Study;
 import co.kr.cocomu.study.service.StudyDomainService;
 import co.kr.cocomu.user.domain.User;
@@ -118,6 +121,13 @@ public class CodingSpaceCommandService {
         stompSSEProducer.publishDeleteTestCase(codingSpaceId, testCaseId);
 
         return testCaseId;
+    }
+
+    public void deleteSpace(final Long codingSpaceId, final Long userId) {
+        final CodingSpaceTab tab = codingSpaceDomainService.getCodingSpaceTabWithThrow(codingSpaceId, userId);
+        tab.validateHostRole();
+
+        codingSpaceRepository.deleteById(codingSpaceId);
     }
 
 }

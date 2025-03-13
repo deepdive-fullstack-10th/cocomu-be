@@ -69,8 +69,8 @@ public class User extends TimeBaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public boolean isNotDefaultImage() {
-        return !profileImageUrl.equals(DEFAULT_PROFILE_IMAGE);
+    public boolean isNotDefaultImageUrl(final String nickname) {
+        return !nickname.equals(DEFAULT_PROFILE_IMAGE);
     }
 
 }

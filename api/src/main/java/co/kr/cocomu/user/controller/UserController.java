@@ -71,7 +71,7 @@ public class UserController implements UserControllerDocs {
         @AuthenticationPrincipal final Long userId,
         @Valid @RequestBody final ProfileUpdateDto dto
     ) {
-        userService.updateUser(userId, dto);
+        userService.updateUser(userId, dto.nickname(), dto.profileImageUrl());
         return NoContent.from(UserApiCode.PROFILE_UPDATE_SUCCESS);
     }
 

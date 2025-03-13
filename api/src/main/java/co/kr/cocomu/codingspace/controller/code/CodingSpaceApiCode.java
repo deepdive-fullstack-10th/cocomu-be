@@ -22,7 +22,8 @@ public enum CodingSpaceApiCode implements ApiCode {
     GET_FINISH_PAGE_SUCCESS(4000, "코딩 스페이스 종료 페이지 조회에 성공했습니다."),
     GET_FEEDBACK_PAGE_SUCCESS(4000, "코딩 스페이스 피드백 페이지 조회에 성공했습니다."),
     ADD_TEST_CASE_SUCCESS(4000, "코딩 스페이스 테스트 케이스 추가에 성공했습니다."),
-    DELETE_TEST_CASE_SUCCESS(4000, "테스트 케이스 삭제에 성공했습니다.");
+    DELETE_TEST_CASE_SUCCESS(4000, "테스트 케이스 삭제에 성공했습니다."),
+    DELETE_SPACE_SUCCESS(4000, "코딩 스페이스 삭제에 성공했습니다.");
 
     private final int code;
     private final String message;

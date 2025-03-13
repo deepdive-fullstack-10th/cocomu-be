@@ -18,7 +18,7 @@ public enum CodingSpaceExceptionCode implements ExceptionCode {
     NO_PARTICIPATION_SPACE(4008, "코딩 스페이스에 참여중이지 않습니다."),
     START_MINIMUM_USER_COUNT(4009, "스터디 시작 최소 인원은 2명입니다."),
     NOT_ENTER_SPACE(4010, "코딩 스페이스에 입장하지 않았습니다."),
-    MEMBER_CAN_NOT_START(4011, "코딩 스페이스 시작은 방장만 할 수 있습니다."),
+    INVALID_ROLE(4011, "유효하지 않은 권한이 없습니다."),
     ALREADY_STARTING_SPACE(4012, "이미 시작된 코딩 스페이스입니다."),
     CAN_NOT_FEEDBACK(4013, "스터디 시작 상태일 때만 피드백 모드를 진행할 수 있습니다."),
     CAN_NOT_FINISH(4014, "스터디 피드백 상태일 때만 종료할 수 있습니다."),
@@ -27,7 +27,8 @@ public enum CodingSpaceExceptionCode implements ExceptionCode {
     NOT_ACTIVE_TAB(4017, "활성화 되지 않은 탭 입니다."),
     EMPTY_TEST_CASE(4018, "테스트 케이스는 비어 있을 수 없습니다."),
     NON_EXISTENT_CASE(4019, "코딩 스페이스에 존재하지 않는 테스트케이스입니다."),
-    CAN_NOT_REMOVE_DEFAULT_CASE(4020, "기본 테스트 케이스는 삭제할 수 없습니다.");
+    CAN_NOT_REMOVE_DEFAULT_CASE(4020, "기본 테스트 케이스는 삭제할 수 없습니다."),
+    ;
 
     private final int code;
     private final String message;
