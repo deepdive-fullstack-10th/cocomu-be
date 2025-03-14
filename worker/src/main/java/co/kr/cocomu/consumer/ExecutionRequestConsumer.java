@@ -1,6 +1,7 @@
 package co.kr.cocomu.consumer;
 
 import co.kr.cocomu.dto.CodeExecutionMessage;
+import co.kr.cocomu.dto.CodeSubmissionMessage;
 import co.kr.cocomu.dto.EventMessage;
 import co.kr.cocomu.dto.ExecutionMessage;
 import co.kr.cocomu.producer.ExecutionResultProducer;
@@ -26,6 +27,11 @@ public class ExecutionRequestConsumer {
 
         //apiClient.sendResultToMainServer(result);
         executionResultProducer.publishExecution(result);
+    }
+
+    @RabbitListener(queues = "${rabbitmq.submission.queue.request}")
+    public void consumeMessage(final CodeSubmissionMessage message) {
+        log.info("코드 제출 메시지 - {}", message.toString());
     }
 
 }

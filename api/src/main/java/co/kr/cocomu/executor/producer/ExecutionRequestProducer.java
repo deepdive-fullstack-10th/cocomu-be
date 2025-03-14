@@ -2,7 +2,9 @@ package co.kr.cocomu.executor.producer;
 
 
 import co.kr.cocomu.executor.dto.message.CodeExecutionMessage;
+import co.kr.cocomu.executor.dto.message.CodeSubmissionMessage;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
+import co.kr.cocomu.executor.dto.request.SubmitDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,4 +37,9 @@ public class ExecutionRequestProducer {
         log.info("Code execution 발행 완료 - {}", newMessage);
     }
 
+    public void publishSubmission(final Long testCaseId, final String input, final SubmitDto dto) {
+        final CodeSubmissionMessage codeSubmissionMessage = CodeSubmissionMessage.of(testCaseId, input, dto);
+        rabbitTemplate.convertAndSend(exchangeName, submissionSendRoutingKey, codeSubmissionMessage);
+        log.info("Code submission 발행 완료 - {}", codeSubmissionMessage);
+    }
 }

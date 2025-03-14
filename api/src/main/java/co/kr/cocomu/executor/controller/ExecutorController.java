@@ -4,6 +4,7 @@ import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.executor.controller.code.ExecutorApiCode;
 import co.kr.cocomu.executor.controller.docs.ExecutorControllerDocs;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
+import co.kr.cocomu.executor.dto.request.SubmitDto;
 import co.kr.cocomu.executor.service.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,12 @@ public class ExecutorController implements ExecutorControllerDocs {
     public NoContent executeCode(@RequestBody final ExecuteDto dto) {
         executorService.execute(dto);
         return NoContent.from(ExecutorApiCode.EXECUTE_CODE_SUCCESS);
+    }
+
+    @PostMapping("/submit")
+    public NoContent submitCode(@RequestBody final SubmitDto dto) {
+        executorService.submit(dto);
+        return NoContent.from(ExecutorApiCode.SUBMIT_CODE_SUCCESS);
     }
 
 }

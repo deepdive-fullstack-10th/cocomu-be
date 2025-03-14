@@ -25,6 +25,9 @@ dependencies {
     // async
     //implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    // object mapper
+    implementation 'org.springframework.boot:spring-boot-starter-json'
+
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
