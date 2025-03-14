@@ -38,8 +38,10 @@ public class ExecutionRequestProducer {
     }
 
     public void publishSubmission(final Long testCaseId, final String input, final SubmitDto dto) {
-        final CodeSubmissionMessage codeSubmissionMessage = CodeSubmissionMessage.of(testCaseId, input, dto);
+        final CodeExecutionMessage codeExecutionMessage = CodeExecutionMessage.of(dto, input);
+        final CodeSubmissionMessage codeSubmissionMessage = CodeSubmissionMessage.of(testCaseId, codeExecutionMessage);
         rabbitTemplate.convertAndSend(exchangeName, submissionSendRoutingKey, codeSubmissionMessage);
         log.info("Code submission 발행 완료 - {}", codeSubmissionMessage);
     }
+
 }

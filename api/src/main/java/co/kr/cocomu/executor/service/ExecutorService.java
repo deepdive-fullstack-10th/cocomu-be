@@ -2,7 +2,6 @@ package co.kr.cocomu.executor.service;
 
 import co.kr.cocomu.codingspace.domain.TestCase;
 import co.kr.cocomu.codingspace.service.CodingSpaceDomainService;
-import co.kr.cocomu.executor.dto.message.ExecutionMessage;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
 import co.kr.cocomu.executor.dto.request.SubmitDto;
 import co.kr.cocomu.executor.producer.ExecutionRequestProducer;

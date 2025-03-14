@@ -27,7 +27,7 @@ public class ExecutorController implements ExecutorControllerDocs {
         return NoContent.from(ExecutorApiCode.EXECUTE_CODE_SUCCESS);
     }
 
-    @PostMapping("/submit")
+    @PostMapping("/submission")
     public NoContent submitCode(@RequestBody final SubmitDto dto) {
         executorService.submit(dto);
         return NoContent.from(ExecutorApiCode.SUBMIT_CODE_SUCCESS);

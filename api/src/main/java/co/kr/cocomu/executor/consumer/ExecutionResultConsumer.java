@@ -20,19 +20,19 @@ public class ExecutionResultConsumer {
     private final ExecutorService executorService;
 
     @RabbitListener(queues = "${rabbitmq.execution.queue.result}")
-    public void consumeMessage(final EventMessage<ExecutionMessage> message) {
-        stompSseProducer.publishResult(message);
+    public void consumeExecutionMessage(final EventMessage<ExecutionMessage> message) {
+        stompSseProducer.publishExecutionResult(message);
         log.info("코드 실행 결과 전송 완료 = {}", message);
     }
 
     @RabbitListener(queues = "${rabbitmq.submission.queue.result}")
     public void consumeSubmissionMessage(final EventMessage<SubmissionMessage> message) {
-        if (message.getType() != EventType.SUCCESS) {
+        if (message.type() != EventType.SUCCESS) {
             stompSseProducer.publishSubmissionResult(message);
             return;
         }
 
-        final SubmissionMessage submissionMessage = message.getData();
+        final SubmissionMessage submissionMessage = message.data();
         final ExecutionMessage executionMessage = submissionMessage.executionMessage();
         final boolean answer = executorService.checkAnswer(submissionMessage.testCaseId(), executionMessage.output());
 

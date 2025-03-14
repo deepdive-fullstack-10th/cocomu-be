@@ -12,7 +12,7 @@ import co.kr.cocomu.common.security.PasswordEncoderConfig;
 import co.kr.cocomu.common.template.PostRequestTemplate;
 import co.kr.cocomu.executor.controller.code.ExecutorApiCode;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
-import co.kr.cocomu.executor.producer.StompSseProducer;
+import co.kr.cocomu.executor.dto.request.SubmitDto;
 import co.kr.cocomu.executor.service.ExecutorService;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
@@ -29,7 +29,6 @@ class ExecutorControllerTest extends BaseExecutorControllerTest {
     private static final String PATH_PREFIX = "/api/v1/executor";
 
     @MockBean private ExecutorService executorService;
-    @MockBean private StompSseProducer stompSseProducer;
 
     @Test
     void 코드_실행_요청이_성공한다() {
@@ -45,6 +44,22 @@ class ExecutorControllerTest extends BaseExecutorControllerTest {
         NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
         assertThat(result.code()).isEqualTo(ExecutorApiCode.EXECUTE_CODE_SUCCESS.getCode());
         assertThat(result.message()).isEqualTo(ExecutorApiCode.EXECUTE_CODE_SUCCESS.getMessage());
+    }
+
+    @Test
+    void 코드_제출_요청이_성공한다() {
+        // given
+        doNothing().when(executorService).submit(any(SubmitDto.class));
+        SubmitDto dto = new SubmitDto(1L, 1L, "", "");
+
+        // when
+        String path = PATH_PREFIX + "/submission";
+        ValidatableMockMvcResponse response = PostRequestTemplate.executeWithBody(path, dto);
+
+        // then
+        NoContent result = response.status(HttpStatus.OK).extract().as(new TypeRef<>() {});
+        assertThat(result.code()).isEqualTo(ExecutorApiCode.SUBMIT_CODE_SUCCESS.getCode());
+        assertThat(result.message()).isEqualTo(ExecutorApiCode.SUBMIT_CODE_SUCCESS.getMessage());
     }
 
 }

@@ -9,7 +9,7 @@ import lombok.Getter;
 public enum ExecutorApiCode implements ApiCode {
 
     EXECUTE_CODE_SUCCESS(5000, "코드 실행이 성공했습니다."),
-    SUBMIT_CODE_SUCCESS(5000, "코드 실행 결과 전달이 성공했습니다."),
+    SUBMIT_CODE_SUCCESS(5000, "코드 제출이 성공했습니다."),
     ;
 
     private final int code;
