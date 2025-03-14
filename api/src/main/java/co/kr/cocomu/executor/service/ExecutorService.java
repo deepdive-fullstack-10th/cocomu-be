@@ -1,6 +1,8 @@
 package co.kr.cocomu.executor.service;
 
+import co.kr.cocomu.codingspace.domain.TestCase;
 import co.kr.cocomu.codingspace.service.CodingSpaceDomainService;
+import co.kr.cocomu.executor.dto.message.ExecutionMessage;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
 import co.kr.cocomu.executor.dto.request.SubmitDto;
 import co.kr.cocomu.executor.producer.ExecutionRequestProducer;
@@ -30,6 +32,11 @@ public class ExecutorService {
                 final String input = testCase.getInput();
                 executionRequestProducer.publishSubmission(testCaseId, input, dto);
             });
+    }
+
+    public boolean checkAnswer(final Long testCaseId, final String output) {
+        final TestCase testCase = codingSpaceDomainService.getTestCaseWithThrow(testCaseId);
+        return testCase.checkAnswer(output);
     }
 
 }

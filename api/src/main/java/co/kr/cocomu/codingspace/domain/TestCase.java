@@ -65,4 +65,8 @@ public class TestCase {
         return testCase;
     }
 
+    public boolean checkAnswer(final String output) {
+        return this.output.equals(output);
+    }
+
 }
