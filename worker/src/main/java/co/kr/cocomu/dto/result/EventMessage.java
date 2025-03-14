@@ -1,12 +1,13 @@
-package co.kr.cocomu.dto;
+package co.kr.cocomu.dto.result;
 
-import static co.kr.cocomu.dto.EventType.COMPILE_ERROR;
-import static co.kr.cocomu.dto.EventType.RUNTIME_ERROR;
-import static co.kr.cocomu.dto.EventType.SUCCESS;
-import static co.kr.cocomu.dto.EventType.TIMEOUT_ERROR;
-import static co.kr.cocomu.dto.EventType.UNKNOWN_ERROR;
-import static co.kr.cocomu.dto.EventType.UNSUPPORTED_LANGUAGE;
+import static co.kr.cocomu.dto.result.EventType.COMPILE_ERROR;
+import static co.kr.cocomu.dto.result.EventType.RUNTIME_ERROR;
+import static co.kr.cocomu.dto.result.EventType.SUCCESS;
+import static co.kr.cocomu.dto.result.EventType.TIMEOUT_ERROR;
+import static co.kr.cocomu.dto.result.EventType.UNKNOWN_ERROR;
+import static co.kr.cocomu.dto.result.EventType.UNSUPPORTED_LANGUAGE;
 
+import co.kr.cocomu.dto.ParseResult;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -47,6 +48,13 @@ public class EventMessage<T> {
     public static EventMessage<ExecutionMessage> createCompileError(final Long tabId, final String output) {
         final ExecutionMessage message = new ExecutionMessage(tabId, output, 0, 0);
         return new EventMessage<>(COMPILE_ERROR, message);
+    }
+
+    public static EventMessage<SubmissionMessage> createSubmissionMessage(
+        final EventType type,
+        final SubmissionMessage submissionMessage
+    ) {
+        return new EventMessage<>(type, submissionMessage);
     }
 
 }

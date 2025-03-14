@@ -7,8 +7,8 @@ import static co.kr.cocomu.executor.docker.DockerConstant.TIMEOUT_EXIT_CODE;
 import static co.kr.cocomu.executor.CodeFileManager.readFile;
 
 import co.kr.cocomu.executor.docker.DockerConstant;
-import co.kr.cocomu.dto.EventMessage;
-import co.kr.cocomu.dto.ExecutionMessage;
+import co.kr.cocomu.dto.result.EventMessage;
+import co.kr.cocomu.dto.result.ExecutionMessage;
 import co.kr.cocomu.dto.ParseResult;
 import co.kr.cocomu.executor.OutputParser;
 import java.io.IOException;

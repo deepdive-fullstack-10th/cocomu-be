@@ -1,9 +1,9 @@
 package co.kr.cocomu.service.impl;
 
 import co.kr.cocomu.executor.container.PythonContainer;
-import co.kr.cocomu.dto.CodeExecutionMessage;
-import co.kr.cocomu.dto.EventMessage;
-import co.kr.cocomu.dto.ExecutionMessage;
+import co.kr.cocomu.dto.receive.CodeExecutionMessage;
+import co.kr.cocomu.dto.result.EventMessage;
+import co.kr.cocomu.dto.result.ExecutionMessage;
 import co.kr.cocomu.service.CodeExecutor;
 import co.kr.cocomu.service.DockerExecutor;
 import co.kr.cocomu.executor.CodeFileManager;

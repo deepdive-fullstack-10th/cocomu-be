@@ -1,7 +1,7 @@
 //package co.kr.cocomu.client;
 //
-//import co.kr.cocomu.dto.EventMessage;
-//import co.kr.cocomu.dto.ExecutionMessage;
+//import co.kr.cocomu.dto.result.EventMessage;
+//import co.kr.cocomu.dto.result.ExecutionMessage;
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;
 //import org.springframework.beans.factory.annotation.Value;

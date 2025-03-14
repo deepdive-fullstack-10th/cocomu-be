@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import co.kr.cocomu.executor.dto.message.EventMessage;
+import co.kr.cocomu.executor.dto.message.ExecutionMessage;
 import co.kr.cocomu.executor.producer.StompSseProducer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ class ExecutionResultConsumerTest {
     void shouldPublishMessageToStomp() {
         // given
         // when
-        executionResultConsumer.consumeMessage(mock(EventMessage.class));
+        executionResultConsumer.consumeMessage((EventMessage<ExecutionMessage>) mock(EventMessage.class));
 
         // then
         verify(stompSseProducer).publishResult(any(EventMessage.class));

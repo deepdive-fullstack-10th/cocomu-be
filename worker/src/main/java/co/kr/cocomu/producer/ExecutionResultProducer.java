@@ -1,7 +1,8 @@
 package co.kr.cocomu.producer;
 
-import co.kr.cocomu.dto.EventMessage;
-import co.kr.cocomu.dto.ExecutionMessage;
+import co.kr.cocomu.dto.result.EventMessage;
+import co.kr.cocomu.dto.result.ExecutionMessage;
+import co.kr.cocomu.dto.result.SubmissionMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,9 +29,18 @@ public class ExecutionResultProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void publishExecution(final EventMessage<ExecutionMessage> message) {
+    public void publishExecutionResult(final EventMessage<ExecutionMessage> message) {
         rabbitTemplate.convertAndSend(exchangeName, executionSendRoutingKey, message);
         log.info("Code execution 발행 완료 - {}", message);
+    }
+
+    public void publishSubmissionResult(final Long testCaseId, final EventMessage<ExecutionMessage> message) {
+        final SubmissionMessage submissionMessage = SubmissionMessage.of(testCaseId, message.getData());
+        final EventMessage<SubmissionMessage> eventMessage =
+            EventMessage.createSubmissionMessage(message.getType(), submissionMessage);
+
+        rabbitTemplate.convertAndSend(exchangeName, submissionSendRoutingKey, eventMessage);
+        log.info("Code Submission 결과 발행 완료 - {}", eventMessage);
     }
 
 }

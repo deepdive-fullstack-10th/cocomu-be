@@ -1,4 +1,4 @@
-package co.kr.cocomu.dto;
+package co.kr.cocomu.dto.result;
 
 public enum EventType {
 
