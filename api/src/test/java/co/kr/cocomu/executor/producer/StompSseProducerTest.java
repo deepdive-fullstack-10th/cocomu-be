@@ -1,13 +1,16 @@
-package co.kr.cocomu.executor.service;
+package co.kr.cocomu.executor.producer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.executor.dto.message.EventMessage;
 import co.kr.cocomu.executor.dto.message.EventType;
 import co.kr.cocomu.executor.dto.message.ExecutionMessage;
+import co.kr.cocomu.executor.dto.message.SubmissionMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,40 +27,30 @@ class StompSseProducerTest {
     @InjectMocks private StompSseProducer stompSseProducer;
 
     @Test
-    void 코드_실행_알림이_발생한다() {
-        // given
-        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
-
-        // when
-        stompSseProducer.publishRunning(1L);
-
-        // then
-        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
-    }
-
-    @Test
     void 코드_실행_결과_알림이_발생한다() {
         // given
-        ExecutionMessage executionMessage = new ExecutionMessage(1L, "", 0, 0);
-        EventMessage<ExecutionMessage> message = new EventMessage<>(EventType.SUCCESS, executionMessage);
-        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+        EventMessage mockEventMessage = mock(EventMessage.class);
+        ExecutionMessage mockExecutionMessage = mock(ExecutionMessage.class);
+        when(mockEventMessage.data()).thenReturn(mockExecutionMessage);
 
         // when
-        stompSseProducer.publishResult(message);
+        stompSseProducer.publishExecutionResult(mockEventMessage);
 
         // then
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
     }
 
     @Test
-    void 테스트케이스_추가_알림이_발생한다() {
+    void 테스트_케이스_별_정답_결과_알림이_발생한다() {
         // given
-        ExecutionMessage executionMessage = new ExecutionMessage(1L, "", 0, 0);
-        EventMessage<ExecutionMessage> message = new EventMessage<>(EventType.SUCCESS, executionMessage);
-        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
+        EventMessage mockEventMessage = mock(EventMessage.class);
+        SubmissionMessage mockSubmissionMessage = mock(SubmissionMessage.class);
+        ExecutionMessage mockExecutionMessage = mock(ExecutionMessage.class);
+        when(mockEventMessage.data()).thenReturn(mockSubmissionMessage);
+        when(mockSubmissionMessage.executionMessage()).thenReturn(mockExecutionMessage);
 
         // when
-        stompSseProducer.publishResult(message);
+        stompSseProducer.publishSubmissionResult(mockEventMessage);
 
         // then
         verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));

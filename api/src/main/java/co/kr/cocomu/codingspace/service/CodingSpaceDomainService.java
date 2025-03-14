@@ -2,10 +2,12 @@ package co.kr.cocomu.codingspace.service;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
+import co.kr.cocomu.codingspace.domain.TestCase;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
+import co.kr.cocomu.codingspace.repository.TestCaseRepository;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class CodingSpaceDomainService {
 
     private final CodingSpaceRepository codingSpaceRepository;
     private final CodingSpaceTabRepository codingSpaceTabRepository;
+    private final TestCaseRepository testCaseRepository;
 
     public CodingSpace getCodingSpaceWithThrow(final Long codingSpaceId) {
         return codingSpaceRepository.findById(codingSpaceId)
@@ -41,6 +44,11 @@ public class CodingSpaceDomainService {
         if (!codingSpaceTabRepository.existsByIdAndStatus(codingSpaceTabId, TabStatus.ACTIVE)) {
             throw new BadRequestException(CodingSpaceExceptionCode.NOT_ACTIVE_TAB);
         }
+    }
+
+    public TestCase getTestCaseWithThrow(final Long testCaseId) {
+        return testCaseRepository.findById(testCaseId)
+            .orElseThrow(() -> new NotFoundException(CodingSpaceExceptionCode.NON_EXISTENT_CASE));
     }
 
 }

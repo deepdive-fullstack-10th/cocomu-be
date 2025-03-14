@@ -8,10 +8,12 @@ import static org.mockito.Mockito.when;
 
 import co.kr.cocomu.codingspace.domain.CodingSpace;
 import co.kr.cocomu.codingspace.domain.CodingSpaceTab;
+import co.kr.cocomu.codingspace.domain.TestCase;
 import co.kr.cocomu.codingspace.domain.vo.TabStatus;
 import co.kr.cocomu.codingspace.exception.CodingSpaceExceptionCode;
 import co.kr.cocomu.codingspace.repository.CodingSpaceRepository;
 import co.kr.cocomu.codingspace.repository.CodingSpaceTabRepository;
+import co.kr.cocomu.codingspace.repository.TestCaseRepository;
 import co.kr.cocomu.common.exception.domain.BadRequestException;
 import co.kr.cocomu.common.exception.domain.NotFoundException;
 import java.util.Optional;
@@ -27,6 +29,7 @@ class CodingSpaceDomainServiceTest {
 
     @Mock private CodingSpaceRepository codingSpaceRepository;
     @Mock private CodingSpaceTabRepository codingSpaceTabRepository;
+    @Mock private TestCaseRepository testCaseRepository;
 
     @InjectMocks private CodingSpaceDomainService codingSpaceDomainService;
 
@@ -123,6 +126,30 @@ class CodingSpaceDomainServiceTest {
         assertThatThrownBy(() -> codingSpaceDomainService.validateActiveTab(1L))
             .isInstanceOf(BadRequestException.class)
             .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NOT_ACTIVE_TAB);
+    }
+
+    @Test
+    void 테스트_케이스를_가져온다() {
+        // given
+        TestCase mockCase = mock(TestCase.class);
+        when(testCaseRepository.findById(1L)).thenReturn(Optional.of(mockCase));
+
+        // when
+        TestCase result = codingSpaceDomainService.getTestCaseWithThrow(1L);
+
+        // then
+        assertThat(result).isEqualTo(mockCase);
+    }
+
+    @Test
+    void 테스트_케이스가_없으면_예외가_발생한다() {
+        // given
+        when(testCaseRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // when
+        assertThatThrownBy(() -> codingSpaceDomainService.getTestCaseWithThrow(1L))
+            .isInstanceOf(NotFoundException.class)
+            .hasFieldOrPropertyWithValue("exceptionType", CodingSpaceExceptionCode.NON_EXISTENT_CASE);
     }
 
 }

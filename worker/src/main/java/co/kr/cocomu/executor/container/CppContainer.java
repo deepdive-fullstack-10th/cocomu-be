@@ -1,10 +1,10 @@
-package co.kr.cocomu.docker.container;
+package co.kr.cocomu.executor.container;
 
-import static co.kr.cocomu.docker.DockerConstant.DEFAULT_CPUS;
-import static co.kr.cocomu.docker.DockerConstant.DEFAULT_MEMORY;
-import static co.kr.cocomu.docker.DockerConstant.DEFAULT_WORK_DIR;
+import static co.kr.cocomu.executor.docker.DockerConstant.DEFAULT_CPUS;
+import static co.kr.cocomu.executor.docker.DockerConstant.DEFAULT_MEMORY;
+import static co.kr.cocomu.executor.docker.DockerConstant.DEFAULT_WORK_DIR;
 
-import co.kr.cocomu.docker.DockerCommander;
+import co.kr.cocomu.executor.docker.DockerCommander;
 import java.nio.file.Path;
 import java.util.List;
 

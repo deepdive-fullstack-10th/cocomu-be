@@ -78,6 +78,22 @@ oauth:
     client-secret: ${GOOGLE_SECRET}
     redirect-uri: ${GOOGLE_REDIRECT_URI}
     redirect-uri-dev: ${GOOGLE_REDIRECT_URI_DEV}
+    
+rabbitmq:
+  exchange:
+    name: ${RABBITMQ_EXCHANGE_NAME:code.executor.exchange}
+  execution:
+    routing:
+      send: ${RABBITMQ_EXECUTION_SEND_KEY:code.executor.execution.request}
+      receive: ${RABBITMQ_EXECUTION_RECEIVE_KEY:code.executor.execution.result}
+    queue:
+      result: ${RABBITMQ_EXECUTION_RESULT_QUEUE:code.executor.execution.result.queue}
+  submission:
+    routing:
+      send: ${RABBITMQ_SUBMISSION_SEND_KEY:code.executor.submission.request}
+      receive: ${RABBITMQ_SUBMISSION_RECEIVE_KEY:code.executor.submission.result}
+    queue:
+      result: ${RABBITMQ_SUBMISSION_RESULT_QUEUE:code.executor.submission.result.queue}
 
 ---
 
@@ -98,8 +114,7 @@ spring:
       mode: always
       data-locations: classpath:data.sql
 
-rabbitmq:
-  exchange:
-    name: ${RABBITMQ_EXCHANGE_NAME:code.execution.exchange}
-  routing:
-    key: ${RABBITMQ_ROUTING_KEY:code.execution.key}
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true

@@ -13,4 +13,5 @@ public record ExecuteDto(
     @NotNull String code,
     @Schema(description = "테스트 케이스 입력 데이터", example = "1 2")
     @NotNull String input
-) {}
+) {
+}

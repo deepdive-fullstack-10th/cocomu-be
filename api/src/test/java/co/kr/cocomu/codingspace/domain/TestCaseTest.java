@@ -45,4 +45,28 @@ class TestCaseTest {
         assertThat(result.getType()).isEqualTo(TestCaseType.CUSTOM);
     }
 
+    @Test
+    void 테스트_케이스가_정답이다() {
+        // given
+        TestCase testCase = new TestCase(null, null, null, "output", null);
+
+        // when
+        boolean result = testCase.checkAnswer("output");
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void 테스트_케이스가_오답이다() {
+        // given
+        TestCase testCase = new TestCase(null, null, null, "output", null);
+
+        // when
+        boolean result = testCase.checkAnswer("wrong");
+
+        // then
+        assertThat(result).isFalse();
+    }
+
 }

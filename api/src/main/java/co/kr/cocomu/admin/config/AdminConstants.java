@@ -13,8 +13,7 @@ public class AdminConstants {
         "/swagger-ui.html",
         "/swagger-resources/**",
         "/webjars/**",
-        "/api/v1/admin/**",
-        "/api/v1/executor/result"
+        "/api/v1/admin/**"
     );
 
     public static String[] getAllAdminUris() {

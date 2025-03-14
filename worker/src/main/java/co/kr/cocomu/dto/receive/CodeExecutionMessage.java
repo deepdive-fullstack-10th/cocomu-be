@@ -1,4 +1,4 @@
-package co.kr.cocomu.dto;
+package co.kr.cocomu.dto.receive;
 
 public record CodeExecutionMessage(
     Long tabId,

@@ -1,6 +1,7 @@
 package co.kr.cocomu.executor.dto.message;
 
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
+import co.kr.cocomu.executor.dto.request.SubmitDto;
 
 public record CodeExecutionMessage(
     Long tabId,
@@ -15,6 +16,15 @@ public record CodeExecutionMessage(
             dto.language(),
             dto.code(),
             dto.input()
+        );
+    }
+
+    public static CodeExecutionMessage of(final SubmitDto dto, final String input) {
+        return new CodeExecutionMessage(
+            dto.codingSpaceTabId(),
+            dto.language(),
+            dto.code(),
+            input
         );
     }
 
