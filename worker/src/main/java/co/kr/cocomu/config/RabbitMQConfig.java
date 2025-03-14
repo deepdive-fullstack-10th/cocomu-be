@@ -19,17 +19,24 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     private final String exchangeName;
-    private final String queueName;
-    private final String routingKey;
-
+    // 실행 결과
+    private final String executionReceiveRoutingKey;
+    private final String executionRequestQueue;
+    // 제출 결과
+    private final String submissionReceiveRoutingKey;
+    private final String submissionRequestQueue;
     public RabbitMQConfig(
         @Value("${rabbitmq.exchange.name}") final String exchangeName,
-        @Value("${rabbitmq.queue.name}") final String queueName,
-        @Value("${rabbitmq.routing.key}") final String routingKey
+        @Value("${rabbitmq.execution.routing.receive}") final String executionReceiveRoutingKey,
+        @Value("${rabbitmq.execution.queue.request}") final String executionRequestQueue,
+        @Value("${rabbitmq.submission.routing.receive}") final String submissionReceiveRoutingKey,
+        @Value("${rabbitmq.submission.queue.request}") final String submissionRequestQueue
     ) {
         this.exchangeName = exchangeName;
-        this.queueName = queueName;
-        this.routingKey = routingKey;
+        this.executionReceiveRoutingKey = executionReceiveRoutingKey;
+        this.executionRequestQueue = executionRequestQueue;
+        this.submissionReceiveRoutingKey = submissionReceiveRoutingKey;
+        this.submissionRequestQueue = submissionRequestQueue;
     }
 
     @Bean
@@ -37,17 +44,31 @@ public class RabbitMQConfig {
         return new DirectExchange(exchangeName);
     }
 
+
     @Bean
-    public Queue queue() {
-        return new Queue(queueName);
+    public Queue executionRequestQueue() {
+        return new Queue(executionRequestQueue);
     }
 
     @Bean
-    public Binding binding(final DirectExchange directExchange, final Queue queue) {
-        return BindingBuilder.bind(queue)
-                .to(directExchange)
-                .with(routingKey);
+    public Queue submissionRequestQueue() {
+        return new Queue(submissionRequestQueue);
     }
+
+    @Bean
+    public Binding executionReceiveBinding() {
+        return BindingBuilder.bind(executionRequestQueue())
+            .to(directExchange())
+            .with(executionReceiveRoutingKey);
+    }
+
+    @Bean
+    public Binding submissionReceiveBinding() {
+        return BindingBuilder.bind(submissionRequestQueue())
+            .to(directExchange())
+            .with(submissionReceiveRoutingKey);
+    }
+
 
     @Bean
     public RabbitTemplate rabbitTemplate(

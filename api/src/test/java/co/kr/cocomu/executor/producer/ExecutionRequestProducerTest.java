@@ -17,18 +17,15 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
-class CodeExecutionProducerTest {
+class ExecutionRequestProducerTest {
 
     @Mock private RabbitTemplate rabbitTemplate;
-    private String mockKey = "mockKey";
-    private String mockExchange = "mockExchange";
-
-    @InjectMocks private CodeExecutionProducer codeExecutionProducer;
+    @InjectMocks private ExecutionRequestProducer executionRequestProducer;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(codeExecutionProducer, "exchangeName", mockExchange);
-        ReflectionTestUtils.setField(codeExecutionProducer, "routingKey", mockKey);
+        ReflectionTestUtils.setField(executionRequestProducer, "exchangeName", "mockExchange");
+        ReflectionTestUtils.setField(executionRequestProducer, "executionSendRoutingKey", "mockKey1");
     }
     @Test
     void 코드_실행_메시지가_발행된다() {
@@ -37,7 +34,7 @@ class CodeExecutionProducerTest {
         doNothing().when(rabbitTemplate).convertAndSend(anyString(), anyString(), any(CodeExecutionMessage.class));
 
         // when
-        codeExecutionProducer.publishCode(mockDto);
+        executionRequestProducer.publishExecution(mockDto);
 
         // then
         verify(rabbitTemplate).convertAndSend(anyString(), anyString(), any(CodeExecutionMessage.class));

@@ -2,8 +2,6 @@ package co.kr.cocomu.executor.controller.docs;
 
 import co.kr.cocomu.common.api.NoContent;
 import co.kr.cocomu.common.exception.dto.ExceptionResponse;
-import co.kr.cocomu.executor.dto.message.EventMessage;
-import co.kr.cocomu.executor.dto.message.ExecutionMessage;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,8 +25,5 @@ public interface ExecutorControllerDocs {
         content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
     )
     NoContent executeCode(ExecuteDto dto);
-
-    @Operation(hidden = true)
-    NoContent handleExecutionResult(EventMessage<ExecutionMessage> dto);
 
 }

@@ -1,9 +1,9 @@
 package co.kr.cocomu.consumer;
 
-import co.kr.cocomu.client.ApiClient;
 import co.kr.cocomu.dto.CodeExecutionMessage;
 import co.kr.cocomu.dto.EventMessage;
 import co.kr.cocomu.dto.ExecutionMessage;
+import co.kr.cocomu.producer.ExecutionResultProducer;
 import co.kr.cocomu.service.CodeExecutionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,18 +13,19 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CodeExecutionConsumer {
+public class ExecutionRequestConsumer {
 
     private final CodeExecutionService codeExecutionService;
-    private final ApiClient apiClient;
+    private final ExecutionResultProducer executionResultProducer;
 
-    @RabbitListener(queues = "${rabbitmq.queue.name}")
+    @RabbitListener(queues = "${rabbitmq.execution.queue.request}")
     public void consumeMessage(final CodeExecutionMessage message) {
         log.info("코드 실행 전 메시지 - {}", message.toString());
         final EventMessage<ExecutionMessage> result = codeExecutionService.execute(message);
         log.info("코드 실행 결과 = {}", result);
 
-        apiClient.sendResultToMainServer(result);
+        //apiClient.sendResultToMainServer(result);
+        executionResultProducer.publishExecution(result);
     }
 
 }

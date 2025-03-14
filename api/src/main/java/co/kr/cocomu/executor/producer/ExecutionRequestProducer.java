@@ -6,29 +6,32 @@ import co.kr.cocomu.executor.dto.request.ExecuteDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 @Slf4j
-public class CodeExecutionProducer {
+public class ExecutionRequestProducer {
 
     private final RabbitTemplate rabbitTemplate;
     private final String exchangeName;
-    private final String routingKey;
+    private final String executionSendRoutingKey;
+    private final String submissionSendRoutingKey;
 
-    public CodeExecutionProducer(
+    public ExecutionRequestProducer(
         @Value("${rabbitmq.exchange.name}") final String exchangeName,
-        @Value("${rabbitmq.routing.key}") final String routingKey,
+        @Value("${rabbitmq.execution.routing.send}") final String executionSendRoutingKey,
+        @Value("${rabbitmq.submission.routing.send}") final String submissionSendRoutingKey,
         final RabbitTemplate rabbitTemplate
     ) {
         this.exchangeName = exchangeName;
-        this.routingKey = routingKey;
+        this.executionSendRoutingKey = executionSendRoutingKey;
+        this.submissionSendRoutingKey = submissionSendRoutingKey;
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void publishCode(final ExecuteDto dto) {
+    public void publishExecution(final ExecuteDto dto) {
         final CodeExecutionMessage newMessage = CodeExecutionMessage.createNewMessage(dto);
-        rabbitTemplate.convertAndSend(exchangeName, routingKey, newMessage);
+        rabbitTemplate.convertAndSend(exchangeName, executionSendRoutingKey, newMessage);
         log.info("Code execution 발행 완료 - {}", newMessage);
     }
 

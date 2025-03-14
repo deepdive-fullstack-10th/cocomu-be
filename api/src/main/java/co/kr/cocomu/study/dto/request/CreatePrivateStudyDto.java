@@ -16,6 +16,7 @@ public record CreatePrivateStudyDto(
     @NotNull
     @Schema(description = "스터디에서 추구하는 문제집 식별자", example = "[1, 2]")
     List<Long> workbooks,
+    @NotNull
     @Schema(description = "스터디 설명", example = "우리 스터디는 ~ ")
     String description,
     @NotNull

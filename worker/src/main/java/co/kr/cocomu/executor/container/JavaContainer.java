@@ -1,10 +1,7 @@
-    package co.kr.cocomu.docker.container;
+    package co.kr.cocomu.executor.container;
 
-    import static co.kr.cocomu.docker.DockerConstant.DEFAULT_CPUS;
-    import static co.kr.cocomu.docker.DockerConstant.DEFAULT_MEMORY;
-    import static co.kr.cocomu.docker.DockerConstant.DEFAULT_WORK_DIR;
-
-    import co.kr.cocomu.docker.DockerCommander;
+    import co.kr.cocomu.executor.docker.DockerCommander;
+    import co.kr.cocomu.executor.docker.DockerConstant;
     import java.nio.file.Path;
     import java.util.List;
 
@@ -35,11 +32,11 @@
             return DockerCommander.builder()
                 .withRun()
                 .withRemove()
-                .withLimits(DEFAULT_MEMORY, DEFAULT_CPUS)
+                .withLimits(DockerConstant.DEFAULT_MEMORY, DockerConstant.DEFAULT_CPUS)
                 .withSecurity()
                 .withName(containerId)
                 .withVolume(tempDir)
-                .withWorkDir(DEFAULT_WORK_DIR)
+                .withWorkDir(DockerConstant.DEFAULT_WORK_DIR)
                 .withImage(JAVA_IMAGE)
                 .withCommand(String.format(JAVA_COMMAND_FORMAT, input))
                 .build();

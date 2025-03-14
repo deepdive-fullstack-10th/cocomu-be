@@ -24,18 +24,6 @@ class StompSseProducerTest {
     @InjectMocks private StompSseProducer stompSseProducer;
 
     @Test
-    void 코드_실행_알림이_발생한다() {
-        // given
-        doNothing().when(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
-
-        // when
-        stompSseProducer.publishRunning(1L);
-
-        // then
-        verify(simpMessagingTemplate).convertAndSend(anyString(), any(EventMessage.class));
-    }
-
-    @Test
     void 코드_실행_결과_알림이_발생한다() {
         // given
         ExecutionMessage executionMessage = new ExecutionMessage(1L, "", 0, 0);

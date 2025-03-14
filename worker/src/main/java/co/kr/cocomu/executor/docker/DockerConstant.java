@@ -1,4 +1,4 @@
-package co.kr.cocomu.docker;
+package co.kr.cocomu.executor.docker;
 
 public final class DockerConstant {
 

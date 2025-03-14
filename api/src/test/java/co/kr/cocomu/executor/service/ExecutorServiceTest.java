@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 
 import co.kr.cocomu.codingspace.service.CodingSpaceDomainService;
 import co.kr.cocomu.executor.dto.request.ExecuteDto;
-import co.kr.cocomu.executor.producer.CodeExecutionProducer;
+import co.kr.cocomu.executor.producer.ExecutionRequestProducer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ExecutorServiceTest {
 
-    @Mock private CodeExecutionProducer codeExecutionProducer;
+    @Mock private ExecutionRequestProducer executionRequestProducer;
     @Mock private CodingSpaceDomainService codingSpaceDomainService;
     @InjectMocks private ExecutorService executorService;
 
@@ -28,7 +28,7 @@ class ExecutorServiceTest {
 
         // then
         verify(codingSpaceDomainService).validateActiveTab(anyLong());
-        verify(codeExecutionProducer).publishCode(any(ExecuteDto.class));
+        verify(executionRequestProducer).publishExecution(any(ExecuteDto.class));
     }
 
 }
