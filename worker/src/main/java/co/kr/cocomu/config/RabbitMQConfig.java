@@ -6,6 +6,7 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -69,6 +70,19 @@ public class RabbitMQConfig {
             .with(submissionReceiveRoutingKey);
     }
 
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+        final ConnectionFactory connectionFactory,
+        final MessageConverter messageConverter
+    ) {
+        final SimpleRabbitListenerContainerFactory containerFactory = new SimpleRabbitListenerContainerFactory();
+        containerFactory.setConnectionFactory(connectionFactory);
+        containerFactory.setMessageConverter(messageConverter);
+        containerFactory.setConcurrentConsumers(5);
+        containerFactory.setMaxConcurrentConsumers(10);
+        containerFactory.setPrefetchCount(10);
+        return containerFactory;
+    }
 
     @Bean
     public RabbitTemplate rabbitTemplate(
@@ -77,6 +91,7 @@ public class RabbitMQConfig {
     ) {
         final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter);
+
         return rabbitTemplate;
     }
 

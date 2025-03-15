@@ -22,7 +22,7 @@ public class CppContainer {
         
         # Execution
         { \
-            output=$(echo '%s' | timeout 2 /usr/bin/time -f "%%e\\n%%M" ./Main 2>&1); \
+            output=$(echo '%s' | timeout 2 /usr/bin/time -f "\\n%%e\\n%%M" ./Main 2>&1); \
             exit_code=$?; \
             echo "$output" > output.log; \
             if [ $exit_code -eq 124 ]; then \
@@ -31,7 +31,7 @@ public class CppContainer {
                 exit 2; \
             fi \
         }
-        """;
+    """;
 
     public static List<String> generate(final String containerId, final Path tempDir, final String input) {
         return DockerCommander.builder()
