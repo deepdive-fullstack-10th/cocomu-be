@@ -52,6 +52,7 @@ public class DockerExecutor {
 
     private static EventMessage<ExecutionMessage> processSuccess(final Long tabId, final Path tempDir) {
         final String output = readFile(tempDir, DockerConstant.EXECUTION_RESULT_LOG).trim();
+        log.info("======== low output =========\n{} ", output);
         final ParseResult parseResult = OutputParser.parse(output);
         return EventMessage.createSuccessMessage(tabId, parseResult);
     }
