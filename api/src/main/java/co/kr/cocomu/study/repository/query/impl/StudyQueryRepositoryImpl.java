@@ -49,7 +49,7 @@ public class StudyQueryRepositoryImpl implements StudyQueryRepository {
         return buildStudyPageForm(viewerId)
             .from(studyUser)
             .join(studyUser.study, study)
-            .where(getLastIndexCondition(lastIndex), studyUser.user.id.eq(userId))
+            .where(getLastIndexCondition(lastIndex), studyUser.user.id.eq(userId), study.status.ne(StudyStatus.REMOVE))
             .orderBy(study.id.desc())
             .limit(STUDY_SCROLL_SIZE)
             .fetch();
